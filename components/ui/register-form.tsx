@@ -6,9 +6,6 @@ import { Label } from '@/components/ui/label'
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
     return (
         <div className={cn('flex flex-col gap-2 items-center', className)} {...props}>
-            {/**
-             * TODO : Remplacer src par la vrai URL du logo
-             */}
             <img src="la-pince-logo-color.png" alt="logo" height='100px' width='100px' />
             <h1 className="text-2xl font-semibold text-center">Bienvenue sur La Pince</h1>
 
