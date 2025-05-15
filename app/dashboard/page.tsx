@@ -6,8 +6,8 @@ import {ExpensesByCategoriesChart} from "@/components/expenses-by-categories-cha
 import {categories} from "@/lib/fake-props";
 export default function Dashboard() {
     return (
-        <div className={"min-h-screen bg-background p-12 font-inter"}>
-            <Header name={"Bob L'éponge 🧽"}/>
+        <>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-8">
                 <div className="col-span-4 lg:col-span-2 p-2 ">
 
@@ -44,7 +44,7 @@ export default function Dashboard() {
             </div>
 
 
-        </div>
+        </>
     )
 }
 
