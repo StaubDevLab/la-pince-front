@@ -19,7 +19,7 @@ export default function Header() {
             <div className="flex items-center gap-2 md:gap-3">
                 <div className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
                     <Image
-                        src="/la-pince-logo-color.png"
+                        src="/la-pince-logo.png"
                         alt="Logo de l'application La pince qui représente un crabe à lunettes"
                         width={100}
                         height={100}
