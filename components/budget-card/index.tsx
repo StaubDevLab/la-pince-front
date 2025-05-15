@@ -36,7 +36,7 @@ export function BudgetCard({
         ]
 
     const chartConfig = {
-        dépensé: {
+        expensed: {
             label: "Dépensé",
             color: spentColor,
         },

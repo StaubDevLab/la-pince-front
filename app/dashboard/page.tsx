@@ -2,7 +2,7 @@ import React from 'react'
 import { BudgetCard } from '@/components/budget-card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import {ExpensesByCategoriesChart} from "@/components/expenses-by-categories-chart";
-import {budgetCardProps, categories, expensesByCategoriesChartProps, monthlyProps} from "@/lib/fake-props";
+import {budgetCardProps, expensesByCategoriesChartProps, monthlyProps} from "@/lib/fake-props";
 import {ChartMonthly} from "@/components/chart-monthly";
 export default function Dashboard() {
     return (
