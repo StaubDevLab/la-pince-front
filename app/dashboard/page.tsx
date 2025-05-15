@@ -1,5 +1,4 @@
 import React from 'react'
-import Header from '@/components/header'
 import { BudgetCard } from '@/components/budget-card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import {ExpensesByCategoriesChart} from "@/components/expenses-by-categories-chart";
