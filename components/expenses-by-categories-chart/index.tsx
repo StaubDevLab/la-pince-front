@@ -12,6 +12,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { DateRange } from 'react-day-picker'
 
 interface CategoryData {
     name: string
@@ -99,10 +100,7 @@ export function ExpensesByCategoriesChart({
                                   },
                               ],
                           }: ActivityChartProps) {
-    const [date, setDate] = useState<{
-        from: Date
-        to: Date
-    }>(initialDateRange)
+    const [date, setDate] = useState<DateRange>(initialDateRange)
 
     // Calculate total and percentages
     const total = initialCategories.reduce((sum, category) => sum + category.value, 0)
