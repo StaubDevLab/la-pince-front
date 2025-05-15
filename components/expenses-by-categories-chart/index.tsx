@@ -4,7 +4,7 @@ import { useState } from "react"
 import type React from "react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Apple, Bike, Bus, CalendarIcon, HeartPulse, House, Tv } from 'lucide-react'
+import {  CalendarIcon} from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,86 +31,18 @@ interface ActivityChartProps {
     categories: CategoryData[]
 }
 
-export function ExpensesByCategoriesChart({
-                              title = "Dépenses par catégorie",
-                              initialDateRange = {
-                                  from: new Date(2025, 4, 2),
-                                  to: new Date(2025, 4, 18),
-                              },
-                              categories: initialCategories = [
-                                  {
-                                      name: "Logement",
-                                      value: 450,
-                                      fill: "#FF7A45",
-                                      icon: (
-                                          <div className="bg-[#FF7A45] text-white p-1 rounded-md">
-                                              <House />
-                                          </div>
-                                      ),
-                                  },
-                                  {
-                                      name: "Alimentation",
-                                      value: 250,
-                                      fill: "#8884d8",
-                                      icon: (
-                                          <div className="bg-[#8884d8] text-white p-1 rounded-md">
-                                              <Apple />
-                                          </div>
-                                      ),
-                                  },
-                                  {
-                                      name: "Loisirs",
-                                      value: 120,
-                                      fill: "#FF5C8D",
-                                      icon: (
-                                          <div className="bg-[#FF5C8D] text-white p-1 rounded-md">
-                                              <Bike />
-                                          </div>
-                                      ),
-                                  },
-                                  {
-                                      name: "Abonnements",
-                                      value: 180,
-                                      fill: "#82E0AA",
-                                      icon: (
-                                          <div className="bg-[#82E0AA] text-white p-1 rounded-md">
-                                              <Tv />
-                                          </div>
-                                      ),
-                                  },
-                                  {
-                                      name: "Transports",
-                                      value: 130,
-                                      fill: "#9B59B6",
-                                      icon: (
-                                          <div className="bg-[#9B59B6] text-white p-1 rounded-md">
-                                              <Bus />
-                                          </div>
-                                      ),
-                                  },
-                                  {
-                                      name: "Santé",
-                                      value: 120,
-                                      fill: "#F7DC6F",
-                                      icon: (
-                                          <div className="bg-[#F7DC6F] text-white p-1 rounded-md">
-                                              <HeartPulse />
-                                          </div>
-                                      ),
-                                  },
-                              ],
-                          }: ActivityChartProps) {
-    const [date, setDate] = useState<DateRange>(initialDateRange)
+export function ExpensesByCategoriesChart({title, categories, initialDateRange}: ActivityChartProps) {
+    const [date, setDate] = useState<DateRange>(initialDateRange as DateRange)
 
     // Calculate total and percentages
-    const total = initialCategories.reduce((sum, category) => sum + category.value, 0)
-    const categories = initialCategories.map((category) => ({
+    const total = categories.reduce((sum, category) => sum + category.value, 0)
+    const categoriesFormat = categories.map((category) => ({
         ...category,
         percentage: Math.round((category.value / total) * 100),
     }))
 
     // Create chart config dynamically from categories
-    const chartConfig = categories.reduce((config, category) => {
+    const chartConfig = categoriesFormat.reduce((config, category) => {
         return {
             ...config,
             [category.name]: {
@@ -131,7 +63,7 @@ export function ExpensesByCategoriesChart({
 
     // Custom tooltip formatter
     const tooltipFormatter = (value: number, name: string) => {
-        const category = categories.find((c) => c.name === name)
+        const category = categoriesFormat.find((c) => c.name === name)
         return [`${value}€ (${category?.percentage}%)`, name]
     }
 
@@ -146,12 +78,11 @@ export function ExpensesByCategoriesChart({
                             {formatDateRange()}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="end">
+                    <PopoverContent className="w-auto p-4" align="end">
                         <Calendar
                             mode="range"
                             selected={date}
                             onSelect={(range) => range && setDate(range)}
-                            initialFocus
                             locale={fr}
                         />
                     </PopoverContent>
@@ -183,7 +114,7 @@ export function ExpensesByCategoriesChart({
                     </div>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full md:w-1/2">
-                        {categories.map((category, index) => (
+                        {categoriesFormat.map((category, index) => (
                             <div key={index} className="flex items-center gap-1.5">
                                 {category.icon}
                                 <span className="text-md">{category.name}</span>

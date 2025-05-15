@@ -2,7 +2,8 @@ import React from 'react'
 import { BudgetCard } from '@/components/budget-card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import {ExpensesByCategoriesChart} from "@/components/expenses-by-categories-chart";
-import {categories} from "@/lib/fake-props";
+import {budgetCardProps, expensesByCategoriesChartProps, monthlyProps} from "@/lib/fake-props";
+import {ChartMonthly} from "@/components/chart-monthly";
 export default function Dashboard() {
     return (
         <>
@@ -16,30 +17,25 @@ export default function Dashboard() {
                         className="w-full"
                     >
                         <CarouselContent>
-                            <CarouselItem className="md:basis-1/2">
-                                <div className="p-1">
-                                    <BudgetCard title={"Budget logement"} spent={615.12} total={500}/>
-                                </div>
-                            </CarouselItem>
-                            <CarouselItem className="md:basis-1/2">
-                                <div className="p-1">
-                                    <BudgetCard title={"Budget logement"} spent={615.12} total={500}/>
-                                </div>
-                            </CarouselItem>
-                            <CarouselItem className="md:basis-1/2 ">
-                                <div className="p-1">
-                                    <BudgetCard title={"Budget logement"} spent={615.12} total={500}/>
-                                </div>
-                            </CarouselItem>
+                            {budgetCardProps.map((props, index) => (
+                                <CarouselItem key={index} className="md:basis-1/2">
+                                    <div className="p-1">
+                                        <BudgetCard {...props} />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+
                         </CarouselContent>
                         <CarouselPrevious/>
                         <CarouselNext/>
                     </Carousel>
                 </div>
                 <div className="p-2 col-span-4 lg:col-span-2">
-                    <ExpensesByCategoriesChart title={"Dépenses par catégorie"} categories={categories}/>
+                    <ExpensesByCategoriesChart {...expensesByCategoriesChartProps}/>
                 </div>
-
+                <div className="p-2 col-span-4 lg:col-span-2">
+                    <ChartMonthly {...monthlyProps} />
+                </div>
             </div>
 
 
