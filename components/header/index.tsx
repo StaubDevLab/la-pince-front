@@ -12,14 +12,14 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
-export default function Header() {
+export default function Header({name}: {name: string}) {
     return (
         <header className="flex items-center justify-between p-3 md:p-4 border-b dark:text-white">
-            {/* Logo et titre - responsive */}
+
             <div className="flex items-center gap-2 md:gap-3">
                 <div className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
                     <Image
-                        src="/la-pince-logo-color.png"
+                        src="/la-pince-logo.png"
                         alt="Logo de l'application La pince qui représente un crabe à lunettes"
                         width={100}
                         height={100}
@@ -27,23 +27,23 @@ export default function Header() {
                 </div>
                 <div>
                     <h1 className="hidden sm:block md:text-2xl lg:text-3xl font-medium">
-                        Bienvenue, <span className="font-bold">Bob L'éponge 🧽</span> !
+                        Bienvenue, <span className="font-bold">{name}</span> !
                     </h1>
-                    {/* Version mobile du titre */}
+
                     <h1 className="text-lg sm:hidden font-medium">
                         Bonjour, <span className="font-bold">Bob</span> !
                     </h1>
                 </div>
             </div>
 
-            {/* Navigation et actions - responsive */}
+
             <div className="flex items-center gap-2 md:gap-4">
-                {/* Navigation sur desktop */}
-                <div className="hidden md:flex rounded-full bg-gray-100">
-                    <button className="px-4 py-1.5 bg-white rounded-full text-sm font-medium shadow-sm cursor-pointer">
+
+                <div className="hidden md:flex rounded-full bg-gray-100 dark:bg-gray-800">
+                    <button className="px-4 py-1.5 bg-white rounded-full text-sm font-medium shadow-sm cursor-pointer dark:bg-gray-800 dark:text-white">
                         Dashboard
                     </button>
-                    <button className="px-4 py-1.5 text-sm font-medium cursor-pointer">Transactions</button>
+                    <button className="px-4 py-1.5 text-sm font-medium cursor-pointer dark:text-white dark:bg-gray-700 rounded-full">Transactions</button>
                 </div>
 
 
@@ -54,9 +54,9 @@ export default function Header() {
                             <span className="sr-only">Menu</span>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className=" p-2 bg-white shadow-xl">
+                    <SheetContent side="left" className=" p-2 bg-white shadow-xl dark:bg-gray-800">
                         <div className="flex flex-col gap-4 mt-8">
-                            <button className="px-4 py-2 bg-white rounded-md text-sm font-medium shadow-sm cursor-pointer border">
+                            <button className="px-4 py-2 bg-white rounded-md text-sm font-medium shadow-sm cursor-pointer border dark:text-white dark:bg-gray-800">
                                 Dashboard
                             </button>
                             <button className="px-4 py-2 text-sm font-medium cursor-pointer border rounded-md">Transactions</button>
@@ -66,7 +66,7 @@ export default function Header() {
 
 
                 <button className="relative h-8 w-8 flex items-center justify-center">
-                    <BellIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+                    <BellIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300" />
                     <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
