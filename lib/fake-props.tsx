@@ -113,3 +113,17 @@ export const budgetCardProps = [{
         spentColor: '#F97316',
         remainingColor: '#F0F0F0',
     }]
+
+export const weeklyProps = {
+    title: 'Activité journalière',
+    total: 150.12,
+    data: [
+        { day: 'LUN', value: 80, dayIndex: 1 },
+        { day: 'MAR', value: 65, dayIndex: 2 },
+        { day: 'MER', value: 40, dayIndex: 3 },
+        { day: 'JEU', value: 30, dayIndex: 4 },
+        { day: 'VEN', value: 70, dayIndex: 5 },
+        { day: 'SAM', value: 100, dayIndex: 6 },
+        { day: 'DIM', value: 25, dayIndex: 0 },    ],
+    currentDayIndex: new Date().getDay(),
+}
