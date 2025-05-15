@@ -1,6 +1,6 @@
-import { BellIcon, CircleUser, LogOut, Menu, Settings } from "lucide-react"
-import Image from "next/image"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BellIcon, CircleUser, LogOut, Menu, Settings } from 'lucide-react'
+import Image from 'next/image'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,9 +8,9 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+} from '@/components/ui/dropdown-menu'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
 
 export default function Header() {
     return (
@@ -43,9 +43,10 @@ export default function Header() {
                     <button className="px-4 py-1.5 bg-white rounded-full text-sm font-medium shadow-sm cursor-pointer">
                         Dashboard
                     </button>
-                    <button className="px-4 py-1.5 text-sm font-medium cursor-pointer">Transactions</button>
+                    <button className="px-4 py-1.5 text-sm font-medium cursor-pointer">
+                        Transactions
+                    </button>
                 </div>
-
 
                 <Sheet>
                     <SheetTrigger asChild className="md:hidden">
@@ -59,17 +60,17 @@ export default function Header() {
                             <button className="px-4 py-2 bg-white rounded-md text-sm font-medium shadow-sm cursor-pointer border">
                                 Dashboard
                             </button>
-                            <button className="px-4 py-2 text-sm font-medium cursor-pointer border rounded-md">Transactions</button>
+                            <button className="px-4 py-2 text-sm font-medium cursor-pointer border rounded-md">
+                                Transactions
+                            </button>
                         </div>
                     </SheetContent>
                 </Sheet>
-
 
                 <button className="relative h-8 w-8 flex items-center justify-center">
                     <BellIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
                     <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
-
 
                 <DropdownMenu>
                     <DropdownMenuTrigger className="h-8 w-8 md:h-9 md:w-9">
