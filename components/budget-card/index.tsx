@@ -22,7 +22,7 @@ export function BudgetCard({
                               spent = 180.12,
                               total = 450,
                               spentLabel = "Dépenses actuels",
-                              spentColor = "#FF7A45",
+                              spentColor = "#F97316",
                               remainingColor = "#F0F0F0",
                           }: BudgetCardProps) {
     const isOverBudget = spent > total
