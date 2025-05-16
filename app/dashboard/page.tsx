@@ -16,11 +16,11 @@ export default function Dashboard() {
 
                 {/* Budget Cards avec Carousel */}
                 <div className="lg:col-span-4 md:col-span-2 col-span-1">
-                    <Carousel className="w-full max-w-full p-4 relative overflow-visible mx-auto">
-                        <CarouselContent className={"mx-auto"}>
+                    <Carousel className=" max-w-full  relative overflow-visible mx-auto">
+                        <CarouselContent >
                             {budgetCardProps.map((props, index) => (
                                 <CarouselItem key={index} className="md:basis-1/2">
-                                    <div className="mx-auto">
+                                    <div>
                                         <BudgetCard {...props} />
                                     </div>
                                 </CarouselItem>
