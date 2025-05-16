@@ -53,31 +53,61 @@ function PaginationLink({ className, isActive, size = 'icon', ...props }: Pagina
     )
 }
 
-function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
+function PaginationPrevious({
+    className,
+    disabled,
+    onClick,
+    ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
     return (
-        <PaginationLink
+        <button
+            type="button"
             aria-label="Go to previous page"
-            size="default"
-            className={cn('gap-1 px-2.5 sm:pl-2.5', className)}
+            disabled={disabled}
+            onClick={e => {
+                if (disabled) return
+                onClick?.(e)
+            }}
+            className={cn(
+                'inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+                'bg-muted hover:bg-muted/80 text-foreground',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                className
+            )}
             {...props}
         >
-            <ChevronLeftIcon />
+            <ChevronLeftIcon className="h-4 w-4" />
             <span className="hidden sm:block">Précédent</span>
-        </PaginationLink>
+        </button>
     )
 }
 
-function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
+function PaginationNext({
+    className,
+    disabled,
+    onClick,
+    ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
     return (
-        <PaginationLink
+        <button
+            type="button"
             aria-label="Go to next page"
-            size="default"
-            className={cn('gap-1 px-2.5 sm:pr-2.5', className)}
+            disabled={disabled}
+            onClick={e => {
+                if (disabled) return
+                onClick?.(e)
+            }}
+            className={cn(
+                'inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+                'bg-muted hover:bg-muted/80 text-foreground',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                className
+            )}
             {...props}
         >
             <span className="hidden sm:block">Suivant</span>
-            <ChevronRightIcon />
-        </PaginationLink>
+            <ChevronRightIcon className="h-4 w-4" />
+        </button>
     )
 }
 
