@@ -68,7 +68,7 @@ export default function Notifications() {
     }
 
     return (
-        <div className="flex items-center justify-center h-screen w-full">
+        <div className="flex items-center justify-center w-full">
             <main className="max-w-4xl w-full p-6 space-y-6">
                 {!notifications.length && (
                     <h1 className="text-center font-semibold text-5xl">Aucune notifications</h1>
