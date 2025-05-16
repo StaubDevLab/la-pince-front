@@ -298,3 +298,26 @@ export default function DataTableDemo() {
                         </TableBody>
                     </Table>
                 </div>
+                <Pagination className="mt-6">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} />
+                        </PaginationItem>
+
+                        {Array.from({ length: table.getPageCount() }, (_, i) => (
+                            <PaginationItem key={i}>
+                                <PaginationLink href="#" isActive={table.getState().pagination.pageIndex === i} onClick={() => table.setPageIndex(i)}>
+                                    {i + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}
+
+                        <PaginationItem>
+                            <PaginationNext onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
+        </div>
+    )
+}
