@@ -192,3 +192,25 @@ export default function DataTableDemo() {
                             placeholder="Netflix..."
                             className="w-full max-w-sm"
                         />
+                        <Select
+                            onValueChange={value => {
+                                if (value === 'all') {
+                                    setSelectedCategory('')
+                                    table.getColumn('category')?.setFilterValue(undefined)
+                                } else {
+                                    setSelectedCategory(value)
+                                    table.getColumn('category')?.setFilterValue(value)
+                                }
+                            }}
+                            value={selectedCategory}
+                        >
+                            <SelectTrigger className="w-[220px]">
+                                <SelectValue placeholder="Catégorie" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Toutes les catégories</SelectItem>
+                                {categories.map(ctg => (
+                                    <SelectItem value={ctg.name.toLowerCase()}>{ctg.name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
