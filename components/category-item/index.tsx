@@ -10,7 +10,7 @@ export const CategoryItem = ({ category }: { category: Category }) => {
     return (
         <div className="flex items-center gap-2">
             {Icon && <Icon size={20} />}
-            <span>{category.name}</span>
+            <span className={"hidden sm:block md:block lg:hidden"}>{category.name}</span>
         </div>
     );
 };
