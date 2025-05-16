@@ -4,6 +4,7 @@ import { PlusIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from '@/components/ui/button'
+import { CategoryItem } from '@/components/category-item'
 
 export interface Transaction {
     id: string;
@@ -47,11 +48,11 @@ const RecentTransactions = ({ transactions }: TransactionListProps) => {
                             </div>
                             <div className="flex justify-center">
                                 <Badge variant="outline" className={cn(
-                                    "px-2 py-1 text-xs font-normal w-22",
+                                    "px-2 py-1 text-xs font-normal w-22 sm:w-30 lg:w-22",
                                     transaction.category.background,
                                     transaction.category.color
                                 )}>
-                                    {transaction.category.name}
+                                    <CategoryItem category={transaction.category}/>
                                 </Badge>
                             </div>
                             <div className={cn(

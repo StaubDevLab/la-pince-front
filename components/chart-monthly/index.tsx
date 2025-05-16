@@ -67,10 +67,10 @@ export function ChartMonthly({
 
     return (
         <Card className="flex flex-col  mx-auto">
-            <CardHeader className="flex flex-row items-center justify-between py-3 px-4 space-y-0">
+            <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
                 <CardTitle className="text-xl font-medium">{title}</CardTitle>
                 <Select value={selectedMonth} onValueChange={setSelectedMonth} >
-                    <SelectTrigger className="h-10 w-auto min-w-[120px] text-lg border-gray-200 bg-gray-50">
+                    <SelectTrigger className="h-10 w-auto min-w-[120px] text-sm md:text-lg border-gray-200 bg-gray-50">
 
                         <SelectValue>{selectedMonth}</SelectValue>
                     </SelectTrigger>
