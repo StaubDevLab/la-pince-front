@@ -185,12 +185,12 @@ export default function DataTableDemo() {
             <div className="w-full max-w-4/5">
                 <h1 className="text-xl font-semibold tracking-tight">Mes transactions</h1>
                 <div className="flex flex-col gap-4 items-start justify-between py-4 md:flex-row md:items-center">
-                    <div className="flex flex-col gap-2 w-full md:flex-row md:items-center md:w-auto">
+                    <div className="flex flex-col gap-2 w-full md:flex-row md:items-center">
                         <Input
                             value={(table.getColumn('description')?.getFilterValue() as string) ?? ''}
                             onChange={event => table.getColumn('description')?.setFilterValue(event.target.value)}
                             placeholder="Netflix..."
-                            className="w-full max-w-sm"
+                            className="w-full md:w-[220px]"
                         />
                         <Select
                             onValueChange={value => {
@@ -204,7 +204,7 @@ export default function DataTableDemo() {
                             }}
                             value={selectedCategory}
                         >
-                            <SelectTrigger className="w-[220px]">
+                            <SelectTrigger className="w-full md:w-[220px]">
                                 <SelectValue placeholder="Catégorie" />
                             </SelectTrigger>
                             <SelectContent>
@@ -249,6 +249,7 @@ export default function DataTableDemo() {
                                     setDateRange(undefined)
                                     table.getColumn('date')?.setFilterValue(undefined)
                                 }}
+                                className="w-full md:w-auto"
                             >
                                 Réinitialiser
                             </Button>
@@ -257,7 +258,7 @@ export default function DataTableDemo() {
                         )}
                     </div>
 
-                    <Button className="flex items-center gap-2 self-stretch md:self-auto w-full md:w-auto">
+                    <Button className="flex items-center gap-2 w-full md:w-auto">
                         <PlusCircleIcon className="h-4 w-4" />
                         <span>Ajouter une transaction</span>
                     </Button>
