@@ -214,3 +214,51 @@ export default function DataTableDemo() {
                                 ))}
                             </SelectContent>
                         </Select>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button id="date" variant={'outline'} className="w-full md:w-[280px] justify-start text-left font-normal">
+                                    <CalendarIcon />
+                                    <span className="ml-2">
+                                        {dateRange?.from && !dateRange?.to
+                                            ? `A partir du ${dateRange.from.toLocaleDateString()}`
+                                            : dateRange?.from && dateRange?.to
+                                              ? `Du ${dateRange.from.toLocaleDateString()} au ${dateRange.to.toLocaleDateString()}`
+                                              : 'Trier par date'}
+                                    </span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    initialFocus
+                                    mode="range"
+                                    selected={dateRange}
+                                    onSelect={range => {
+                                        if (range) {
+                                            setDateRange(range)
+                                            table.getColumn('date')?.setFilterValue(range ?? undefined)
+                                        }
+                                    }}
+                                    numberOfMonths={2}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        {dateRange?.from || dateRange?.to ? (
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setDateRange(undefined)
+                                    table.getColumn('date')?.setFilterValue(undefined)
+                                }}
+                            >
+                                Réinitialiser
+                            </Button>
+                        ) : (
+                            <></>
+                        )}
+                    </div>
+
+                    <Button className="flex items-center gap-2 self-stretch md:self-auto w-full md:w-auto">
+                        <PlusCircleIcon className="h-4 w-4" />
+                        <span>Ajouter une transaction</span>
+                    </Button>
+                </div>
