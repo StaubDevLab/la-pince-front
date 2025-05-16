@@ -181,7 +181,7 @@ export default function DataTableDemo() {
     })
 
     return (
-        <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <div className="flex w-full items-center justify-center p-6 md:p-10">
             <div className="w-full max-w-4/5">
                 <h1 className="text-xl font-semibold tracking-tight">Mes transactions</h1>
                 <div className="flex flex-col gap-4 items-start justify-between py-4 md:flex-row md:items-center">
