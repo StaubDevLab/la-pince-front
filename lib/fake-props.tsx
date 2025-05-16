@@ -136,6 +136,7 @@ export const transactions = [
         description: "Crabe Croustillant",
         category: { name: "Alimentation", color: "text-blue-600", background: "bg-blue-100" },
         amount: -12.99,
+        icon:"alimentation"
     },
     {
         id: "2",
@@ -144,6 +145,7 @@ export const transactions = [
         category: { name: "Salaire", color: "text-green-600", background: "bg-green-100" },
         amount: 1812.99,
         isIncome: true,
+        icon:"salaire"
     },
     {
         id: "3",
@@ -151,6 +153,7 @@ export const transactions = [
         description: "Netflix",
         category: { name: "Abonnements", color: "text-teal-600", background: "bg-teal-100" },
         amount: -18.99,
+        icon:"abonnements"
     },
     {
         id: "4",
@@ -159,6 +162,7 @@ export const transactions = [
         category: { name: "Santé", color: "text-yellow-600", background: "bg-yellow-100" },
         amount: 125.99,
         isIncome: true,
+        icon:"santé"
     },
     {
         id: "5",
@@ -166,5 +170,6 @@ export const transactions = [
         description: "Bowling",
         category: { name: "Loisirs", color: "text-pink-600", background: "bg-pink-100" },
         amount: -27.00,
+        icon:"loisirs"
     },
 ];
