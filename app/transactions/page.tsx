@@ -18,3 +18,13 @@ import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
 
 const data = fakeData.data
+
+type Transaction = {
+    amount: number
+    date: string
+    category: {
+        name: string
+        color: string
+        icon: string
+    }
+}
