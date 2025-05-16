@@ -179,3 +179,16 @@ export default function DataTableDemo() {
             pagination,
         },
     })
+
+    return (
+        <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+            <div className="w-full max-w-4/5">
+                <h1 className="text-xl font-semibold tracking-tight">Mes transactions</h1>
+                <div className="flex flex-col gap-4 items-start justify-between py-4 md:flex-row md:items-center">
+                    <div className="flex flex-col gap-2 w-full md:flex-row md:items-center md:w-auto">
+                        <Input
+                            value={(table.getColumn('description')?.getFilterValue() as string) ?? ''}
+                            onChange={event => table.getColumn('description')?.setFilterValue(event.target.value)}
+                            placeholder="Netflix..."
+                            className="w-full max-w-sm"
+                        />
