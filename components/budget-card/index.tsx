@@ -47,7 +47,7 @@ export function BudgetCard({
     } satisfies ChartConfig
 
     return (
-        <Card className="flex flex-col max-w-xl">
+        <Card className="flex flex-col w-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-base font-medium">{title}</CardTitle>
                 <div className="flex items-center gap-4">
