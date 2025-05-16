@@ -1,3 +1,4 @@
+"use client"
 import { BellIcon, CircleUser, LogOut, Menu, Settings } from "lucide-react"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -11,8 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
+import { SwitchTheme } from '@/components/switch-theme'
+import Link from "next/link"
+import { usePathname } from 'next/navigation'
 
 export default function Header({name}: {name: string}) {
+    const pathname = usePathname()
     return (
         <header className="flex items-center justify-between p-3 md:p-4 border-b dark:text-white">
 
@@ -39,16 +44,38 @@ export default function Header({name}: {name: string}) {
 
             <div className="flex items-center gap-2 md:gap-4">
 
-                <div className="hidden md:flex rounded-full bg-gray-100 dark:bg-gray-800">
-                    <button className="px-4 py-1.5 bg-white rounded-full text-sm font-medium shadow-sm cursor-pointer dark:bg-gray-800 dark:text-white">
-                        Dashboard
-                    </button>
-                    <button className="px-4 py-1.5 text-sm font-medium cursor-pointer dark:text-white dark:bg-gray-700 rounded-full">Transactions</button>
+                <div className="flex items-center gap-2 md:gap-4">
+                    {/* Navigation en style icône */}
+                    <div className="hidden md:flex items-center rounded-full bg-muted  p-1">
+                        <Link href="/dashboard">
+                            <Button
+                                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer
+            ${pathname === '/dashboard'
+                                    ? 'bg-primary text-white shadow-sm '
+                                    : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
+          `}
+                            >
+                                Dashboard
+                            </Button>
+                        </Link>
+                        <Link href="/transactions">
+                            <Button
+                                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all cursor-pointer
+            ${pathname === '/transactions'
+                                    ? 'bg-primary text-white shadow-sm'
+                                    : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
+          `}
+                            >
+                                Transactions
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
 
                 <Sheet>
                     <SheetTrigger asChild className="md:hidden">
+
                         <Button variant="ghost" size="icon" className="h-8 w-8">
                             <Menu className="h-5 w-5" />
                             <span className="sr-only">Menu</span>
@@ -56,20 +83,24 @@ export default function Header({name}: {name: string}) {
                     </SheetTrigger>
                     <SheetContent side="left" className=" p-2 bg-white shadow-xl dark:bg-gray-800">
                         <div className="flex flex-col gap-4 mt-8">
-                            <button className="px-4 py-2 bg-white rounded-md text-sm font-medium shadow-sm cursor-pointer border dark:text-white dark:bg-gray-800">
+                            <button
+                                className="px-4 py-2 bg-white rounded-md text-sm font-medium shadow-sm cursor-pointer border dark:text-white dark:bg-gray-800">
                                 Dashboard
                             </button>
-                            <button className="px-4 py-2 text-sm font-medium cursor-pointer border rounded-md">Transactions</button>
+                            <button
+                                className="px-4 py-2 text-sm font-medium cursor-pointer border rounded-md">Transactions
+                            </button>
                         </div>
                     </SheetContent>
                 </Sheet>
 
-
-                <button className="relative h-8 w-8 flex items-center justify-center">
+                <Link href="/notifications">
+                <Button variant="outline" size="icon" className={"relative cursor-pointer"}>
                     <BellIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300" />
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </Button>
+                </Link>
+                <SwitchTheme />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger className="h-8 w-8 md:h-9 md:w-9">
