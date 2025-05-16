@@ -16,3 +16,5 @@ import { data as fakeData } from '@/lib/fake-transactions'
 import { formatRelativeDate } from '@/lib/utils'
 import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
+
+const data = fakeData.data
