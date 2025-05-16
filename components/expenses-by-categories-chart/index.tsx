@@ -69,11 +69,11 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
 
     return (
         <Card className="flex flex-col  mx-auto">
-            <CardHeader className="flex flex-row items-center justify-between py-3 px-4 space-y-0">
-                <CardTitle className="text-xl font-medium">{title}</CardTitle>
+            <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
+                <CardTitle className="text-lg font-medium">{title}</CardTitle>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" size="lg" className="h-10 px-2 text-md">
+                        <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg">
                             <CalendarIcon className="h-3 w-3 mr-1" />
                             {formatDateRange()}
                         </Button>
