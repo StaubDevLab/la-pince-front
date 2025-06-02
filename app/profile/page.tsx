@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false)
+    //TODO: Récupérer les données du profil
     const [profileData, setProfileData] = useState({
         name: "John DOE",
         email: "john.doe@hello.fr",
