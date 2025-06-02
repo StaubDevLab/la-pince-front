@@ -6,8 +6,12 @@ import { budgetCardProps, expensesByCategoriesChartProps, monthlyProps, weeklyPr
 import { ChartMonthly } from '@/components/chart-monthly'
 import { ChartWeekly } from '@/components/chart-weekly'
 import RecentTransactions from '@/components/recent-transactions'
+import { auth } from '@/auth'
 
-export default function Dashboard() {
+export default async function Dashboard() {
+    const session = await auth()
+    if (!session) return <div>Not authenticated</div>
+
     return (
 <main className="min-h-screen bg-background p-6 font-inter md:p-8 ">
 

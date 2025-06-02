@@ -48,7 +48,7 @@ const RecentTransactions = ({ transactions }: TransactionListProps) => {
                             </div>
                             <div className="flex justify-center">
                                 <Badge variant="outline" className={cn(
-                                    "px-2 py-1 text-xs font-normal w-22 sm:w-30 lg:w-22",
+                                    "px-2 py-1 text-xs font-normal w-30 sm:w-30 lg:w-30",
                                     transaction.category.background,
                                     transaction.category.color
                                 )}>

@@ -1,32 +1,85 @@
+'use client'
+import { z } from 'zod'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { signIn } from "next-auth/react"
+import Image from 'next/image'
+import logo from '@/public/la-pince-logo.png'
+import Link from 'next/link'
+import { loginSchema } from '@/types/auth-schema'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+
+export type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
+    const router = useRouter()
+    const [error, setError] = useState<string>('')
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting, isSubmitSuccessful },
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    })
+
+    const onSubmit = async (data: LoginFormData) => {
+        try {
+            const result = await signIn('credentials', {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            })
+
+            if (result?.error) {
+                setError('Identifiants invalides, veuillez réessayer')
+                return
+            }
+            router.push('/dashboard')
+            router.refresh()
+        } catch (error) {
+            console.error('Erreur lors de la connexion', error)
+            setError('Une erreur est survenue')
+        }
+    }
     return (
         <div className={cn('flex flex-col gap-2 items-center', className)} {...props}>
-            <img src="la-pince-logo.png" alt="logo" height="100px" width="75px" />
+            <Image src={logo} alt="logo" height={100} width={75} />
             <h1 className="text-2xl font-semibold text-center">Bienvenue sur La Pince</h1>
 
             <span className="text-sm text-center mb-4">
                 Pas de compte ?{' '}
-                <a href="#" className="underline underline-offset-4">
+                <Link href={'/inscription'} className={'underline hover:text-primary'}>
                     Créer en un ici
-                </a>
+                </Link>
             </span>
 
             <div className="w-full max-w-md">
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
+                                {...register('email')}
                                 placeholder="john.doe@gmail.com"
                                 required
                             />
+                            {errors.email && (
+                                <span className="text-sm text-red-500">
+              {errors.email.message}
+            </span>
+                            )}
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center">
@@ -38,10 +91,20 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                     Mot de passe oublié ?
                                 </a>
                             </div>
-                            <Input id="password" type="password" required />
+                            <Input {...register('password')} type="password" required />
+                            {errors.password && (
+                                <span className="text-sm text-red-500">
+              {errors.password.message}
+            </span>
+                            )}
                         </div>
-                        <Button type="submit" className="w-full">
-                            Connexion
+                        {error && (
+                            <div className="bg-red-50 p-4 rounded-md">
+                                <p className="text-sm text-red-500">{error}</p>
+                            </div>
+                        )}
+                        <Button type="submit" className="w-full" disabled={isSubmitting || isSubmitSuccessful}>
+                            {isSubmitting || isSubmitSuccessful ? 'Connexion...' : 'Connexion'}
                         </Button>
                     </div>
                 </form>
@@ -49,3 +112,4 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         </div>
     )
 }
+

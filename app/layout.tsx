@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import ClientLayout from '@/components/client-layout'
 import { ThemeProvider } from '@/components/theme-provider'
+import { SessionProvider } from 'next-auth/react'
 
 const inter = Inter({
     variable: '--font-inter',
@@ -28,9 +29,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <ClientLayout>
-                {children}
-            </ClientLayout>
+            <SessionProvider>
+                <ClientLayout>
+                    {children}
+                </ClientLayout>
+            </SessionProvider>
         </ThemeProvider>
         </body>
 
