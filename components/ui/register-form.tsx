@@ -18,12 +18,12 @@ type RegisterFormData = z.infer<typeof registerSchema>
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
     const router = useRouter()
     const [error, setError] = useState<string>('')
-
+    const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
 
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting,isSubmitSuccessful },
+        formState: { errors, isSubmitting },
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
     })
@@ -39,6 +39,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
             if (!res.ok) {
                 const { message } = await res.json()
+                setError(message || "Erreur d'inscription")
                 throw new Error(message || "Erreur d'inscription")
             }
 
@@ -54,14 +55,15 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                 return
             }
 
-
+            setIsRedirecting(true)
             router.push('/dashboard')
             router.refresh()
-        } catch (err) {
+        } catch (err : any) {
             console.error(err)
-            setError( "Une erreur est survenue")
+            setError( err.message || "Une erreur est survenue")
         }
     }
+
 
     return (
         <div className={cn('flex flex-col gap-2 items-center', className)} {...props}>
@@ -123,13 +125,13 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                             )}
                         </div>
                         {error && (
-                            <div className="bg-red-50 p-4 rounded-md">
-                                <p className="text-sm text-red-500">{error}</p>
+                            <div className="p-2 bg-red-300 text-red-800 rounded-md">
+                                <p className="text-md text-red-500">{error}</p>
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={isSubmitting || isSubmitSuccessful}>
-                            {isSubmitting || isSubmitSuccessful ? 'Inscription...' : "S'inscrire"}
+                        <Button type="submit" className="w-full" disabled={isSubmitting || isRedirecting}>
+                            {isSubmitting || isRedirecting ? 'Inscription...' : "S'inscrire"}
                         </Button>
                     </div>
                 </form>
