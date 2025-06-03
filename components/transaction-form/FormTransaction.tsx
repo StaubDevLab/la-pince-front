@@ -9,29 +9,26 @@ import { Textarea } from '../ui/textarea'
 import { Switch } from '../ui/switch'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Calendar } from '../ui/calendar'
-import { DateRange } from 'react-day-picker'
 import { useForm, Controller } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
+import {  getCategoriesForForm } from '@/actions/categories.actions'
+import { Category } from '@/types/categories'
+import { Transaction } from '@/types/transactions'
+import { createTransaction } from '@/actions/transactions.actions'
+import { toast } from "sonner"
 
-export interface Transaction {
-    transactionType: string
-    amount: number
-    description?: string
-    category: string
-    isRecurring: boolean
-    reccuringFrequency?: string | null
-    dateRange?: DateRange
-    date: Date
-}
 
 const FormTransaction = () => {
     const { data: session } = useSession()
-    const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+    const [categories, setCategories] = useState<Partial<Category>[]|undefined>([])
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+
     const {
         handleSubmit,
         control,
         register,
         watch,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<Transaction>({
         defaultValues: {
@@ -47,71 +44,45 @@ const FormTransaction = () => {
 
     const isRecurring = watch('isRecurring')
 
-    const getCategories = async () => {
-        try {
-            const res = await fetch('https://api.la-pince.tech/v1/api/categories', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session?.accessToken}`,
-                },
-            })
 
-            if (!res.ok) {
-                const { message } = await res.json()
-                console.error('Erreur API :', message)
-                return null
-            }
-
-            const data = await res.json()
-            return data
-        } catch (e) {
-            console.error('Erreur réseau ou autre :', e)
-            return null
-        }
-    }
 
     const onSubmit = async (data: Transaction) => {
-        console.log(data)
-        const payload = {
-            amount: Number(data.amount),
-            transactionType: Number(data.transactionType),
-            description: data.description?.trim() || '',
-            categoryId: data.category,
-            isReccuring: data.isRecurring,
-            reccuringFrequency: data.isRecurring ? Number(data.reccuringFrequency) : null,
-            reccuringStartDate: data.isRecurring && data.dateRange?.from ? data.dateRange.from.toISOString() : null,
-            reccuringEndDate: data.isRecurring && data.dateRange?.to ? data.dateRange.to.toISOString() : null,
-            date: new Date().toISOString(),
-        }
-        try {
-            const res = await fetch('https://api.la-pince.tech/v1/api/transactions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session?.accessToken}`,
-                },
-                body: JSON.stringify(payload),
-            })
+        console.log("Données du formulaire avant envoi à l'action serveur:", data);
 
-            if (!res.ok) {
-                const { message } = await res.json()
-                console.error(message)
-            }
-        } catch (e) {
-            console.error(e)
+        const result = await createTransaction(data);
+
+        if (result.success) {
+            console.log("Transaction créée avec succès:", result.message);
+            reset();
+            toast.success("Transaction créée avec succès.");
+
+            await new Promise(resolve => setTimeout(resolve, 100));
+            setIsSheetOpen(false);
+
+        } else {
+            console.error("Échec de la création de la transaction:", result.error);
+            toast.error("Échec de la création de la transaction: " + result.error);
         }
     }
+
     useEffect(() => {
         if (session?.accessToken) {
-            getCategories().then(setCategories)
+
+            getCategoriesForForm().then((data) => {
+                if (data.success && data.data) {
+                    setCategories(data.data)
+                } else {
+                    console.error("Échec de la récupération des catégories :", data.error);
+                    setCategories([]);
+                }
+            })
         }
     }, [session?.accessToken])
 
     return (
-        <Sheet modal={false}>
+        <Sheet  open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-                <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white">
+                <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" >
                     <PlusIcon className="h-5 w-5" />
                 </Button>
             </SheetTrigger>
@@ -142,7 +113,7 @@ const FormTransaction = () => {
                         <Label htmlFor="amount">Montant</Label>
                         <Input
                             id="amount"
-                            type="number"
+                            type="float"
                             placeholder="Entrez le montant"
                             {...register('amount', {
                                 required: 'Le montant est requis',
@@ -173,11 +144,11 @@ const FormTransaction = () => {
                                         <SelectValue placeholder="Catégorie" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {categories.map(ctg => (
-                                            <SelectItem key={ctg.id} value={ctg.id}>
+                                        {categories && categories.length > 0 ? categories.map(ctg => (
+                                            <SelectItem key={ctg.id} value={ctg.id as string}>
                                                 {ctg.name}
                                             </SelectItem>
-                                        ))}
+                                        )) : <SelectItem value="loading" disabled>Chargement...</SelectItem>}
                                     </SelectContent>
                                 </Select>
                             )}

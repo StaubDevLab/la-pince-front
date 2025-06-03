@@ -46,7 +46,7 @@ const RecentTransactions = ({ transactions }: TransactionListProps) => {
                                 <p className="font-medium">{transaction.description}</p>
                             </div>
                             <div className="flex justify-center">
-                                <Badge variant="outline" className={cn('px-2 py-1 text-xs font-normal w-22 sm:w-30 lg:w-22', transaction.category.background, transaction.category.color)}>
+                                <Badge variant="outline" className={cn('px-2 py-1 text-xs font-normal w-30',  transaction.category.background, transaction.category.color)}>
                                     <CategoryItem category={transaction.category} />
                                 </Badge>
                             </div>
