@@ -10,7 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
             async authorize(credentials) {
                 console.log("CREDENTIALS",credentials)
-                const response = await fetch('https://api.la-pince.tech/v1/api/auth/signin',{
+                const response = await fetch(`${process.env.API_URL}/auth/signin`,{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 return {
                     ...data.user,                // id, email, etc.
-                    accessToken: data.access_token,
+                    accessToken: data.accessToken,
                 }
             },
         }),
