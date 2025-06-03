@@ -181,7 +181,7 @@ export default function DataTableDemo() {
     })
 
     return (
-        <div className="flex w-full items-center justify-center p-6 md:p-10">
+        <div className="flex w-full justify-center p-6 md:p-10 flex-grow">
             <div className="w-full max-w-4/5">
                 <h1 className="text-xl font-semibold tracking-tight">Mes transactions</h1>
                 <div className="flex flex-col gap-4 items-start justify-between py-4 md:flex-row md:items-center">
@@ -210,7 +210,7 @@ export default function DataTableDemo() {
                             <SelectContent>
                                 <SelectItem value="all">Toutes les catégories</SelectItem>
                                 {categories.map(ctg => (
-                                    <SelectItem value={ctg.name.toLowerCase()}>{ctg.name}</SelectItem>
+                                    <SelectItem key={ctg.name} value={ctg.name.toLowerCase()}>{ctg.name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

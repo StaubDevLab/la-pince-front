@@ -13,7 +13,7 @@ export default async function Dashboard() {
     if (!session) return <div>Not authenticated</div>
 
     return (
-<main className="min-h-screen bg-background p-6 font-inter md:p-8 ">
+<main className="flex-grow bg-background p-6 font-inter md:p-8 ">
 
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8">
