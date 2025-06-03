@@ -78,7 +78,7 @@ export default function ProfilePage() {
     const allPasswordRequirementsMet = Object.values(passwordRequirements).every((req) => req)
 
     return (
-        <div className="min-h-screen  p-4">
+        <div className=" p-4 flex-grow">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">

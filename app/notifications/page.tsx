@@ -68,7 +68,7 @@ export default function Notifications() {
     }
 
     return (
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-center w-full flex-grow">
             <main className="max-w-4xl w-full p-6 space-y-6">
                 {!notifications.length && (
                     <h1 className="text-center font-semibold text-5xl">Aucune notifications</h1>
@@ -146,7 +146,7 @@ export default function Notifications() {
                                 <PaginationEllipsis />
                             </PaginationItem>
                             <PaginationItem>
-                                <PaginationNext href="#" />
+                                <PaginationNext href={'#'}/>
                             </PaginationItem>
                         </PaginationContent>
                     </Pagination>
