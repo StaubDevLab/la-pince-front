@@ -8,12 +8,10 @@ import { Button } from '@/components/ui/button'
 import { SwitchTheme } from '@/components/switch-theme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 
 export default function Header({ name }: { name: string }) {
     const pathname = usePathname()
-    const { data: session } = useSession()
-    console.log("SESSION",session)
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
             <div className="flex items-center gap-3">
