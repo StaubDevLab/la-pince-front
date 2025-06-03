@@ -34,7 +34,7 @@ export default function Header({ name }: { name: string }) {
                 <div className="hidden md:flex items-center rounded-full bg-muted px-1 py-0.5">
                     <Link href="/dashboard">
                         <Button
-                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all
+                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all cursor-pointer
                                 ${pathname === '/dashboard' ? 'bg-primary text-white' : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
                             `}
                         >
@@ -43,7 +43,7 @@ export default function Header({ name }: { name: string }) {
                     </Link>
                     <Link href="/transactions">
                         <Button
-                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all
+                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all cursor-pointer
                                 ${pathname === '/transactions' ? 'bg-primary text-white' : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
                             `}
                         >
