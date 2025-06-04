@@ -1,30 +1,16 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { CategoryItem } from '@/components/category-item'
-import { DateRange } from 'react-day-picker'
 import FormTransaction from '../transaction-form/FormTransaction'
+import { Transaction } from '@/types/transactions'
 
-export interface Transaction {
-    id: string
-    date: string
-    description: string
-    category: {
-        name: string
-        color: string
-        background: string
-    }
-    amount: number
-    isIncome?: boolean
-}
 
-interface TransactionListProps {
-    transactions: Transaction[]
-}
 
-const RecentTransactions = ({ transactions }: TransactionListProps) => {
+const RecentTransactions = ( {transactions} : {transactions:Transaction[]}) => {
+ 
     return (
         <Card className="w-full h-full">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -42,16 +28,16 @@ const RecentTransactions = ({ transactions }: TransactionListProps) => {
                     {transactions.map(transaction => (
                         <div key={transaction.id} className="grid grid-cols-3 items-center px-4 py-3">
                             <div>
-                                <p className="text-xs text-muted-foreground">{transaction.date}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(transaction.date).toLocaleDateString('fr-FR')}</p>
                                 <p className="font-medium">{transaction.description}</p>
                             </div>
-                            <div className="flex justify-center">
-                                <Badge variant="outline" className={cn('px-2 py-1 text-xs font-normal w-30',  transaction.category.background, transaction.category.color)}>
+                            <div className={`flex justify-center `}>
+                                <Badge variant="outline" className={cn(`px-2 py-1 text-xs font-normal w-30 bg-[${transaction.category.color}] rounded-lg `)}>
                                     <CategoryItem category={transaction.category} />
                                 </Badge>
                             </div>
-                            <div className={cn('text-right font-medium', transaction.isIncome ? 'text-green-600' : 'text-red-500')}>
-                                {transaction.isIncome ? '+' : '-'}
+                            <div className={cn('text-right font-medium', transaction.transactionType === "Revenu" ? 'text-green-600' : 'text-red-500')}>
+                                {transaction.transactionType === "Revenu" ? '+' : '-'}
                                 {Math.abs(transaction.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                             </div>
                         </div>
