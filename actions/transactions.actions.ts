@@ -11,7 +11,10 @@ const API_BASE_URL = process.env.API_URL;
 /**
  * Récupère les transactions pour l'utilisateur connecté.
  */
-export async function getTransactionsForUser(limit=0,page=1): Promise<ApiResponse<{data: Transaction[], limit: number, page: number}>> {
+export async function getTransactionsForUser(
+    limit = 0,
+    page = 1
+): Promise<ApiResponse<{ data: Transaction[]; limit: number; page: number }>> {
     const session = await auth();
 
     if (!session?.user?.id || !session?.accessToken) {
@@ -21,8 +24,15 @@ export async function getTransactionsForUser(limit=0,page=1): Promise<ApiRespons
     const userId = session.user.id;
     const jwt = session.accessToken;
 
+   
+    const params = new URLSearchParams();
+    if (limit > 0) params.append('limit', limit.toString());
+    if (page > 0) params.append('page', page.toString());
+
+    const url = `${API_BASE_URL}/transactions${params.size ? `?${params.toString()}` : ''}`;
+
     try {
-        const response = await fetch(`${API_BASE_URL}/transactions?${limit > 0 ? `limit=${limit}`:""}`, {
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
@@ -48,7 +58,7 @@ export async function getTransactionsForUser(limit=0,page=1): Promise<ApiRespons
             };
         }
 
-        const transactions:{data:Transaction[], limit:number, page: number} = await response.json();
+        const transactions: { data: Transaction[]; limit: number; page: number } = await response.json();
         return { success: true, data: transactions };
 
     } catch (error) {
@@ -106,6 +116,7 @@ export async function createTransaction(data: Transaction): Promise<ApiResponse<
                 'Authorization': `Bearer ${jwt}`,
             },
             body: JSON.stringify(payload),
+            
 
         });
 
@@ -124,7 +135,7 @@ export async function createTransaction(data: Transaction): Promise<ApiResponse<
         }
 
 
-        revalidateTag('transactions');
+        revalidateUserTransactionsCache();
         console.log("Cache révalidé pour le tag: 'transactions' après création.");
         return { success: true, message: 'Transaction créée avec succès.' };
 
