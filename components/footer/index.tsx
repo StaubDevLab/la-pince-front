@@ -51,7 +51,7 @@ export default function Footer() {
                     </Link>
                 </div>
             </div>
-            <div className="border-t border-border mt-4 text-center text-xs py-2 text-muted-foreground">
+            <div className="border-t border-border mt-4 text-center text-xs py-2 text-muted-foreground" aria-live="polite">
                 Fait avec ❤️ et NextJs – {mounted ? `Mode ${currentThemeText} activé !` : 'Chargement du thème...'}
             </div>
         </footer>
