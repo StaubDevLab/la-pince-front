@@ -16,12 +16,13 @@ import { data as fakeData } from '@/lib/fake-transactions'
 import { formatRelativeDate } from '@/lib/utils'
 import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
+import { getTransactionsForUser } from '@/actions/transactions.actions'
 
 const data = fakeData.data
 
 type Transaction = {
     amount: number
-    date: string
+    date: Date
     category: {
         name: string
         color: string
@@ -153,14 +154,26 @@ export default function DataTableDemo() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [selectedCategory, setSelectedCategory] = React.useState<string>('')
+    const [transactions, setTransactions] = React.useState<Transaction[]>([])
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 10,
     })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
-
+    React.useEffect(() => {
+        getTransactionsForUser().then((transactions) => {
+           
+           if (transactions.success && transactions.data) {
+            console.log('Transactions récupérées:', transactions);
+        
+            setTransactions(transactions.data.data);
+      
+           }
+            
+        })
+    }, [])
     const table = useReactTable({
-        data,
+        data: transactions,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,

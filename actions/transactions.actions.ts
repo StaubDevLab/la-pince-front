@@ -11,7 +11,7 @@ const API_BASE_URL = process.env.API_URL;
 /**
  * Récupère les transactions pour l'utilisateur connecté.
  */
-export async function getTransactionsForUser(): Promise<ApiResponse<Transaction[]>> {
+export async function getTransactionsForUser(limit=0,page=1): Promise<ApiResponse<{data: Transaction[], limit: number, page: number}>> {
     const session = await auth();
 
     if (!session?.user?.id || !session?.accessToken) {
@@ -22,7 +22,7 @@ export async function getTransactionsForUser(): Promise<ApiResponse<Transaction[
     const jwt = session.accessToken;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/transactions`, {
+        const response = await fetch(`${API_BASE_URL}/transactions?${limit > 0 ? `limit=${limit}`:""}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
@@ -48,7 +48,7 @@ export async function getTransactionsForUser(): Promise<ApiResponse<Transaction[
             };
         }
 
-        const transactions: Transaction[] = await response.json();
+        const transactions:{data:Transaction[], limit:number, page: number} = await response.json();
         return { success: true, data: transactions };
 
     } catch (error) {
