@@ -2,14 +2,15 @@ import { DateRange } from 'react-day-picker'
 import { Category } from './categories'
 
 export interface Transaction {
+    id: string
     transactionType: string
     amount: number
-    description?: string
+    description?: string | undefined
     category: Category
     isRecurring: boolean
     reccuringFrequency?: string | null
     dateRange?: DateRange
-    date: Date
+    date: string
 }
 
 

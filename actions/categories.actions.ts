@@ -79,6 +79,54 @@ export async function getCategoriesForForm(): Promise<ApiResponse<Partial<Catego
 }
 
 /**
+ * Récupère une catégorie par son id.
+ */
+export async function getCategoryById(id: string | number): Promise<ApiResponse<Category>> {
+    const session = await auth();
+
+    if (!session?.accessToken) {
+        return { success: false, error: 'Non autorisé : Token JWT manquant pour récupérer la catégorie.' };
+    }
+
+    const jwt = session.accessToken;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json',
+            },
+            next: {
+                revalidate: 3600,
+                tags: [`categories`, `category-${id}`], // Tag pour la revalidation à la demande
+            },
+        });
+
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { message: response.statusText || 'Erreur de communication avec l\'API.' };
+            }
+            console.error('Erreur API (catégorie):', response.status, errorData);
+            return {
+                success: false,
+                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de récupérer la catégorie.'}`
+            };
+        }
+
+        const category: Category = await response.json();
+        return { success: true, data: category };
+
+    } catch (error) {
+        console.error('Erreur inattendue (catégorie):', error);
+        return { success: false, error: 'Une erreur serveur est survenue lors de la récupération de la catégorie.' };
+    }
+}
+
+/**
  * Action pour révalider manuellement le cache des catégories.
  */
 export async function revalidateCategoriesCache(): Promise<ApiResponse<null>> {

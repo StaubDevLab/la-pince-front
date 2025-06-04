@@ -17,18 +17,10 @@ import { formatRelativeDate } from '@/lib/utils'
 import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
 import { getTransactionsForUser } from '@/actions/transactions.actions'
-
+import { Transaction } from '@/types/transactions'
 const data = fakeData.data
 
-type Transaction = {
-    amount: number
-    date: Date
-    category: {
-        name: string
-        color: string
-        icon: string
-    }
-}
+
 
 export const columns: ColumnDef<Transaction>[] = [
     {
@@ -147,7 +139,7 @@ export const columns: ColumnDef<Transaction>[] = [
         },
     },
 ]
-
+const DEFAULT_TRANSACTION_LIMIT = process.env.DEFAULT_TRANSACTION_LIMIT ? Number(process.env.DEFAULT_TRANSACTION_LIMIT) : 100
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -161,7 +153,7 @@ export default function DataTableDemo() {
     })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     React.useEffect(() => {
-        getTransactionsForUser().then((transactions) => {
+        getTransactionsForUser(DEFAULT_TRANSACTION_LIMIT, 0).then((transactions) => {
            
            if (transactions.success && transactions.data) {
             console.log('Transactions récupérées:', transactions);
