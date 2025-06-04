@@ -139,7 +139,7 @@ export const columns: ColumnDef<Transaction>[] = [
         },
     },
 ]
-
+const DEFAULT_TRANSACTION_LIMIT = process.env.DEFAULT_TRANSACTION_LIMIT ? Number(process.env.DEFAULT_TRANSACTION_LIMIT) : 100
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])

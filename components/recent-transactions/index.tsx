@@ -32,9 +32,9 @@ const RecentTransactions = ( {transactions} : {transactions:Transaction[]}) => {
                                 <p className="font-medium">{transaction.description}</p>
                             </div>
                             <div className={`flex justify-center `}>
-                                <Badge variant="outline" className={cn(`px-2 py-1 text-xs font-normal w-30 bg-[${transaction.category.color}] rounded-lg `)}>
-                                    <CategoryItem category={transaction.category} />
-                                </Badge>
+                                <Badge style={{ backgroundColor: transaction.category.color }} className="font-medium capitalize">
+                                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} />
+                                                </Badge>
                             </div>
                             <div className={cn('text-right font-medium', transaction.transactionType === "Revenu" ? 'text-green-600' : 'text-red-500')}>
                                 {transaction.transactionType === "Revenu" ? '+' : '-'}
