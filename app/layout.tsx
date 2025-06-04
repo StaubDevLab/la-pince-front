@@ -5,6 +5,7 @@ import ClientLayout from '@/components/client-layout'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SessionProvider } from 'next-auth/react'
 import { Toaster } from "@/components/ui/sonner"
+import { UserProvider } from '@/context/user-context'
 
 const inter = Inter({
     variable: '--font-inter',
@@ -31,8 +32,11 @@ export default function RootLayout({
             disableTransitionOnChange
         >
             <SessionProvider>
+               <UserProvider>
                 <ClientLayout>
+                     
                     {children}
+                    
                     <Toaster toastOptions={{
                         unstyled: true,
                         classNames: {
@@ -43,6 +47,7 @@ export default function RootLayout({
                     }}/>
 
                 </ClientLayout>
+                </UserProvider>
             </SessionProvider>
         </ThemeProvider>
         </body>

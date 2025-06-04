@@ -9,9 +9,23 @@ import { SwitchTheme } from '@/components/switch-theme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-
-export default function Header({ name }: { name: string }) {
+import { useEffect } from 'react'
+import { getProfile } from '@/actions/profile.actions'
+import { useUser } from '@/context/user-context'
+import { HeaderAmmount } from '../header-amount'
+import { Skeleton } from '../ui/skeleton'
+export default function Header() {
     const pathname = usePathname()
+    const { user, setUser } = useUser()
+    
+  
+    useEffect(() => {
+    getProfile().then((response) => {
+      if (response.success && response.data) {
+        setUser(response.data)
+      }
+    })
+  }, [setUser])
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
             <div className="flex items-center gap-3">
@@ -19,12 +33,15 @@ export default function Header({ name }: { name: string }) {
                     <Image src="/la-pince-logo.png" alt="Logo de l'application La Pince" width={80} height={80} />
                 </div>
                 <div>
-                    <h1 className="hidden sm:block text-lg md:text-xl font-medium">
-                        Bienvenue, <span className="font-semibold">{name}</span>
+                    <h1 className="hidden sm:flex text-lg md:text-xl font-medium gap-1 items-center ">
+                        Bienvenue<span className="font-semibold">{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}</span>
                     </h1>
-                    <h1 className="text-base sm:hidden font-medium">
-                        Bonjour, <span className="font-semibold">{name}</span>
+                    <h1 className="flex gap-1 items-center text-base sm:hidden font-medium">
+                        Bonjour, <span className="font-semibold">{user.firstName}</span>
                     </h1>
+                    <p className="text-sm text-muted-foreground">
+                        {user.amount ? <HeaderAmmount amount={user.amount} /> : <Skeleton className="w-24 h-6" />}
+                    </p>
                 </div>
             </div>
 
