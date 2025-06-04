@@ -153,7 +153,7 @@ export default function DataTableDemo() {
     })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     React.useEffect(() => {
-        getTransactionsForUser(999,0).then((transactions) => {
+        getTransactionsForUser(DEFAULT_TRANSACTION_LIMIT, 0).then((transactions) => {
            
            if (transactions.success && transactions.data) {
             console.log('Transactions récupérées:', transactions);
