@@ -11,7 +11,7 @@ const API_BASE_URL = process.env.API_URL;
 /**
  * Récupère les transactions pour l'utilisateur connecté.
  */
-export async function getTransactionsForUser(): Promise<ApiResponse<Transaction[]>> {
+export async function getTransactionsForUser(): Promise<ApiResponse<{data: Transaction[], limit: number, page: number}>> {
     const session = await auth();
 
     if (!session?.user?.id || !session?.accessToken) {
@@ -48,7 +48,7 @@ export async function getTransactionsForUser(): Promise<ApiResponse<Transaction[
             };
         }
 
-        const transactions: Transaction[] = await response.json();
+        const transactions:{data:Transaction[], limit:number, page: number} = await response.json();
         return { success: true, data: transactions };
 
     } catch (error) {
