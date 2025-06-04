@@ -8,8 +8,6 @@ import { ChartWeekly } from '@/components/chart-weekly'
 import RecentTransactions from '@/components/recent-transactions'
 import { auth } from '@/auth'
 import { getTransactionsForUser } from '@/actions/transactions.actions'
-import { log } from 'console'
-
 export default async function Dashboard() {
     const session = await auth()
     if (!session) return <div>Not authenticated</div>
