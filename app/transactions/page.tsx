@@ -162,9 +162,7 @@ export default function DataTableDemo() {
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     React.useEffect(() => {
         getTransactionsForUser().then((transactions) => {
-            // Ici, vous pouvez mettre à jour les données avec les transactions récupérées
-            // Par exemple, si vous avez un état pour les données, vous pouvez faire :
-            // setData(transactions);
+           
            if (transactions.success && transactions.data) {
             console.log('Transactions récupérées:', transactions);
         
@@ -173,7 +171,6 @@ export default function DataTableDemo() {
            }
             
         })
-        // Note: Assurez-vous que getTransactionsForUser() retourne les données dans le format attendu par votre table
     }, [])
     const table = useReactTable({
         data: transactions,
