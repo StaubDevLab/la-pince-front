@@ -24,6 +24,8 @@ export default function DataTableDemo() {
     const [rowSelection, setRowSelection] = React.useState({})
     const [selectedCategory, setSelectedCategory] = React.useState<string>('')
     const [transactions, setTransactions] = React.useState<Transaction[]>([])
+    const [transactionToEdit, setTransactionToEdit] = React.useState<Transaction | null>(null)
+    const [isFormOpen, setIsFormOpen] = React.useState(false)
     const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     const [totalCount, setTotalCount] = React.useState(0)
@@ -60,6 +62,15 @@ export default function DataTableDemo() {
             pagination,
         },
     })
+
+    const handleRowClick = (transaction: Transaction) => {
+        setTransactionToEdit(transaction)
+        setIsFormOpen(true)
+    }
+    const handleAddClick = () => {
+        setTransactionToEdit(null)
+        setIsFormOpen(true)
+    }
 
     const fetchTransactions = () => {
         getTransactionsForUser(pagination.pageSize, pagination.pageIndex).then(transactions => {
@@ -154,12 +165,27 @@ export default function DataTableDemo() {
                             <></>
                         )}
                     </div>
+                    <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+                        <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" onClick={handleAddClick}>
+                            <PlusIcon className="h-5 w-5" />
+                        </Button>
 
-                    <Button className="flex items-center gap-2 w-full md:w-auto">
-                        <PlusCircleIcon className="h-4 w-4" />
-                        <span>Ajouter une transaction</span>
-                    </Button>
+                        <FormTransaction
+                            key={transactionToEdit?.id || 'new'}
+                            open={isFormOpen}
+                            onOpenChange={open => {
+                                setIsFormOpen(open)
+                            }}
+                            onSuccess={() => {
+                                fetchTransactions()
+                                setIsFormOpen(false)
+                            }}
+                            transactionToEdit={transactionToEdit || undefined}
+                        />
+                    </Sheet>
                 </div>
+
+                {/** TABLE */}
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
@@ -178,7 +204,7 @@ export default function DataTableDemo() {
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map(row => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} onClick={() => handleRowClick(row.original as Transaction)}>
                                         {row.getVisibleCells().map(cell => (
                                             <TableCell key={cell.id} className="text-center">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
