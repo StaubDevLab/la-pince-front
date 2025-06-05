@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { TooltipProps } from "recharts"
 import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface MonthlyActivityProps {
     title?: string
@@ -21,20 +19,11 @@ interface MonthlyActivityProps {
 }
 
 export function ChartMonthly({
-                              title = "Activité mensuelle des 6 derniers mois",
-                              currentMonth = "Juin 2025",
-                              data = [
-                                  { month: "Janvier", revenue: 680, expense: 1200 },
-                                  { month: "Février", revenue: 950, expense: 1350 },
-                                  { month: "Mars", revenue: 1350, expense: 1200 },
-                                  { month: "Avril", revenue: 1380, expense: 1250 },
-                                  { month: "Mai", revenue: 1400, expense: 1230 },
-                                  { month: "Juin", revenue: 1420, expense: 1220 },
-                              ],
-                              totalRevenue = 2015.16,
-                              totalExpense = 3015.16,
-                          }: MonthlyActivityProps) {
-    const [selectedMonth, setSelectedMonth] = useState(currentMonth)
+                                 title = "Activité mensuelle des 6 derniers mois",
+                                 data = [], // Initialiser avec un tableau vide par défaut, les valeurs statiques sont remplacées par les props
+                                 totalRevenue = 0, // Initialiser avec 0 par défaut
+                                 totalExpense = 0, // Initialiser avec 0 par défaut
+                             }: MonthlyActivityProps) {
 
     // Format currency
     const formatCurrency = (value: number) => {
@@ -48,9 +37,9 @@ export function ChartMonthly({
     const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-2 border rounded shadow-sm text-xs">
+                <div className="bg-white p-2 border rounded shadow-sm text-xs dark:bg-gray-800">
                     <p className="font-medium mb-1">{label}</p>
-                    <p className="text-[#FF7A45] flex justify-between">
+                    <p className="text-[#F97316] flex justify-between"> {/* Couleur adaptée au graphique */}
                         <span>Revenu:</span> <span className="ml-2">{formatCurrency(payload[0].value as number)}€</span>
                     </p>
                     <p className="text-[#8884d8] flex justify-between">
@@ -62,47 +51,74 @@ export function ChartMonthly({
         return null
     }
 
-    // Available months for the dropdown
-    const months = ["Janvier 2025", "Février 2025", "Mars 2025", "Avril 2025", "Mai 2025", "Juin 2025"]
+    // --- Calcul dynamique du domaine de l'axe Y et des seuils (ticks) ---
+    const allAmounts = data.flatMap(item => [item.revenue, item.expense]);
+    const maxAmount = allAmounts.length > 0 ? Math.max(...allAmounts) : 0;
+
+    let domainUpper: number;
+    if (maxAmount === 0) {
+        domainUpper = 100; // Domaine par défaut si aucune donnée ou toutes les données sont à zéro
+    } else if (maxAmount <= 100) {
+        domainUpper = Math.ceil(maxAmount / 25) * 25; // Arrondir au multiple de 25 supérieur
+    } else if (maxAmount <= 500) {
+        domainUpper = Math.ceil(maxAmount / 50) * 50; // Arrondir au multiple de 50 supérieur
+    } else if (maxAmount <= 1000) {
+        domainUpper = Math.ceil(maxAmount / 100) * 100; // Arrondir au multiple de 100 supérieur
+    } else if (maxAmount <= 5000) {
+        domainUpper = Math.ceil(maxAmount / 500) * 500; // Arrondir au multiple de 500 supérieur
+    } else {
+        domainUpper = Math.ceil(maxAmount / 1000) * 1000; // Arrondir au multiple de 1000 supérieur
+    }
+
+    // Pour s'assurer qu'il y a toujours un minimum de 100 pour la lisibilité si le max est très petit
+    if (domainUpper < 100 && maxAmount > 0) {
+        domainUpper = 100;
+    } else if (domainUpper === 0 && maxAmount === 0) {
+        domainUpper = 100;
+    }
+
+
+    // Génération de 3 ticks dynamiques : 0, milieu, et le maximum calculé
+    const dynamicTicks = [0];
+    if (domainUpper > 0) {
+        dynamicTicks.push(domainUpper / 2);
+        dynamicTicks.push(domainUpper);
+    }
+    // Pour éviter les doublons ou un seul tick si domainUpper est 0 ou petit
+    const uniqueDynamicTicks = Array.from(new Set(dynamicTicks)).sort((a,b) => a - b);
+
 
     return (
-        <Card className="flex flex-col  mx-auto">
+        <Card className="flex flex-col mx-auto">
             <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
                 <CardTitle className="text-xl font-medium">{title}</CardTitle>
-                <Select value={selectedMonth} onValueChange={setSelectedMonth} >
-                    <SelectTrigger className="h-10 w-auto min-w-[120px] text-sm md:text-lg border-gray-200 bg-gray-50">
 
-                        <SelectValue>{selectedMonth}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                        {months.map((month) => (
-                            <SelectItem key={month} value={month} className="text-lg">
-                                {month}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 <div className="h-[200px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} margin={{ top: 20, right: 0, left: 0, bottom: 5 }}>
+                        <BarChart
+                            data={data}
+                            margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
+                            barCategoryGap="10%"
+                            barGap={4}
+                        >
                             <CartesianGrid strokeDasharray="4 4" vertical={false} opacity={0.2} />
                             <XAxis
                                 dataKey="month"
                                 axisLine={false}
                                 tickLine={false}
                                 tick={{ fontSize: 16 }}
-                                padding={{ left: 10, right: 10 }}
+
                             />
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
                                 tick={{ fontSize: 16 }}
-                                domain={[0, 1500]}
-                                ticks={[0, 500, 1000, 1500]}
+                                domain={[0, domainUpper]}
+                                ticks={uniqueDynamicTicks}
                             />
-                            <Tooltip content={<CustomTooltip />} cursor={{ opacity: 0.1 }} />
+                            <Tooltip content={<CustomTooltip />} cursor={false} />
                             <Bar dataKey="revenue" fill="#F97316" radius={[4, 4, 0, 0]} barSize={40} />
                             <Bar dataKey="expense" fill="#8884d8" radius={[4, 4, 0, 0]} barSize={40} />
                         </BarChart>
@@ -111,7 +127,7 @@ export function ChartMonthly({
 
                 <div className="flex justify-center gap-6 mt-4 border-t pt-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-primary rounded-sm"></div>
+                        <div className="w-3 h-3 bg-[#F97316] rounded-sm"></div>
                         <div>
                             <div className="text-md text-muted-foreground">Revenu</div>
                             <div className="font-medium text-lg">{formatCurrency(totalRevenue)}€</div>
