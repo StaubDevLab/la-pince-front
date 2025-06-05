@@ -17,8 +17,8 @@ import { Skeleton } from '../ui/skeleton'
 export default function Header() {
     const pathname = usePathname()
     const { user, setUser } = useUser()
-    
-  
+
+
     useEffect(() => {
     getProfile().then((response) => {
       if (response.success && response.data) {
@@ -39,9 +39,9 @@ export default function Header() {
                     <h1 className="flex gap-1 items-center text-base sm:hidden font-medium">
                         Bonjour, <span className="font-semibold">{user.firstName}</span>
                     </h1>
-                    <p className="text-sm text-muted-foreground">
-                        {user.amount ? <HeaderAmmount amount={user.amount} /> : <Skeleton className="w-24 h-6" />}
-                    </p>
+                    <div className="text-sm text-muted-foreground">
+                        {user.amount ? <HeaderAmmount amount={user.amount} /> : <Skeleton  className="w-24 h-6" />}
+                    </div>
                 </div>
             </div>
 

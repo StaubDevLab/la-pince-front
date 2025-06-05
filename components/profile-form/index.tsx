@@ -138,8 +138,8 @@ const ProfileForm = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <p className="font-medium">{profileData.email ? profileData.email :
-                                        <Skeleton className="h-4 w-[250px]" />}</p>
+                                    <div className="font-medium">{profileData.email ? profileData.email :
+                                        <Skeleton className="h-4 w-[250px]" />}</div>
                                 )}
                             </div>
 
@@ -166,8 +166,8 @@ const ProfileForm = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <p className="font-medium">{profileData.accountName ? profileData.accountName :
-                                        <Skeleton className="h-4 w-[250px]" />}</p>
+                                    <div className="font-medium">{profileData.accountName ? profileData.accountName :
+                                        <Skeleton className="h-4 w-[250px]" />}</div>
                                 )}
                             </div>
                         </div>
