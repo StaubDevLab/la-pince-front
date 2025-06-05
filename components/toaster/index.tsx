@@ -9,38 +9,24 @@ const ToasterComponent = () => {
                 duration: 4000,
                 classNames: {
                     success: `
+        ${commonToastStyles}
         bg-gradient-to-r from-emerald-50 to-green-50 
         text-green-800 
         border border-green-200/50 
-        p-4 rounded-xl 
         shadow-lg shadow-green-100/50
-        backdrop-blur-sm
         ring-1 ring-green-200/20
-        transition-all duration-300 ease-out
         hover:shadow-xl hover:shadow-green-200/30
-        hover:scale-[1.02]
-        relative overflow-hidden
-        before:absolute before:inset-0 
         before:bg-gradient-to-r before:from-green-400/10 before:to-emerald-400/10
-        before:opacity-0 before:transition-opacity before:duration-300
-        hover:before:opacity-100
       `,
                     error: `
+        ${commonToastStyles}
         bg-gradient-to-r from-red-50 to-rose-50 
         text-red-800 
         border border-red-200/50 
-        p-4 rounded-xl 
         shadow-lg shadow-red-100/50
-        backdrop-blur-sm
         ring-1 ring-red-200/20
-        transition-all duration-300 ease-out
         hover:shadow-xl hover:shadow-red-200/30
-        hover:scale-[1.02]
-        relative overflow-hidden
-        before:absolute before:inset-0 
         before:bg-gradient-to-r before:from-red-400/10 before:to-rose-400/10
-        before:opacity-0 before:transition-opacity before:duration-300
-        hover:before:opacity-100
       `,
                     warning: `
         bg-gradient-to-r from-amber-50 to-yellow-50 
