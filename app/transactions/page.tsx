@@ -1,8 +1,7 @@
 'use client'
 import * as React from 'react'
-import type { ColumnDef } from '@tanstack/react-table'
 import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from '@tanstack/react-table'
-import { CalendarIcon, PlusCircleIcon, EuroIcon, LayersIcon, NotebookTextIcon } from 'lucide-react'
+import { CalendarIcon, PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -10,15 +9,14 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
 import { categories } from '@/lib/fake-props'
-import { data as fakeData } from '@/lib/fake-transactions'
-import { formatRelativeDate } from '@/lib/utils'
-import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
-import { getTransactionsForUser } from '@/actions/transactions.actions'
+import { deleteTransaction, getTransactionsForUser } from '@/actions/transactions.actions'
+import FormTransaction from '@/components/transaction-form/FormTransaction'
 import { Transaction } from '@/types/transactions'
-const data = fakeData.data
+import { Sheet } from '@/components/ui/sheet'
+import getColumns from './TableColumns'
+import { toast } from 'sonner'
 
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
