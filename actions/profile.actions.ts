@@ -24,7 +24,6 @@ export async function updateProfileAndSession(newProfile: { firstName: string,la
 
         return { success: false, error: 'Erreur lors de la mise à jour du profil' }
     }
-revalidateTag('profile');
 await revalidateProfileCache();
 return { success: true }
 }
