@@ -98,7 +98,7 @@ export async function changePasswordAction(data: PasswordFormData) {
 export async function revalidateProfileCache(): Promise<ApiResponse<null>> {
     const session = await auth();
     if (!session?.user?.id) {
-        return { success: false, error: 'Non autorisé pour la révalidation des profile.' };
+        return { success: false, error: 'Non autorisé pour la révalidation des profil.' };
     }
     const userId = session.user.id;
     revalidateTag(`profile-${userId}`);
