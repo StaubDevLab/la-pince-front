@@ -16,7 +16,7 @@ import { ChartMonthly } from '@/components/chart-monthly';
 import { ChartWeekly } from '@/components/chart-weekly';
 import RecentTransactions from '@/components/recent-transactions';
 
-import { DashboardErrorToast } from '@/components/dashboard-error';
+import { DashboardToaster } from '@/components/dashboard-toaster';
 
 import { Transaction } from '@/types/transactions'
 import { CategoryItem } from '@/components/category-item'
@@ -205,7 +205,7 @@ export default async function Dashboard() {
                     <ChartWeekly {...weeklyProps} />
                 </div>
             </div>
-            <DashboardErrorToast errorMessage={dashboardErrorMessage || "Données du dashboard chargées avec succès"} success={dashboardResult.success} />
+            <DashboardToaster message={dashboardErrorMessage || "Données du dashboard chargées avec succès"} success={dashboardResult.success} />
 
         </main>
     );

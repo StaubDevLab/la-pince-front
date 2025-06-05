@@ -3,24 +3,24 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-interface DashboardErrorToastProps {
+interface DashboardToastProps {
     success?: boolean;
-    errorMessage: string | null;
+    message: string | null;
 }
 
 /**
  * Composant client pour afficher un toast d'erreur sur le tableau de bord.
  * Il est conçu pour être utilisé dans un Server Component en lui passant un message d'erreur.
  */
-export function DashboardErrorToast({success, errorMessage }: DashboardErrorToastProps) {
+export function DashboardToaster({success, message }: DashboardToastProps) {
     useEffect(() => {
-        if (errorMessage && !success) {
-            toast.error(errorMessage);
+        if (message && !success) {
+            toast.error(message);
         }
         else if (success) {
-            toast.success(errorMessage);
+            toast.success(message);
         }
-    }, [errorMessage]);
+    }, [message]);
 
     return null;
 }
