@@ -10,3 +10,10 @@ export type User = {
     accountId: string;
     amount: float;
 }
+
+export interface PasswordFormData {
+    currentPassword: string
+    newPassword: string
+    confirmNewPassword: string
+}
+
