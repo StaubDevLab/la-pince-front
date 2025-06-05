@@ -6,16 +6,26 @@ import { cn } from '@/lib/utils'
 import { CategoryItem } from '@/components/category-item'
 import FormTransaction from '../transaction-form/FormTransaction'
 import { Transaction } from '@/types/transactions'
+import { PlusIcon } from 'lucide-react'
+import { Button } from '../ui/button'
+import { SheetContent, SheetTrigger, Sheet } from '../ui/sheet'
 
-
-
-const RecentTransactions = ( {transactions} : {transactions:Transaction[]}) => {
- 
+const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) => {
+    const [open, setOpen] = React.useState(false)
     return (
         <Card className="w-full h-full">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className={'text-lg font-medium'}>Transactions récentes</CardTitle>
-                <FormTransaction />
+                <Sheet open={open} onOpenChange={setOpen}>
+                    <SheetTrigger asChild>
+                        <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white">
+                            <PlusIcon className="h-5 w-5" />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                        <FormTransaction onSuccess={() => setOpen(false)} />
+                    </SheetContent>
+                </Sheet>
             </CardHeader>
             <CardContent className="px-2">
                 <div className="grid grid-cols-3 px-4 py-2 text-xs text-muted-foreground">
@@ -33,11 +43,11 @@ const RecentTransactions = ( {transactions} : {transactions:Transaction[]}) => {
                             </div>
                             <div className={`flex justify-center `}>
                                 <Badge style={{ backgroundColor: transaction.category.color }} className="font-medium capitalize">
-                                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} />
-                                                </Badge>
+                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} />
+                                </Badge>
                             </div>
-                            <div className={cn('text-right font-medium', transaction.transactionType === "Revenu" ? 'text-green-600' : 'text-red-500')}>
-                                {transaction.transactionType === "Revenu" ? '+' : '-'}
+                            <div className={cn('text-right font-medium', transaction.transactionsType === 'Revenu' ? 'text-green-600' : 'text-red-500')}>
+                                {transaction.transactionsType === 'Revenu' ? '+' : '-'}
                                 {Math.abs(transaction.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                             </div>
                         </div>
