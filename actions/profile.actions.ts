@@ -69,7 +69,7 @@ export async function changePasswordAction(data: PasswordFormData) {
         return { success: false, error: 'Non autorisé' }
     }
     try {
-        const response = await fetch('https://api.la-pince.tech/v1/api/users/password', {
+        const response = await fetch(`${process.env.API_URL}/users/password`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
