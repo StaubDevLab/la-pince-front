@@ -1,6 +1,14 @@
 import React from 'react'
 import { Toaster } from "@/components/ui/sonner"
 const ToasterComponent = () => {
+    const commonToastStyles = `
+  p-4 rounded-xl backdrop-blur-sm
+  transition-all duration-300 ease-out
+  hover:scale-[1.02] relative overflow-hidden
+  before:absolute before:inset-0 before:opacity-0 
+  before:transition-opacity before:duration-300
+  hover:before:opacity-100
+`
     return (
         <Toaster
             position="bottom-right"
