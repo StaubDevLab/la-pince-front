@@ -15,6 +15,8 @@ import { User as UserType } from "@/types/user"
 import { getProfile, updateProfileAndSession } from "@/actions/profile.actions"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useUser } from "@/context/user-context"
+import { toast } from "sonner"
+
 export type ProfileFormValues = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
@@ -102,6 +104,7 @@ const { setUser } = useUser()
             email: data.email,
         })
         if (res.success) {
+            toast.success("Profil mis à jour avec succès")
          setUser((prev) => ({ ...prev, ...data }))
             setIsEditing(false)
             setProfileData(data)
