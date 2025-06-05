@@ -1,0 +1,18 @@
+import { cn } from "@/lib/utils"
+
+
+export const HeaderAmmount = ({ amount }: { amount: number }) => {
+    const colorClass = amount < 0 ? "text-red-500" : "text-green-600"
+    return (
+        <span className="flex items-center gap-2">
+            <span className="text-sm sm:text-lg text-muted-foreground">
+                Il vous reste
+            </span>
+            <span className={cn("text-sm sm:text-lg font-semibold", colorClass)}>
+              {amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+              
+            </span>
+          
+        </span>
+    )
+}
