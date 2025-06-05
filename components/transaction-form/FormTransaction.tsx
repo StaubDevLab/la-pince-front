@@ -80,142 +80,136 @@ const FormTransaction = () => {
     }, [session?.accessToken])
 
     return (
-        <Sheet  open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-                <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" >
-                    <PlusIcon className="h-5 w-5" />
-                </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:w-[480px]">
-                <SheetHeader>
-                    <SheetTitle>Ajouter une transaction</SheetTitle>
-                </SheetHeader>
-                <form className="grid flex-1 auto-rows-min gap-6 px-4" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="grid gap-3">
-                        <Label>Type de transaction</Label>
-                        <Controller
-                            control={control}
-                            name="transactionType"
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionnez un type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="1">Revenu</SelectItem>
-                                        <SelectItem value="2">Dépense</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            )}
-                        />
-                    </div>
-                    <div className="grid gap-3">
-                        <Label htmlFor="amount">Montant</Label>
-                        <Input
-                            id="amount"
-                            type="float"
-                            placeholder="Entrez le montant"
-                            {...register('amount', {
-                                required: 'Le montant est requis',
-                                valueAsNumber: true,
-                                min: {
-                                    value: 0.01,
-                                    message: 'Le montant doit être supérieur à 0',
-                                },
-                                validate: value => (typeof value === 'number' && !isNaN(value)) || 'Le montant doit être un nombre valide',
-                            })}
-                        />
-                        {errors.amount && <p className="text-sm text-red-500">{errors.amount.message}</p>}
-                    </div>
+        <SheetContent className="w-full sm:w-[480px]">
+            <SheetHeader>
+                <SheetTitle>{props.transactionToEdit ? 'Modifier la transaction' : 'Ajouter une transaction'}</SheetTitle>
+            </SheetHeader>
+            <form className="grid flex-1 auto-rows-min gap-6 px-4" onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid gap-3">
+                    <Label>Type de transaction</Label>
+                    <Controller
+                        control={control}
+                        name="transactionType"
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Sélectionnez un type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1">Revenu</SelectItem>
+                                    <SelectItem value="2">Dépense</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                </div>
+                <div className="grid gap-3">
+                    <Label htmlFor="amount">Montant</Label>
+                    <Input
+                        id="amount"
+                        type="float"
+                        placeholder="Entrez le montant"
+                        {...register('amount', {
+                            required: 'Le montant est requis',
+                            valueAsNumber: true,
+                        })}
+                    />
+                    {errors.amount && <p className="text-sm text-red-500">{errors.amount.message}</p>}
+                </div>
 
-                    <div className="grid gap-3">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea id="description" placeholder="Burking king..." {...register('description')} />
-                    </div>
+                <div className="grid gap-3">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" placeholder="Burking king..." {...register('description')} />
+                </div>
 
-                    <div className="grid gap-3">
-                        <Label>Catégorie</Label>
-                        <Controller
-                            control={control}
-                            name="category"
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Catégorie" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories && categories.length > 0 ? categories.map(ctg => (
+                <div className="grid gap-3">
+                    <Label>Catégorie</Label>
+                    <Controller
+                        control={control}
+                        name="category"
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Catégorie" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories && categories.length > 0 ? (
+                                        categories.map(ctg => (
                                             <SelectItem key={ctg.id} value={ctg.id as string}>
                                                 {ctg.name}
                                             </SelectItem>
-                                        )) : <SelectItem value="loading" disabled>Chargement...</SelectItem>}
+                                        ))
+                                    ) : (
+                                        <SelectItem value="loading" disabled>
+                                            Chargement...
+                                        </SelectItem>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                    <Controller
+                        name="isRecurring"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} />
+                                <Label htmlFor="recurring">Récurrent ?</Label>
+                            </>
+                        )}
+                    />
+                </div>
+
+                {isRecurring && (
+                    <div className="grid gap-3">
+                        <Label>Fréquence</Label>
+                        <Controller
+                            control={control}
+                            name="reccuringFrequency"
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value || ''}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Mensuelle..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="1">Quotidien</SelectItem>
+                                        <SelectItem value="7">Hebdomadaire</SelectItem>
+                                        <SelectItem value="30">Mensuelle</SelectItem>
+                                        <SelectItem value="90">Trimestrielle</SelectItem>
                                     </SelectContent>
                                 </Select>
                             )}
                         />
                     </div>
+                )}
+                {isRecurring && (
+                    <Controller
+                        control={control}
+                        name="dateRange"
+                        render={({ field }) => (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg w-full justify-start">
+                                        <CalendarIcon className="h-4 w-4 mr-2" />
+                                        {field.value?.from ? `${field.value.from.toLocaleDateString()} - ${field.value.to?.toLocaleDateString()}` : 'Choisir une période'}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-4" align="end">
+                                    <Calendar mode="range" numberOfMonths={2} selected={field.value} onSelect={field.onChange} defaultMonth={new Date()} />
+                                </PopoverContent>
+                            </Popover>
+                        )}
+                    />
+                )}
 
-                    <div className="flex items-center space-x-2">
-                        <Controller
-                            name="isRecurring"
-                            control={control}
-                            render={({ field }) => (
-                                <>
-                                    <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} />
-                                    <Label htmlFor="recurring">Récurrent ?</Label>
-                                </>
-                            )}
-                        />
-                    </div>
-
-                    {isRecurring && (
-                        <div className="grid gap-3">
-                            <Label>Fréquence</Label>
-                            <Controller
-                                control={control}
-                                name="reccuringFrequency"
-                                render={({ field }) => (
-                                    <Select onValueChange={field.onChange} value={field.value || ''}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Mensuelle..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="1">Quotidien</SelectItem>
-                                            <SelectItem value="7">Hebdomadaire</SelectItem>
-                                            <SelectItem value="30">Mensuelle</SelectItem>
-                                            <SelectItem value="90">Trimestrielle</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                            />
-                        </div>
-                    )}
-                    {isRecurring && (
-                        <Controller
-                            control={control}
-                            name="dateRange"
-                            render={({ field }) => (
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg w-full justify-start">
-                                            <CalendarIcon className="h-4 w-4 mr-2" />
-                                            {field.value?.from ? `${field.value.from.toLocaleDateString()} - ${field.value.to?.toLocaleDateString()}` : 'Choisir une période'}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-4" align="end">
-                                        <Calendar mode="range" numberOfMonths={2} selected={field.value} onSelect={field.onChange} defaultMonth={new Date()} />
-                                    </PopoverContent>
-                                </Popover>
-                            )}
-                        />
-                    )}
-
-                    <Button type="submit" disabled={isSubmitting}>
-                        Enregistrer
-                    </Button>
-                </form>
-            </SheetContent>
-        </Sheet>
+                <Button type="submit" disabled={isSubmitting}>
+                    Enregistrer
+                </Button>
+            </form>
+        </SheetContent>
     )
 }
 
