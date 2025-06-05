@@ -5,9 +5,6 @@ import Header from '@/components/header'
 import { useSession } from 'next-auth/react'
 import Footer from '@/components/footer'
 import { getProfile } from '@/actions/profile.actions'
-import { useUser } from "@/context/user-context"
-
-
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const showHeader = pathname !== '/connexion' && pathname !== '/inscription'
