@@ -27,6 +27,19 @@ export default function DataTableDemo() {
     const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     const [totalCount, setTotalCount] = React.useState(0)
+
+    const handleDeleteTransaction = async (id: string) => {
+        const res = await deleteTransaction(id)
+        if (res.success) {
+            fetchTransactions()
+            toast.success('Transaction supprimée')
+        } else {
+            toast.error('Erreur lors de la suppresion de la transaction')
+        }
+    }
+
+    const columns = React.useMemo(() => getColumns(handleDeleteTransaction), [])
+
     const table = useReactTable({
         data: transactions,
         columns,
