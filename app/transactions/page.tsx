@@ -21,14 +21,9 @@ import { toast } from 'sonner'
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [selectedCategory, setSelectedCategory] = React.useState<string>('')
     const [transactions, setTransactions] = React.useState<Transaction[]>([])
-    const [pagination, setPagination] = React.useState({
-        pageIndex: 0,
-        pageSize: 10,
-    })
     const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     const [totalCount, setTotalCount] = React.useState(0)
@@ -43,13 +38,11 @@ export default function DataTableDemo() {
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
-            columnVisibility,
             rowSelection,
             pagination,
         },
