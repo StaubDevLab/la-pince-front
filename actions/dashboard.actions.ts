@@ -1,52 +1,15 @@
 'use server';
 
 import { auth } from '@/auth';
-import { ApiResponse } from '@/types/apiResponse'; // Assurez-vous que ce type est défini dans votre projet
-import { revalidateTag } from 'next/cache';
-import { toast } from 'sonner'
+import { ApiResponse } from '@/types/apiResponse';
 
-const API_BASE_URL = process.env.API_URL; // Assurez-vous que cette variable d'environnement est définie
+import { BudgetFetched } from '@/types/budget'
+import { DashboardData } from '@/types/dashboard'
 
-// Interfaces pour la structure des données de l'API /home
-interface DailyAmount {
-    date: string; // Format ISO string (ex: "2025-06-01T00:00:00.000Z")
-    amount: number;
-}
+const API_BASE_URL = process.env.API_URL;
 
-interface HebdoData {
-    total: number;
-    perDay: DailyAmount[];
-}
 
-interface MonthlyData {
-    month: string; // Format "YYYY-MM" (ex: "2025-01")
-    income: number;
-    expense: number;
-}
 
-interface Last6MonthsData {
-    totalIncome: number;
-    totalExpense: number;
-    byMonth: MonthlyData[];
-}
-
-interface CategoryTotal {
-    categoryId: string;
-    total: number;
-}
-
-interface ByCategoriesData {
-    totalByCategory: CategoryTotal[];
-    startDate: string; // Format ISO string
-    endDate: string; // Format ISO string
-}
-
-// Interface principale pour toutes les données du tableau de bord
-export interface DashboardData {
-    hebdo: HebdoData;
-    last6Months: Last6MonthsData;
-    byCategories: ByCategoriesData;
-}
 
 /**
  * Récupère les données agrégées du tableau de bord depuis l'API /home.
@@ -105,19 +68,8 @@ export async function getDashboardData(): Promise<ApiResponse<DashboardData>> {
 }
 
 
-// Interface pour un objet budget tel que retourné par l'API
-export interface BudgetFetched {
-    id: string;
-    userId: string;
-    categoryId: string;
-    totalAmount: number;
-    actualAmount: number;
-    reccuringFrequency: number; // Ex: 30 pour 30 jours
-    reccuringStartDate: string; // Ex: "2025-06-01"
-    lastResetDate: string; // Ex: "2025-06-01"
-    createdAt: string;
-    updatedAt: string;
-}
+
+
 
 /**
  * Récupère les budgets pour l'utilisateur authentifié.
