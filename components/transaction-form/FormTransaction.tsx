@@ -11,17 +11,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Calendar } from '../ui/calendar'
 import { useForm, Controller } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
-import {  getCategoriesForForm } from '@/actions/categories.actions'
+import { getCategoriesForForm } from '@/actions/categories.actions'
 import { Category } from '@/types/categories'
-import { Transaction } from '@/types/transactions'
+import { Transaction, TransactionPayloadBeforeFormat } from '@/types/transactions'
 import { createTransaction } from '@/actions/transactions.actions'
-import { toast } from "sonner"
+import { updateTransaction } from '@/actions/transactions.actions'
+import { toast } from 'sonner'
 
-
-const FormTransaction = () => {
+const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
     const { data: session } = useSession()
-    const [categories, setCategories] = useState<Partial<Category>[]|undefined>([])
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
+    const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const {
         handleSubmit,
@@ -30,7 +30,7 @@ const FormTransaction = () => {
         watch,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<Transaction>({
+    } = useForm<TransactionPayloadBeforeFormat>({
         defaultValues: {
             transactionType: '1',
             amount: 0,
@@ -44,40 +44,60 @@ const FormTransaction = () => {
 
     const isRecurring = watch('isRecurring')
 
+    const onSubmit = async (data: TransactionPayloadBeforeFormat) => {
+        console.log("Données du formulaire avant envoi à l'action serveur:", data)
 
-
-    const onSubmit = async (data: Transaction) => {
-        console.log("Données du formulaire avant envoi à l'action serveur:", data);
-
-        const result = await createTransaction(data);
+        const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(data)
 
         if (result.success) {
-            console.log("Transaction créée avec succès:", result.message);
-            reset();
-            toast.success("Transaction créée avec succès.");
+            props.onSuccess?.()
+            toast.success(props.transactionToEdit ? 'Transaction modifiée avec succès.' : 'Transaction créée avec succès.')
 
-            await new Promise(resolve => setTimeout(resolve, 100));
-            setIsSheetOpen(false);
-
+            if (!props.transactionToEdit) {
+                reset() // On réinitialise uniquement pour une création
+            }
+            setIsSheetOpen(false)
         } else {
-            console.error("Échec de la création de la transaction:", result.error);
-            toast.error("Échec de la création de la transaction: " + result.error);
+            console.error('Échec de la création de la transaction:', result.error)
+            toast.error('Échec de la création de la transaction: ' + result.error)
         }
     }
 
     useEffect(() => {
         if (session?.accessToken) {
+            setIsSheetOpen(props.open)
 
-            getCategoriesForForm().then((data) => {
+            getCategoriesForForm().then(data => {
                 if (data.success && data.data) {
                     setCategories(data.data)
                 } else {
-                    console.error("Échec de la récupération des catégories :", data.error);
-                    setCategories([]);
+                    console.error('Échec de la récupération des catégories :', data.error)
+                    setCategories([])
                 }
             })
+
+            // Ce bloc ne doit s'exécuter que si on OUVRE la modale pour la première fois
+            if (props.open && props.transactionToEdit) {
+                reset({
+                    amount: props.transactionToEdit.amount,
+                    transactionType: props.transactionToEdit.transactionsType.toString(),
+                    description: props.transactionToEdit.description ?? '',
+                    category: props.transactionToEdit.category.id,
+                    isRecurring: props.transactionToEdit.isReccuring,
+                    reccuringFrequency: props.transactionToEdit.reccuringFrequency?.toString(),
+                    dateRange:
+                        props.transactionToEdit.isReccuring && props.transactionToEdit.reccuringStartDate
+                            ? {
+                                  from: new Date(props.transactionToEdit.reccuringStartDate),
+                                  to: props.transactionToEdit.reccuringEndDate ? new Date(props.transactionToEdit.reccuringEndDate) : undefined,
+                              }
+                            : undefined,
+                })
+            } else if (props.open && !props.transactionToEdit) {
+                reset() // vide le formulaire en cas de création
+            }
         }
-    }, [session?.accessToken])
+    }, [session?.accessToken, props.open])
 
     return (
         <SheetContent className="w-full sm:w-[480px]">
