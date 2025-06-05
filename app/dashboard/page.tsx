@@ -205,7 +205,7 @@ export default async function Dashboard() {
                     <ChartWeekly {...weeklyProps} />
                 </div>
             </div>
-            <DashboardErrorToast errorMessage={dashboardErrorMessage} success={dashboardResult.success} />
+            <DashboardErrorToast errorMessage={dashboardErrorMessage || "Données du dashboard chargées avec succès"} success={dashboardResult.success} />
 
         </main>
     );
