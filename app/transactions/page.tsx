@@ -151,6 +151,7 @@ export default function DataTableDemo() {
         pageIndex: 0,
         pageSize: 10,
     })
+    const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
     React.useEffect(() => {
         getTransactionsForUser(DEFAULT_TRANSACTION_LIMIT, 0).then((transactions) => {
@@ -164,9 +165,12 @@ export default function DataTableDemo() {
             
         })
     }, [])
+    const [totalCount, setTotalCount] = React.useState(0)
     const table = useReactTable({
         data: transactions,
         columns,
+        manualPagination: true,
+        pageCount: Math.ceil(totalCount / pagination.pageSize),
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -184,6 +188,22 @@ export default function DataTableDemo() {
             pagination,
         },
     })
+
+    const fetchTransactions = () => {
+        getTransactionsForUser(pagination.pageSize, pagination.pageIndex).then(transactions => {
+            if (transactions.success && transactions.data) {
+                setTransactions(transactions.data.data)
+                setTotalCount(transactions.data.total || transactions.data.data.length || 0)
+            } else {
+                setTransactions([])
+                setTotalCount(0)
+            }
+        })
+    }
+
+    React.useEffect(() => {
+        fetchTransactions()
+    }, [pagination.pageIndex, pagination.pageSize])
 
     return (
         <div className="flex w-full justify-center p-6 md:p-10 flex-grow">
@@ -304,6 +324,8 @@ export default function DataTableDemo() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/** PAGINATION */}
                 <Pagination className="mt-6">
                     <PaginationContent>
                         <PaginationItem>
