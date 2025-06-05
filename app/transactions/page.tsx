@@ -31,18 +31,6 @@ export default function DataTableDemo() {
     })
     const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
-    React.useEffect(() => {
-        getTransactionsForUser(DEFAULT_TRANSACTION_LIMIT, 0).then((transactions) => {
-           
-           if (transactions.success && transactions.data) {
-            console.log('Transactions récupérées:', transactions);
-        
-            setTransactions(transactions.data.data);
-      
-           }
-            
-        })
-    }, [])
     const [totalCount, setTotalCount] = React.useState(0)
     const table = useReactTable({
         data: transactions,
