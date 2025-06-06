@@ -36,7 +36,7 @@ export async function getProfile(): Promise<ApiResponse<{
         return { success: false, error: 'Non autorisé' }
     }
 
-    const res = await fetch(`${process.env.API_URL}/users/${session.user.id}`, {
+    const res = await fetch(`${process.env.API_URL}/users`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${session.accessToken}`,
