@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
@@ -21,7 +23,7 @@ import { toast } from 'sonner'
 const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
     const { data: session } = useSession()
     const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
-    const [isSheetOpen, setIsSheetOpen] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
 
     const {
         handleSubmit,
@@ -47,7 +49,19 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
     const onSubmit = async (data: TransactionPayloadBeforeFormat) => {
         console.log("Données du formulaire avant envoi à l'action serveur:", data)
 
-        const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(data)
+        const payload = {
+            amount: Number(data.amount),
+            transactionType: Number(data.transactionType),
+            description: data.description?.trim() || '',
+            categoryId: data.category,
+            isRecurring: data.isRecurring,
+            recurringFrequency: data.isRecurring ? Number(data.reccuringFrequency) : null,
+            recurringStartDate: data.isRecurring && data.dateRange?.from ? new Date(data.dateRange.from).toISOString() : null,
+            recurringEndDate: data.isRecurring && data.dateRange?.to ? new Date(data.dateRange.to).toISOString() : null,
+            date: new Date().toISOString(),
+        }
+
+        const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(payload)
 
         if (result.success) {
             props.onSuccess?.()
@@ -56,7 +70,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             if (!props.transactionToEdit) {
                 reset() // On réinitialise uniquement pour une création
             }
-            setIsSheetOpen(false)
+            props.onOpenChange?.(false)
         } else {
             console.error('Échec de la création de la transaction:', result.error)
             toast.error('Échec de la création de la transaction: ' + result.error)
@@ -64,40 +78,43 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
     }
 
     useEffect(() => {
-        if (session?.accessToken) {
-            setIsSheetOpen(props.open)
+        setIsMounted(true)
+    }, [])
 
-            getCategoriesForForm().then(data => {
-                if (data.success && data.data) {
-                    setCategories(data.data)
-                } else {
-                    console.error('Échec de la récupération des catégories :', data.error)
-                    setCategories([])
-                }
-            })
+    useEffect(() => {
+        if (!session?.accessToken || !props.open) return
+        console.log(props.open)
 
-            // Ce bloc ne doit s'exécuter que si on OUVRE la modale pour la première fois
-            if (props.open && props.transactionToEdit) {
-                reset({
-                    amount: props.transactionToEdit.amount,
-                    transactionType: props.transactionToEdit.transactionsType.toString(),
-                    description: props.transactionToEdit.description ?? '',
-                    category: props.transactionToEdit.category.id,
-                    isRecurring: props.transactionToEdit.isReccuring,
-                    reccuringFrequency: props.transactionToEdit.reccuringFrequency?.toString(),
-                    dateRange:
-                        props.transactionToEdit.isReccuring && props.transactionToEdit.reccuringStartDate
-                            ? {
-                                  from: new Date(props.transactionToEdit.reccuringStartDate),
-                                  to: props.transactionToEdit.reccuringEndDate ? new Date(props.transactionToEdit.reccuringEndDate) : undefined,
-                              }
-                            : undefined,
-                })
-            } else if (props.open && !props.transactionToEdit) {
-                reset() // vide le formulaire en cas de création
+        getCategoriesForForm().then(data => {
+            if (data.success && data.data) {
+                setCategories(data.data)
+            } else {
+                console.error('Échec de la récupération des catégories :', data.error)
+                setCategories([])
             }
+        })
+
+        // Ce bloc ne doit s'exécuter que si on OUVRE la modale pour la première fois
+        if (props.open && props.transactionToEdit) {
+            reset({
+                amount: props.transactionToEdit.amount,
+                transactionType: '1',
+                description: props.transactionToEdit.description ?? '',
+                category: props.transactionToEdit.category.id,
+                isRecurring: props.transactionToEdit.isReccuring,
+                reccuringFrequency: props.transactionToEdit.reccuringFrequency?.toString(),
+                dateRange:
+                    props.transactionToEdit.isReccuring && props.transactionToEdit.reccuringStartDate
+                        ? {
+                              from: new Date(props.transactionToEdit.reccuringStartDate),
+                              to: props.transactionToEdit.reccuringEndDate ? new Date(props.transactionToEdit.reccuringEndDate) : undefined,
+                          }
+                        : undefined,
+            })
+        } else {
+            reset() // vide le formulaire en cas de création
         }
-    }, [session?.accessToken, props.open])
+    }, [session?.accessToken, props.open, isMounted])
 
     return (
         <SheetContent className="w-full sm:w-[480px]">
