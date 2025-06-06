@@ -86,7 +86,7 @@ export default async function Dashboard() {
 
 
         return {
-            title: `Budget ${categoriesMap.get(budget.categoryId)|| 'Inconnu'}`,
+            title: `Budget ${categoriesMap.get(budget.categoryId)?.name || 'Inconnu'}`,
             period: periodText,
             spent: budget.actualAmount,
             total: budget.totalAmount,
