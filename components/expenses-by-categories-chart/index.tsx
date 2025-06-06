@@ -4,11 +4,11 @@ import { useState } from "react"
 import type React from "react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
-import {  CalendarIcon} from 'lucide-react'
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
-
+import { CalendarIcon } from 'lucide-react'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import type { TooltipProps } from "recharts"
+import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
@@ -18,7 +18,7 @@ interface CategoryData {
     name: string
     value: number
     fill: string
-    icon: React.ReactNode
+    icon?: React.ReactNode
     percentage?: number
 }
 
@@ -38,20 +38,8 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
     const total = categories.reduce((sum, category) => sum + category.value, 0)
     const categoriesFormat = categories.map((category) => ({
         ...category,
-        percentage: Math.round((category.value / total) * 100),
+        percentage: total > 0 ? Math.round((category.value / total) * 100) : 0, // Handle total being 0 to avoid NaN
     }))
-
-    // Create chart config dynamically from categories
-    const chartConfig = categoriesFormat.reduce((config, category) => {
-        return {
-            ...config,
-            [category.name]: {
-                label: category.name,
-                color: category.fill,
-                value: category.value,
-            },
-        }
-    }, {}) as ChartConfig
 
     // Format the date range for display
     const formatDateRange = () => {
@@ -61,14 +49,38 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
         return "Sélectionner"
     }
 
-    // Custom tooltip formatter
-    const tooltipFormatter = (value: number, name: string) => {
-        const category = categoriesFormat.find((c) => c.name === name)
-        return [`${value}€ (${category?.percentage}%)`, name]
+    // Format currency function (re-defined here for CustomTooltip)
+    const formatCurrency = (value: number) => {
+        return value.toLocaleString("fr-FR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        })
     }
 
+    // Custom tooltip component, similar to ChartMonthly
+    const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
+        if (active && payload && payload.length) {
+            const dataEntry = payload[0].payload as CategoryData;
+
+            return (
+                <div className="bg-white p-2 border rounded shadow-sm text-xs dark:bg-gray-800">
+                    <p className="font-medium text-lg mb-1" style={{ color: dataEntry.fill }}>{dataEntry.name}</p>
+                    <p className="flex justify-between">
+                        <span>Montant:</span> <span className="ml-2 font-semibold">{formatCurrency(dataEntry.value)}€</span>
+                    </p>
+                    {dataEntry.percentage !== undefined && (
+                        <p className="flex justify-between">
+                            <span>Pourcentage:</span> <span className="ml-2">{dataEntry.percentage}%</span>
+                        </p>
+                    )}
+                </div>
+            );
+        }
+        return null;
+    };
+
     return (
-        <Card className="flex flex-col  mx-auto">
+        <Card className="flex flex-col mx-auto">
             <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
                 <CardTitle className="text-lg font-medium">{title}</CardTitle>
                 <Popover>
@@ -91,26 +103,25 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
             <CardContent className="p-4 pt-0">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                     <div className="w-full md:w-1/2 h-[220px] md:h-[350px]">
-                        <ChartContainer config={chartConfig} className="w-full h-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <ChartTooltip formatter={tooltipFormatter} content={<ChartTooltipContent />} />
-                                    <Pie
-                                        data={categories}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius="40%"
-                                        outerRadius="70%"
-                                    >
-                                        {categories.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </ChartContainer>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+
+                                <Tooltip content={<CustomTooltip />} />
+                                <Pie
+                                    data={categoriesFormat}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius="40%"
+                                    outerRadius="70%"
+                                >
+                                    {categoriesFormat.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
                     </div>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full md:w-1/2">
@@ -118,6 +129,9 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
                             <div key={index} className="flex items-center gap-1.5">
                                 {category.icon}
                                 <span className="text-md">{category.name}</span>
+                                {category.percentage !== undefined && (
+                                    <span className="text-sm text-muted-foreground">({category.percentage}%)</span>
+                                )}
                             </div>
                         ))}
                     </div>

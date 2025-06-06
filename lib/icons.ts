@@ -3,7 +3,7 @@ import {
     Home,
     Book,
     Music,
-    Heart, Apple, BadgeEuro,
+    Heart, Apple, BadgeEuro,Car, Shirt
 } from 'lucide-react'
 
 export const categoryIconMap: Record<string, React.ElementType> = {
@@ -14,5 +14,7 @@ export const categoryIconMap: Record<string, React.ElementType> = {
     "abonnements": Music,
     "salaire": BadgeEuro,
     "default": Home,
+    "transport": Car,
+    "vêtements":Shirt
 
 };

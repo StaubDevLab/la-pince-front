@@ -10,7 +10,7 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<Partial<User>>({ firstName: '', lastName: '', email: '' })
+  const [user, setUser] = useState<Partial<User>>({ firstName: '', lastName: '', email: '', amount: 0 })
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

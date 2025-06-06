@@ -1,5 +1,6 @@
 import { Apple, Bike, Bus, HeartPulse, House, Tv } from 'lucide-react'
 import type React from 'react'
+import { CategoryItem } from '@/components/category-item'
 
 export const categories = [
     {
@@ -8,7 +9,7 @@ export const categories = [
         fill: '#F97316',
         icon: (
             <div className="bg-[#FF7A45] text-white p-1 rounded-md">
-                <House />
+                <CategoryItem category={{ name: 'Logement', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
@@ -18,7 +19,7 @@ export const categories = [
         fill: '#8884d8',
         icon: (
             <div className="bg-[#8884d8] text-white p-1 rounded-md">
-                <Apple />
+                <CategoryItem category={{ name: 'Alimentation', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
@@ -28,7 +29,7 @@ export const categories = [
         fill: '#FF5C8D',
         icon: (
             <div className="bg-[#FF5C8D] text-white p-1 rounded-md">
-                <Bike />
+                <CategoryItem category={{ name: 'Loisirs', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
@@ -38,7 +39,7 @@ export const categories = [
         fill: '#82E0AA',
         icon: (
             <div className="bg-[#82E0AA] text-white p-1 rounded-md">
-                <Tv />
+                <CategoryItem category={{ name: 'TV', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
@@ -48,7 +49,7 @@ export const categories = [
         fill: '#9B59B6',
         icon: (
             <div className="bg-[#9B59B6] text-white p-1 rounded-md">
-                <Bus />
+                <CategoryItem category={{ name: 'Transport', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
@@ -58,7 +59,7 @@ export const categories = [
         fill: '#F7DC6F',
         icon: (
             <div className="bg-[#F7DC6F] text-white p-1 rounded-md">
-                <HeartPulse />
+                <CategoryItem category={{ name: 'Santé', iconSize: 24 , displayName:false}} />
             </div>
         ),
     },
