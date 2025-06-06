@@ -19,13 +19,20 @@ import { Transaction, TransactionPayloadBeforeFormat } from '@/types/transaction
 import { createTransaction } from '@/actions/transactions.actions'
 import { updateTransaction } from '@/actions/transactions.actions'
 import { toast } from 'sonner'
+import { revalidateUserTransactionsCache } from '@/actions/transactions.actions'
+import { revalidateProfileCache } from '@/actions/profile.actions'
+import { revalidateUserDashboardCache, revalidateUserBudgetsCache } from '@/actions/dashboard.actions'
+import { useRouter } from 'next/navigation'
+import { useUser } from '@/context/user-context'
 
 const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
     const { data: session } = useSession()
     const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
     const [isMounted, setIsMounted] = useState(false)
+    const router = useRouter()
+    const { setUser } = useUser()
 
-    const {
+    const { 
         handleSubmit,
         control,
         register,
@@ -61,10 +68,18 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             date: new Date().toISOString(),
         }
 
+        console.log("Données du formulaire avant envoi à l'action serveur:", payload)
+
         const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(payload)
 
         if (result.success) {
             props.onSuccess?.()
+            revalidateUserDashboardCache()
+            revalidateUserBudgetsCache()
+            revalidateUserTransactionsCache()
+            revalidateProfileCache()
+            setUser((prev) => ({ ...prev, amount: result.data?.amount || prev.amount }))
+            router.refresh()
             toast.success(props.transactionToEdit ? 'Transaction modifiée avec succès.' : 'Transaction créée avec succès.')
 
             if (!props.transactionToEdit) {
