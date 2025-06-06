@@ -80,8 +80,8 @@ export async function revalidateUserTransactionsCache(): Promise<ApiResponse<nul
  * @param data Les données de la transaction à créer.
  * @returns Une ApiResponse indiquant le succès ou l'échec de l'opération.
  */
-export async function createTransaction(data: TransactionPayloadBeforeFormat): Promise<ApiResponse<null>> {
-    console.log('coucou')
+export async function createTransaction(data: TransactionPayloadBeforeFormat): Promise<ApiResponse<{amount: number}>> {
+    
     const session = await auth()
 
     if (!session?.accessToken) {
@@ -90,17 +90,8 @@ export async function createTransaction(data: TransactionPayloadBeforeFormat): P
 
     const jwt = session.accessToken
 
-    const payload = {
-        amount: Number(data.amount),
-        transactionType: Number(data.transactionType),
-        description: data.description?.trim() || '',
-        categoryId: data.category,
-        isReccuring: data.isRecurring,
-        reccuringFrequency: data.isRecurring ? Number(data.reccuringFrequency) : null,
-        reccuringStartDate: data.isRecurring && data.dateRange?.from ? new Date(data.dateRange.from).toISOString() : null,
-        reccuringEndDate: data.isRecurring && data.dateRange?.to ? new Date(data.dateRange.to).toISOString() : null,
-        date: new Date().toISOString(),
-    }
+    
+
 
     try {
         const response = await fetch(`${API_BASE_URL}/transactions`, {
@@ -109,7 +100,7 @@ export async function createTransaction(data: TransactionPayloadBeforeFormat): P
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${jwt}`,
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(data),
         })
 
         if (!response.ok) {
@@ -125,10 +116,12 @@ export async function createTransaction(data: TransactionPayloadBeforeFormat): P
                 error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de créer la transaction.'}`,
             }
         }
-
+        const res = await response.json()
+        const amount = res.totalUserAccountAmount
+     
         revalidateTag('transactions')
         console.log("Cache révalidé pour le tag: 'transactions' après création.")
-        return { success: true, message: 'Transaction créée avec succès.' }
+        return { success: true, message: 'Transaction créée avec succès.',data: { amount } }
     } catch (error) {
         console.error('Erreur inattendue (création transaction):', error)
         return { success: false, error: 'Une erreur serveur est survenue lors de la création de la transaction.' }

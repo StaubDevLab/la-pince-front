@@ -5,6 +5,7 @@ import { ApiResponse } from '@/types/apiResponse';
 
 import { BudgetFetched } from '@/types/budget'
 import { DashboardData } from '@/types/dashboard'
+import { revalidateTag } from 'next/cache';
 
 const API_BASE_URL = process.env.API_URL;
 
@@ -41,7 +42,6 @@ export async function getDashboardData(): Promise<ApiResponse<DashboardData>> {
         });
 
         if (!response.ok) {
-            console.log("ERREUR")
             let errorData;
             try {
                 errorData = await response.json();
@@ -58,7 +58,6 @@ export async function getDashboardData(): Promise<ApiResponse<DashboardData>> {
         }
 
         const data: DashboardData = await response.json();
-        console.log('getDashboardData: Réponse API réussie - Données brutes:', data);
         return { success: true, data: data };
 
     } catch (error) {
@@ -88,7 +87,7 @@ export async function getBudgetsForUser(): Promise<ApiResponse<BudgetFetched[]>>
     const url = `${API_BASE_URL}/budget`;
 
     try {
-        console.log(`getBudgetsForUser: Appel API à ${url}`);
+       
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -117,7 +116,7 @@ export async function getBudgetsForUser(): Promise<ApiResponse<BudgetFetched[]>>
         }
 
         const data: BudgetFetched[] = await response.json();
-        console.log('getBudgetsForUser: Réponse API réussie - Données brutes:', data);
+       
 
         if (!Array.isArray(data)) {
             console.error('getBudgetsForUser: Format de réponse API inattendu. Les données ne sont pas un tableau.', data);
@@ -132,3 +131,27 @@ export async function getBudgetsForUser(): Promise<ApiResponse<BudgetFetched[]>>
     }
 }
 
+export async function revalidateUserBudgetsCache(): Promise<ApiResponse<null>> {
+    const session = await auth()
+    if (!session?.user?.id) {
+        return { success: false, error: 'Non autorisé pour la révalidation des budgets.' }
+    }
+    const userId = session.user.id
+    revalidateTag(`budgets-user-${userId}`)
+    revalidateTag('budgets')
+    console.log(`Cache révalidé pour les tags: 'budgets-user-${userId}', 'budgets'`)
+    return { success: true, message: 'Cache des budgets révalidé.' }
+}
+
+export async function revalidateUserDashboardCache(): Promise<ApiResponse<null>> {
+    const session = await auth()
+    if (!session?.user?.id) {
+        return { success: false, error: 'Non autorisé pour la révalidation des budgets.' }
+    }
+    const userId = session.user.id
+    revalidateTag(`dashboard-user-${userId}`)
+    revalidateTag('dashboard-data')
+    console.log(`Cache révalidé pour les tags: 'dashboard-user-${userId}', 'dashboard'`)
+    return { success: true, message: 'Cache des budgets révalidé.' }
+}
+    
