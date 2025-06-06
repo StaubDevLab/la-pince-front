@@ -8,23 +8,25 @@ import FormTransaction from '../transaction-form/FormTransaction'
 import { Transaction } from '@/types/transactions'
 import { PlusIcon } from 'lucide-react'
 import { Button } from '../ui/button'
-import { SheetContent, SheetTrigger, Sheet } from '../ui/sheet'
+import { SheetContent, SheetTrigger, Sheet, SheetTitle } from '../ui/sheet'
 
 const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) => {
     const [open, setOpen] = React.useState(false)
+    console.log(open)
     return (
         <Card className="w-full h-full">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className={'text-lg font-medium'}>Transactions récentes</CardTitle>
-                <Sheet open={open} onOpenChange={setOpen}>
-                    <SheetTrigger asChild>
-                        <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white">
-                            <PlusIcon className="h-5 w-5" />
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <FormTransaction onSuccess={() => setOpen(false)} />
-                    </SheetContent>
+                <Sheet open={open} onOpenChange={setOpen} modal={false}>
+                    <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" onClick={() => setOpen(true)}>
+                        <PlusIcon className="h-5 w-5" />
+                    </Button>
+                    <FormTransaction
+                        open={open}
+                        onOpenChange={open => {
+                            setOpen(open)
+                        }}
+                    />
                 </Sheet>
             </CardHeader>
             <CardContent className="px-2">
