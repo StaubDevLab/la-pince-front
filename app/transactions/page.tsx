@@ -1,8 +1,7 @@
 'use client'
 import * as React from 'react'
-import type { ColumnDef } from '@tanstack/react-table'
 import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from '@tanstack/react-table'
-import { CalendarIcon, PlusCircleIcon, EuroIcon, LayersIcon, NotebookTextIcon } from 'lucide-react'
+import { CalendarIcon, PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -10,185 +9,90 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
 import { categories } from '@/lib/fake-props'
-import { data as fakeData } from '@/lib/fake-transactions'
-import { formatRelativeDate } from '@/lib/utils'
-import { CategoryItem } from '@/components/category-item'
 import { DateRange } from 'react-day-picker'
-import { getTransactionsForUser } from '@/actions/transactions.actions'
+import { deleteTransaction, getTransactionsForUser } from '@/actions/transactions.actions'
+import FormTransaction from '@/components/transaction-form/FormTransaction'
 import { Transaction } from '@/types/transactions'
-const data = fakeData.data
+import { Sheet } from '@/components/ui/sheet'
+import getColumns from './TableColumns'
+import { toast } from 'sonner'
 
-
-
-export const columns: ColumnDef<Transaction>[] = [
-    {
-        accessorKey: 'description',
-        header: ({ column }) => {
-            return (
-                // On tri par ordre alphabétique
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    <NotebookTextIcon />
-                    <span>Transaction</span>
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div className="capitalize">{row.getValue('description')}</div>,
-    },
-    {
-        accessorKey: 'category',
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    <LayersIcon />
-                    <span>Categorie</span>
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const category = row.getValue('category') as {
-                name: string
-                color: string
-                icon?: string
-            }
-
-            return (
-                <Badge style={{ backgroundColor: category.color }} className="font-medium capitalize">
-                    <CategoryItem category={{ name: category.name, iconSize: 14 }} />
-                </Badge>
-            )
-        },
-        sortingFn: (rowA, rowB, columnId) => {
-            // On tri par ordre alphabétique
-            const a = rowA.getValue(columnId) as { name: string }
-            const b = rowB.getValue(columnId) as { name: string }
-
-            return a.name.localeCompare(b.name)
-        },
-        filterFn: (row, columnId, filterValue) => {
-            // On return uniquement la catégorie sélectionner dans le Select
-            const category = row.getValue(columnId) as { name: string }
-            if (!filterValue) return true
-            return category.name.toLowerCase().includes(filterValue.toLowerCase())
-        },
-    },
-    {
-        accessorKey: 'amount',
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    <EuroIcon />
-                    <span>Montant</span>
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue('amount'))
-            const isPositive = amount > 0
-            return (
-                <div className={`font-medium ${isPositive ? 'text-green-500' : ''}`}>
-                    {isPositive && '+'}
-                    {row.getValue('amount')} €
-                </div>
-            )
-        },
-    },
-    {
-        accessorKey: 'date',
-        header: ({ column }) => {
-            return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    <CalendarIcon />
-                    <span>Date</span>
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const rawDate = row.getValue('date')
-            const relativeDate = formatRelativeDate(rawDate as string)
-
-            return (
-                <div className="font-medium">
-                    <Badge variant={'secondary'}>{relativeDate}</Badge>
-                </div>
-            )
-        },
-        sortingFn: (rowA, rowB, columnId) => {
-            // On tri de la plus récente à la plus ancienne ou inversement
-            const dateA = new Date(rowA.getValue(columnId))
-            const dateB = new Date(rowB.getValue(columnId))
-
-            return dateA.getTime() - dateB.getTime()
-        },
-        filterFn: (row, columnId, filterValue) => {
-            // On tri en fonction du range date
-            const rowDate = new Date(row.getValue(columnId))
-            const { from, to } = filterValue || {}
-
-            if (from && to) {
-                return rowDate >= from && rowDate <= to
-            }
-            if (from) {
-                return rowDate >= from
-            }
-            if (to) {
-                return rowDate <= to
-            }
-            return true
-        },
-    },
-]
-const DEFAULT_TRANSACTION_LIMIT = process.env.DEFAULT_TRANSACTION_LIMIT ? Number(process.env.DEFAULT_TRANSACTION_LIMIT) : 100
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [selectedCategory, setSelectedCategory] = React.useState<string>('')
     const [transactions, setTransactions] = React.useState<Transaction[]>([])
-    const [pagination, setPagination] = React.useState({
-        pageIndex: 0,
-        pageSize: 10,
-    })
+    const [transactionToEdit, setTransactionToEdit] = React.useState<Transaction | null>(null)
+    const [isFormOpen, setIsFormOpen] = React.useState(false)
+    const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined)
-    React.useEffect(() => {
-        getTransactionsForUser(DEFAULT_TRANSACTION_LIMIT, 0).then((transactions) => {
-           
-           if (transactions.success && transactions.data) {
-            console.log('Transactions récupérées:', transactions);
-        
-            setTransactions(transactions.data.data);
-      
-           }
-            
-        })
-    }, [])
+    const [totalCount, setTotalCount] = React.useState(0)
+
+    const handleDeleteTransaction = async (id: string) => {
+        const res = await deleteTransaction(id)
+        if (res.success) {
+            fetchTransactions()
+            toast.success('Transaction supprimée')
+        } else {
+            toast.error('Erreur lors de la suppresion de la transaction')
+        }
+    }
+
+    const columns = React.useMemo(() => getColumns(handleDeleteTransaction), [])
+
     const table = useReactTable({
         data: transactions,
         columns,
+        manualPagination: true,
+        pageCount: Math.ceil(totalCount / pagination.pageSize),
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
-            columnVisibility,
             rowSelection,
             pagination,
         },
     })
 
+    const handleRowClick = (transaction: Transaction) => {
+        setTransactionToEdit(transaction)
+        setIsFormOpen(true)
+    }
+    const handleAddClick = () => {
+        setTransactionToEdit(null)
+        setIsFormOpen(true)
+    }
+
+    const fetchTransactions = () => {
+        getTransactionsForUser(pagination.pageSize, pagination.pageIndex).then(transactions => {
+            if (transactions.success && transactions.data) {
+                setTransactions(transactions.data.data)
+                setTotalCount(transactions.data.total || transactions.data.data.length || 0)
+            } else {
+                setTransactions([])
+                setTotalCount(0)
+            }
+        })
+    }
+
+    React.useEffect(() => {
+        fetchTransactions()
+    }, [pagination.pageIndex, pagination.pageSize])
+
     return (
         <div className="flex w-full justify-center p-6 md:p-10 flex-grow">
             <div className="w-full max-w-4/5">
                 <h1 className="text-xl font-semibold tracking-tight">Mes transactions</h1>
+                {/** HEADER */}
                 <div className="flex flex-col gap-4 items-start justify-between py-4 md:flex-row md:items-center">
                     <div className="flex flex-col gap-2 w-full md:flex-row md:items-center">
                         <Input
@@ -215,7 +119,9 @@ export default function DataTableDemo() {
                             <SelectContent>
                                 <SelectItem value="all">Toutes les catégories</SelectItem>
                                 {categories.map(ctg => (
-                                    <SelectItem key={ctg.name} value={ctg.name.toLowerCase()}>{ctg.name}</SelectItem>
+                                    <SelectItem key={ctg.name} value={ctg.name.toLowerCase()}>
+                                        {ctg.name}
+                                    </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
@@ -262,12 +168,27 @@ export default function DataTableDemo() {
                             <></>
                         )}
                     </div>
+                    <Sheet open={isFormOpen} onOpenChange={setIsFormOpen} modal={false}>
+                        <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" onClick={handleAddClick}>
+                            <PlusIcon className="h-5 w-5" />
+                        </Button>
 
-                    <Button className="flex items-center gap-2 w-full md:w-auto">
-                        <PlusCircleIcon className="h-4 w-4" />
-                        <span>Ajouter une transaction</span>
-                    </Button>
+                        <FormTransaction
+                            key={transactionToEdit?.id || 'new'}
+                            open={isFormOpen}
+                            onOpenChange={open => {
+                                setIsFormOpen(open)
+                            }}
+                            onSuccess={() => {
+                                fetchTransactions()
+                                setIsFormOpen(false)
+                            }}
+                            transactionToEdit={transactionToEdit || undefined}
+                        />
+                    </Sheet>
                 </div>
+
+                {/** TABLE */}
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
@@ -286,7 +207,7 @@ export default function DataTableDemo() {
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map(row => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} onClick={() => handleRowClick(row.original as Transaction)}>
                                         {row.getVisibleCells().map(cell => (
                                             <TableCell key={cell.id} className="text-center">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -304,6 +225,8 @@ export default function DataTableDemo() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/** PAGINATION */}
                 <Pagination className="mt-6">
                     <PaginationContent>
                         <PaginationItem>
