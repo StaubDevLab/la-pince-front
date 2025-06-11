@@ -8,7 +8,7 @@ export interface Transaction {
     updatedAt: Date
     amount: number
     userAccountId: string
-    transactionsType: number
+    transactionType: number
     description: string | null
     categoryId: string
     isReccuring: boolean

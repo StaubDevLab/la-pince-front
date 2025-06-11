@@ -4,8 +4,8 @@ export interface BudgetFetched {
     categoryId: string;
     totalAmount: number;
     actualAmount: number;
-    reccuringFrequency: number;
-    reccuringStartDate: string;
+    recurringFrequency: number;
+    recurringStartDate: string;
     lastResetDate: string;
     createdAt: string;
     updatedAt: string;
