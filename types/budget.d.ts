@@ -10,3 +10,12 @@ export interface BudgetFetched {
     createdAt: string;
     updatedAt: string;
 }
+
+
+export type BudgetFormType = {
+    categoryId:string
+    totalAmount: number
+    reccuringFrequency: number
+    reccuringStartDate: string
+
+}
