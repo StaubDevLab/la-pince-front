@@ -34,10 +34,10 @@ export default function Header() {
                 </div>
                 <div>
                     <h1 className="hidden sm:flex text-lg md:text-xl font-medium gap-1 items-center ">
-                        Bienvenue<span className="font-semibold">{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}</span>
+                        Bienvenue{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}
                     </h1>
                     <h1 className="flex gap-1 items-center text-base sm:hidden font-medium">
-                        Bonjour, <span className="font-semibold">{user.firstName ? user.firstName : <Skeleton className='w-20 h-4' />}</span>
+                        Bonjour, {user.firstName ? user.firstName : <Skeleton className='w-20 h-4' />}
                     </h1>
                     <div className="text-sm text-muted-foreground">
                         {user.amount ? <HeaderAmmount amount={user.amount} /> : <Skeleton  className="w-24 h-6" />}
