@@ -26,6 +26,13 @@ export function BudgetForm({open, onOpenChange}: {open: boolean; onOpenChange?: 
     formState: { errors },
   } = useForm<BudgetFormInputs>({
     resolver: zodResolver(budgetSchema),
+    defaultValues:{
+      totalAmount:0,
+      reccuringFrequency:'30',
+      categoryId:"",
+      reccuringStartDate:new Date().toISOString().split('T')[0]
+
+    }
   });
   useEffect(()=>{
     getCategoriesForForm().then(data => {
@@ -95,7 +102,7 @@ export function BudgetForm({open, onOpenChange}: {open: boolean; onOpenChange?: 
       <Label>
         Montant du budget
         </Label>
-        <Input type="number"  {...register('totalAmount', {
+        <Input type="number" min={0} {...register('totalAmount', {
                             required: 'Le montant est requis',
                             valueAsNumber: true,
                         })} />
@@ -109,7 +116,7 @@ export function BudgetForm({open, onOpenChange}: {open: boolean; onOpenChange?: 
                                   control={control}
                                   name="reccuringFrequency"
                                   render={({ field }) => (
-                                      <Select onValueChange={field.onChange} value={field.value || '30'}>
+                                      <Select onValueChange={field.onChange} value={'30'}>
                                           <SelectTrigger className="w-full">
                                               <SelectValue placeholder="Mensuelle..." />
                                           </SelectTrigger>
