@@ -97,6 +97,7 @@ export default async function Dashboard() {
             spentLabel: 'Dépenses actuelles',
             spentColor: spentColor,
             remainingColor: '#E5E7EB',
+            budgetId:budget.id
         };
     });
 
