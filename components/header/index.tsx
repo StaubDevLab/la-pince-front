@@ -37,9 +37,9 @@ export default function Header() {
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
+                <Link className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0" href='/dashboard'>
                     <Image src="/la-pince-logo.png" alt="Logo de l'application La Pince" width={80} height={80} />
-                </div>
+                </Link>
                 <div>
                     <h1 className="hidden sm:flex text-lg md:text-xl font-medium gap-1 items-center ">
                         Bonjour{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}
