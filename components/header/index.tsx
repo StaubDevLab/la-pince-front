@@ -42,7 +42,7 @@ export default function Header() {
                 </div>
                 <div>
                     <h1 className="hidden sm:flex text-lg md:text-xl font-medium gap-1 items-center ">
-                        Bienvenue{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}
+                        Bonjour{user.firstName ? ', ' + user.firstName : <Skeleton className='w-28 h-5'/>}
                     </h1>
                     <h1 className="flex gap-1 items-center text-base sm:hidden font-medium">
                         Bonjour, {user.firstName ? user.firstName : <Skeleton className='w-20 h-4' />}
