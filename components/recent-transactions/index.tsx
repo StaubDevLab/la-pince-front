@@ -18,7 +18,7 @@ const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) =
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className={'text-lg font-medium'}>Transactions récentes</CardTitle>
                 <Sheet open={open} onOpenChange={setOpen} modal={false}>
-                    <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" onClick={() => setOpen(true)}>
+                    <Button size="icon" className="rounded-full p-1 text-md bg-primary text-white" onClick={() => setOpen(true)}>
                         <PlusIcon className="h-5 w-5" />
                     </Button>
                     <FormTransaction
