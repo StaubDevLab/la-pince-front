@@ -20,6 +20,7 @@ export default function Header() {
     const pathname = usePathname()
     const { user, setUser } = useUser()
     const [nbUnreadNotifs, setNbUnreadNotifs] = useState(0)
+    const toggleValue = ['/dashboard', '/transactions'].includes(pathname) ? pathname : undefined;
 
 
     useEffect(() => {
@@ -57,13 +58,13 @@ export default function Header() {
             <div className="flex items-center gap-2 md:gap-3">
                 <ToggleGroup.Root
                     type="single"
-                    value={pathname}
+                    value={toggleValue}
                     className="hidden md:inline-flex relative bg-muted rounded-full p-1"
                 >
                     <div
                         className={`
                         absolute inset-y-0 left-0 w-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out
-                        ${pathname === '/dashboard' ? 'translate-x-0' : 'translate-x-full'}
+                        ${pathname === '/dashboard' ? 'translate-x-0' : pathname === '/transactions' ? 'translate-x-full' : 'translate-x-[-100%] opacity-0'}
                         `}
                     />
 
