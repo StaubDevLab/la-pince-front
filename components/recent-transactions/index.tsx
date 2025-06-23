@@ -48,7 +48,7 @@ const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) =
                                     <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} />
                                 </Badge>
                             </div>
-                            <div className={cn('text-right font-medium', transaction.transactionType === 1 ? 'text-green-600' : 'text-red-500')}>
+                            <div className={cn('text-right', transaction.transactionType === 1 ? 'text-green-600' : 'text-red-500')}>
                                 {transaction.transactionType === 1 ? '+' : '-'}
                                 {Math.abs(transaction.amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                             </div>
