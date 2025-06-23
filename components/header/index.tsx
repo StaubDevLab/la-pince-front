@@ -20,11 +20,11 @@ export default function Header() {
 
 
     useEffect(() => {
-    getProfile().then((response) => {
-      if (response.success && response.data) {
-        setUser(response.data)
-      }
-    })
+        getProfile().then((response) => {
+        if (response.success && response.data) {
+            setUser(response.data)
+        }
+        })
   }, [setUser])
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
