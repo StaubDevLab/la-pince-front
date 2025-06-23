@@ -139,6 +139,34 @@ const getColumns = (onDelete: (id: string) => void): ColumnDef<Transaction>[] =>
                 >
                     <DeleteIcon className="h-5 w-5" />
                 </Button>
+                    <Dialog>
+                            <DialogTrigger asChild>
+                            <Button
+                                variant='outline'
+                                size="sm"
+                                className="rounded-full p-1 text-md bg-primary text-white"
+                                onClick={(e) => e.stopPropagation()}>
+                                    <Trash />
+                            </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Attention</DialogTitle>
+                                <DialogDescription>
+                                Etes-vous sur de vouloir supprimer cette transaction ?
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                <Button variant="outline" onClick={(e) => e.stopPropagation()}>Annuler</Button>
+                                </DialogClose>
+                                <Button type="submit" onClick={(e) => {
+                                    e.stopPropagation()
+                                    onDelete(transaction.id)
+                                }}>Confirmer</Button>
+                            </DialogFooter>
+                            </DialogContent>
+                    </Dialog>
             )
         },
     },
