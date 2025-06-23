@@ -24,6 +24,10 @@ import { Category } from '@/types/categories'
 import { toast } from 'sonner'
 import { DashboardData } from '@/types/dashboard'
 import { BudgetFetched } from '@/types/budget'
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { BudgetCarousel } from '@/components/budget-carousel';
 
 
 export default async function Dashboard() {
@@ -38,6 +42,7 @@ export default async function Dashboard() {
         getBudgetsForUser()
     ]);
     const getCategoryIconComponent = (categoryName: string, fillColor: string): React.ReactNode => {
+        
         return (
             <div className="p-1 rounded-md" style={{ backgroundColor: fillColor }}>
                 <CategoryItem category={{ name: categoryName, iconSize: 24, displayName: false }} />
@@ -54,8 +59,7 @@ export default async function Dashboard() {
         categoriesResult.data.forEach((cat: Category) => {
             if (cat.id && cat.name && cat.color && cat.icon) {
                 const categoryFillColor: string = cat.color;
-                const categoryIconName: string = cat.icon;
-
+                const categoryIconName: string = cat.name;
 
                 const categoryIconComponent = getCategoryIconComponent(categoryIconName, categoryFillColor);
 
@@ -76,7 +80,7 @@ export default async function Dashboard() {
 
     //1. Données pour les cartes de budget
     const budgetCardProps = budgets.map(budget => {
-        const periodText = budget.reccuringFrequency === 30 ? '30 Jours' : `${budget.reccuringFrequency} Jours`; // Adapter le texte de la période
+        const periodText = budget.recurringFrequency === 30 ? '30 Jours' : `${budget.recurringFrequency} Jours`; // Adapter le texte de la période
 
         const spentPercentage = budget.totalAmount > 0 ? (budget.actualAmount / budget.totalAmount) * 100 : 0;
         let spentColor = '#F97316';
@@ -93,6 +97,12 @@ export default async function Dashboard() {
             spentLabel: 'Dépenses actuelles',
             spentColor: spentColor,
             remainingColor: '#E5E7EB',
+            budgetId:budget.id,
+            categoryId: budget.categoryId,
+            recurringFrequency: budget.recurringFrequency,
+            recurringStartDate: budget.recurringStartDate,
+            id: budget.id,
+            totalAmount: budget.totalAmount,
         };
     });
 
@@ -167,22 +177,14 @@ export default async function Dashboard() {
 
     return (
         <main className="flex-grow bg-background p-6 font-inter md:p-8 ">
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8">
+          
                 {/* Budget Cards avec Carousel */}
-                <div className="lg:col-span-4 md:col-span-2 col-span-1">
-                    <Carousel className="max-w-full relative overflow-visible mx-auto">
-                        <CarouselContent >
-                            {budgetCardProps.map((props, index) => (
-                                <CarouselItem key={index} className="md:basis-1/2">
-                                    <div>
-                                        <BudgetCard {...props} />
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="absolute top-1/2 left-2 md:left-4 lg:left-6 -translate-y-1/2 z-20" />
-                        <CarouselNext className="absolute top-1/2 right-2 md:right-4 lg:right-6 -translate-y-1/2 z-20" />
-                    </Carousel>
+                <div className="lg:col-span-4 md:col-span-2 col-span-1 ">
+               <BudgetCarousel budgetCardProps={budgetCardProps}/>
+
+                  
                 </div>
 
                 {/* Transactions Récentes à droite sur desktop */}

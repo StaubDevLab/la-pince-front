@@ -19,11 +19,13 @@ export type LoginFormData = z.infer<typeof loginSchema>
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
     const router = useRouter()
     const [error, setError] = useState<string>('')
+    // New state to control button disabled status
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting, isSubmitSuccessful },
+        formState: { errors, isSubmitting }, // isSubmitSuccessful is no longer needed here for button control
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -33,6 +35,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     })
 
     const onSubmit = async (data: LoginFormData) => {
+        setError(''); // Clear previous errors
+        setIsButtonDisabled(true); // Disable button immediately on submission
+
         try {
             const result = await signIn('credentials', {
                 email: data.email,
@@ -41,14 +46,16 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             })
 
             if (result?.error) {
-                setError('Identifiants invalides, veuillez réessayer')
-                return
+                setError('Identifiants invalides, veuillez réessayer');
+                setIsButtonDisabled(false); // Re-enable button on authentication error
+                return;
             }
-            router.push('/dashboard')
-            router.refresh()
+            router.push('/dashboard');
+            router.refresh();
         } catch (error) {
-            console.error('Erreur lors de la connexion', error)
-            setError('Une erreur est survenue')
+            console.error('Erreur lors de la connexion', error);
+            setError('Une erreur est survenue');
+            setIsButtonDisabled(false); // Re-enable button on general error
         }
     }
     return (
@@ -103,8 +110,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 <p className="text-sm text-red-500">{error}</p>
                             </div>
                         )}
-                        <Button type="submit" className="w-full" disabled={isSubmitting || isSubmitSuccessful}>
-                            {isSubmitting || isSubmitSuccessful ? 'Connexion...' : 'Connexion'}
+                        <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+                            {isSubmitting ? 'Connexion...' : 'Connexion'}
                         </Button>
                     </div>
                 </form>
@@ -112,4 +119,3 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         </div>
     )
 }
-
