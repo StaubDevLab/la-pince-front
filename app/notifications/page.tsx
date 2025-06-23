@@ -57,7 +57,7 @@ export default function Notifications() {
           <h1 className="text-xl font-semibold tracking-tight">Notifications</h1>
           <div className="flex items-center space-x-2">
             <Label htmlFor="show-unread" className="text-sm text-muted-foreground">
-              Uniquement les non lues
+              Afficher les notifications lues
             </Label>
             <Switch
               id="show-unread"

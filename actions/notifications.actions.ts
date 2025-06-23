@@ -16,7 +16,7 @@ export async function getNotifications (limit = 0, page = 1, showOnlyUnread: boo
     const params = new URLSearchParams()
     if (limit > 0) params.append('limit', limit.toString())
     if (page > 0) params.append('page', page.toString())
-    if (!showOnlyUnread) params.append('isRead', showOnlyUnread.toString())
+    if (showOnlyUnread) params.append('isRead', showOnlyUnread.toString())
 
     const url = `${API_BASE_URL}/notifications${params.size ? `?${params.toString()}` : ''}`
 
