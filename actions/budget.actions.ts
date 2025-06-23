@@ -101,6 +101,49 @@ export const deleteBudget = async (budgetId: string): Promise<ApiResponse<null>>
         return { success: false, error: 'Une erreur serveur est survenue lors de la suppression du budget.' }
     }
 }
+export const updateBudget = async(budgetId: string, data: BudgetFormType): Promise<ApiResponse<null>> => {
+    const session = await auth()
+
+    if (!session?.accessToken) {
+        return { success: false, error: 'Non autorisé : Token JWT manquant pour supprimer le budget.' }
+    }
+
+    const jwt = session.accessToken
+    
+    try{
+        const response = await fetch(`${API_BASE_URL}/budget/${budgetId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+            },
+            body: JSON.stringify(data),
+            next: {
+                revalidate: 300,
+                tags: ['budget'],
+            },
+        })
+        if (!response.ok) {
+            let errorData
+            try {
+                errorData = await response.json()
+            } catch (e) {
+                errorData = { message: response.statusText || "Erreur de communication avec l'API." }
+            }
+            console.error('Erreur API (mise à jour budget):', response.status, errorData)
+            return {
+                success: false,
+                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de mettre à jour le budget.'}`,
+            }
+        }
+        revalidateUserBudgetsCache()
+        console.log("Cache révalidé pour le tag: 'budget' après mise à jour.")
+        return { success: true, message: 'Budget modifié avec succès.' }
+    } catch (error) {
+        console.error('Erreur inattendue (mise à jour budget):', error)
+        return { success: false, error: 'Une erreur serveur est survenue lors de la mise à jour du budget.' }
+    }
+}
 
 export const revalidateUserBudgetsCache = async (): Promise<ApiResponse<null>> => {
     const session = await auth()
@@ -109,6 +152,7 @@ export const revalidateUserBudgetsCache = async (): Promise<ApiResponse<null>> =
     }
     const userId = session.user.id
     revalidateTag('budget')
+    revalidateTag(`budgets-user-${userId}`)
     console.log(`Cache révalidé pour les tags: 'budget'`)
     return { success: true, message: 'Cache des budgets révalidé.' }
 }

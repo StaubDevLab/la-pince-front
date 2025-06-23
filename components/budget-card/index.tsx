@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, MoreVertical, Trash } from "lucide-react"
+import { Edit, MoreVertical, Plus, Sheet, Trash } from "lucide-react"
 import { Cell, Pie, PieChart } from "recharts"
 import { useState } from "react"
 
@@ -29,6 +29,8 @@ import { deleteBudget  } from "@/actions/budget.actions"
 import { revalidateUserDashboardCache,revalidateUserBudgetsCache } from "@/actions/dashboard.actions"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
+import { BudgetForm } from "../budget-form"
 
 interface BudgetCardProps {
   title: string
@@ -39,6 +41,7 @@ interface BudgetCardProps {
   spentColor?: string
   remainingColor?: string
   budgetId?: string
+  onEditOpen?: () => void
 
 }
 
@@ -51,12 +54,14 @@ export function BudgetCard({
   spentColor = "#F97316",
   remainingColor = "#F0F0F0",
   budgetId = "",
+  onEditOpen
   
 }: BudgetCardProps) {
   const isOverBudget = spent > total
   const remaining = isOverBudget ? 0 : total - spent
     
   const [open, setOpen] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
   const onOpenChange = (value: boolean) => setOpen(value)
     const router = useRouter()
 
@@ -96,42 +101,47 @@ export function BudgetCard({
           <span className="text-sm text-muted-foreground">{period}</span>
 
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MoreVertical className="h-5 w-5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>
-                <Edit className="mr-2 h-4 w-4" />
-                Modifier
-              </DropdownMenuItem>
+  <DropdownMenuTrigger>
+    <MoreVertical className="h-5 w-5" />
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+  <DropdownMenuItem
+  onSelect={(e) => {
+    e.preventDefault()
+    onEditOpen?.() 
+  }}
+>
+  <Edit className="mr-2 h-4 w-4" />
+  Modifier
+</DropdownMenuItem>
 
-              {/* Dialog pour la suppression */}
-              <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Trash className="mr-2 h-4 w-4" />
-                    Supprimer
-                  </DropdownMenuItem>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Supprimer le budget ?</DialogTitle>
-                    <DialogDescription>
-                      Cette action est irréversible. Voulez-vous vraiment supprimer ce budget ?
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setOpen(false)}>
-                      Annuler
-                    </Button>
-                    <Button variant="destructive" onClick={handleDelete}>
-                      Confirmer
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    {/* Dialog pour la suppression  */}
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          <Trash className="mr-2 h-4 w-4" />
+          Supprimer
+        </DropdownMenuItem>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Supprimer le budget ?</DialogTitle>
+          <DialogDescription>
+            Cette action est irréversible. Voulez-vous vraiment supprimer ce budget ?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Annuler
+          </Button>
+          <Button variant="destructive" onClick={handleDelete}>
+            Confirmer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </DropdownMenuContent>
+</DropdownMenu>
         </div>
       </CardHeader>
 
@@ -176,6 +186,7 @@ export function BudgetCard({
           </div>
         </div>
       </CardContent>
+      
     </Card>
   )
 }
