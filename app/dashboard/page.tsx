@@ -176,7 +176,7 @@ export default async function Dashboard() {
 
 
     return (
-        <main className="flex-grow bg-background p-6 font-inter md:p-8 ">
+        <main className="flex-grow bg-background p-4 font-inter md:p-8 max-w-[1500px] mx-auto ">
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8">
           
