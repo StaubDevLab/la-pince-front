@@ -1,12 +1,13 @@
 import { CategoryItem } from '@/components/category-item'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { formatRelativeDate } from '@/lib/utils'
 import { Transaction } from '@/types/transactions'
 import { ColumnDef } from '@tanstack/react-table'
-import { CalendarIcon, DeleteIcon, EuroIcon, LayersIcon, NotebookTextIcon } from 'lucide-react'
+import { CalendarIcon, DeleteIcon, EuroIcon, Eye, LayersIcon, NotebookTextIcon, Trash } from 'lucide-react'
 
-const getColumns = (onDelete: (id: string) => void): ColumnDef<Transaction>[] => [
+const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Transaction) => void): ColumnDef<Transaction>[] => [
     {
         accessorKey: 'description',
         header: ({ column }) => {
@@ -123,22 +124,48 @@ const getColumns = (onDelete: (id: string) => void): ColumnDef<Transaction>[] =>
         },
     },
     {
-        id: 'delete',
+        id: 'action',
         header: () => <span>Action</span>,
         cell: ({ row }) => {
             const transaction = row.original
             return (
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    className="rounded-full p-1 text-md bg-primary text-white"
-                    onClick={e => {
-                        e.stopPropagation() // pour ne pas déclencher l'édition
-                        onDelete(transaction.id)
-                    }}
-                >
-                    <DeleteIcon className="h-5 w-5" />
-                </Button>
+                <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
+                    <Button
+                        variant='outline'
+                        size="sm"
+                        className="rounded-full p-1 text-md bg-primary text-white"
+                        onClick={(e) => onRowClick(transaction)}>
+                            <Eye />
+                    </Button>
+                    <Dialog>
+                            <DialogTrigger asChild>
+                            <Button
+                                variant='outline'
+                                size="sm"
+                                className="rounded-full p-1 text-md bg-primary text-white"
+                                onClick={(e) => e.stopPropagation()}>
+                                    <Trash />
+                            </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Attention</DialogTitle>
+                                <DialogDescription>
+                                Etes-vous sur de vouloir supprimer cette transaction ?
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                <Button variant="outline" onClick={(e) => e.stopPropagation()}>Annuler</Button>
+                                </DialogClose>
+                                <Button type="submit" onClick={(e) => {
+                                    e.stopPropagation()
+                                    onDelete(transaction.id)
+                                }}>Confirmer</Button>
+                            </DialogFooter>
+                            </DialogContent>
+                    </Dialog>
+                </div>
             )
         },
     },

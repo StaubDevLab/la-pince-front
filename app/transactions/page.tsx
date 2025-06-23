@@ -40,7 +40,12 @@ export default function DataTableDemo() {
         }
     }
 
-    const columns = React.useMemo(() => getColumns(handleDeleteTransaction), [])
+    const handleRowClick = (transaction: Transaction) => {
+        setTransactionToEdit(transaction)
+        setIsFormOpen(true)
+    }
+
+    const columns = React.useMemo(() => getColumns(handleDeleteTransaction, handleRowClick), [])
 
     const table = useReactTable({
         data: transactions,
@@ -63,10 +68,6 @@ export default function DataTableDemo() {
         },
     })
 
-    const handleRowClick = (transaction: Transaction) => {
-        setTransactionToEdit(transaction)
-        setIsFormOpen(true)
-    }
     const handleAddClick = () => {
         setTransactionToEdit(null)
         setIsFormOpen(true)
@@ -207,7 +208,7 @@ export default function DataTableDemo() {
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map(row => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} onClick={() => handleRowClick(row.original as Transaction)}>
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                         {row.getVisibleCells().map(cell => (
                                             <TableCell key={cell.id} className="text-center">
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
