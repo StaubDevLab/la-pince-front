@@ -7,5 +7,5 @@ export default auth((req) => {
     }
 })
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|la-pince-logo).*)"],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|la-pince-logo|reset-password|forgot-password|mentions-legales|contact|a-propos|conditions-generales|politique-privacite).*)"],
 }

@@ -100,11 +100,11 @@ export function BudgetCard({
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground">{period}</span>
 
-          <DropdownMenu>
+          <DropdownMenu >
   <DropdownMenuTrigger>
     <MoreVertical className="h-5 w-5" />
   </DropdownMenuTrigger>
-  <DropdownMenuContent>
+  <DropdownMenuContent align="end">
   <DropdownMenuItem
   onSelect={(e) => {
     e.preventDefault()

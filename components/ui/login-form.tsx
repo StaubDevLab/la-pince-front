@@ -12,8 +12,8 @@ import { loginSchema } from '@/types/auth-schema'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
-
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
@@ -21,10 +21,12 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     const [error, setError] = useState<string>('')
     // New state to control button disabled status
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
+    const emailParam = useSearchParams().get("email")
     const {
         register,
         handleSubmit,
+        watch,
+        setValue,
         formState: { errors, isSubmitting }, // isSubmitSuccessful is no longer needed here for button control
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -33,7 +35,12 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             password: '',
         },
     })
-
+    const email = emailParam || watch('email')
+    useEffect(() => {
+        if (emailParam) {
+            setValue('email', emailParam)
+        }
+    }, [emailParam])
     const onSubmit = async (data: LoginFormData) => {
         setError(''); // Clear previous errors
         setIsButtonDisabled(true); // Disable button immediately on submission
@@ -65,7 +72,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
             <span className="text-sm text-center mb-4">
                 Pas de compte ?{' '}
-                <Link href={'/inscription'} className={'underline hover:text-primary'}>
+                <Link href={email ? "/inscription?email=" + email : "/inscription"} className={'underline hover:text-primary'}>
                     Créer en un ici
                 </Link>
             </span>
@@ -91,12 +98,12 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         <div className="grid gap-2">
                             <div className="flex items-center">
                                 <Label htmlFor="password">Mot de passe</Label>
-                                <a
-                                    href="#"
+                                <Link
+                                    href={`/forgot-password?email=${email}`}
                                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                                 >
                                     Mot de passe oublié ?
-                                </a>
+                                </Link>
                             </div>
                             <Input {...register('password')} type="password" required />
                             {errors.password && (
