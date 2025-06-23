@@ -15,7 +15,7 @@ export interface BudgetFetched {
 export type BudgetFormType = {
     categoryId:string
     totalAmount: number
-    reccuringFrequency: number
-    reccuringStartDate: string
+    recurringFrequency: number
+    recurringStartDate: string
 
 }
