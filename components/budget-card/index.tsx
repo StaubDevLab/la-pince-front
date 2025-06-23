@@ -134,7 +134,7 @@ export function BudgetCard({
           <Button variant="outline" onClick={() => setOpen(false)}>
             Annuler
           </Button>
-          <Button variant="destructive" onClick={handleDelete}>
+          <Button variant="default" onClick={handleDelete}>
             Confirmer
           </Button>
         </DialogFooter>
