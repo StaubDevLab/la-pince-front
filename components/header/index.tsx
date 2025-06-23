@@ -125,10 +125,6 @@ export default function Header() {
                             <CircleUser className="mr-2 h-4 w-4" />
                             <Link href={"/profile"}>Mon profil</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Paramètres</span>
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={ () => {
                             signOut({redirectTo: '/connexion'})
                         }}>
