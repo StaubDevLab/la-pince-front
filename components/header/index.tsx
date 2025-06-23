@@ -9,23 +9,31 @@ import { SwitchTheme } from '@/components/switch-theme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getProfile } from '@/actions/profile.actions'
 import { useUser } from '@/context/user-context'
 import { HeaderAmmount } from '../header-amount'
 import { Skeleton } from '../ui/skeleton'
+import { getNotifications } from '@/actions/notifications.actions'
 export default function Header() {
     const pathname = usePathname()
     const { user, setUser } = useUser()
+    const [nbUnreadNotifs, setNbUnreadNotifs] = useState(0)
 
 
     useEffect(() => {
-    getProfile().then((response) => {
-      if (response.success && response.data) {
-        setUser(response.data)
-      }
-    })
-  }, [setUser])
+            getProfile().then((response) => {
+            if (response.success && response.data) {
+                setUser(response.data)
+            }
+            getNotifications().then((response) => {
+                if(response.success && response.data) {
+                    const nbNotifsUnread = response.data.data.filter((notif) => !notif.isRead)
+                    setNbUnreadNotifs(nbNotifsUnread.length)
+                }
+            })
+        })
+    }, [setUser])
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
             <div className="flex items-center gap-3">
@@ -93,7 +101,11 @@ export default function Header() {
                 <Link href="/notifications">
                     <Button variant="ghost" size="icon" className="relative h-8 w-8">
                         <BellIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                        <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                        {nbUnreadNotifs > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 text-xs text-white bg-red-500 rounded-full flex items-center justify-center">
+                            {nbUnreadNotifs > 9 ? '9+' : nbUnreadNotifs}
+                        </span>
+                        )}
                     </Button>
                 </Link>
 

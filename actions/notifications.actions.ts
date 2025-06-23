@@ -1,10 +1,12 @@
 'use server'
 
 import { auth } from '@/auth'
+import { ApiResponse } from '@/types/apiResponse';
+import { Notification } from '@/types/notifications';
 
 const API_BASE_URL = process.env.API_URL
 
-export async function getNotifications (limit = 0, page = 1, showOnlyUnread: boolean) {
+export async function getNotifications (limit = 0, page = 1, showOnlyUnread = true): Promise<ApiResponse<{ data: Notification[]; limit: number; page: number; total: number }>> {
     const session = await auth()
 
     if (!session?.user?.id || !session?.accessToken) {
