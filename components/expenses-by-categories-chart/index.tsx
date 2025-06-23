@@ -85,9 +85,9 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
                 <CardTitle className="text-lg font-medium">{title}</CardTitle>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg">
+                        <Button variant="outline" size="sm" className="px-2 text-sm md:text-lg">
                             <CalendarIcon className="h-3 w-3 mr-1" />
-                            {formatDateRange()}
+                            <small>{formatDateRange()}</small> 
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-4" align="end">
