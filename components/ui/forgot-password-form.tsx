@@ -70,7 +70,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
 
             <span className="text-sm text-center mb-4">
                 Retour à la{' '}
-                <Link href={'/connexion?email=' + email} className={'underline hover:text-primary'}>
+                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={'underline hover:text-primary'}>
                     connexion
                 </Link>
             </span>

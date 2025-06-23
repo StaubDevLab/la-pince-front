@@ -72,7 +72,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
             <span className="text-sm text-center mb-4">
                 Pas de compte ?{' '}
-                <Link href={'/inscription?email=' + email} className={'underline hover:text-primary'}>
+                <Link href={email ? "/inscription?email=" + email : "/inscription"} className={'underline hover:text-primary'}>
                     Créer en un ici
                 </Link>
             </span>

@@ -80,7 +80,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
             <span className="text-sm text-center mb-4">
                 Vous avez déjà un compte ?{' '}
-                <Link href={"/connexion?email=" + email} className={"underline hover:text-primary"}>
+                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={"underline hover:text-primary"}>
                     Se connecter
                 </Link>
             </span>
