@@ -24,7 +24,7 @@ export default function Notifications() {
   const typeColor: Record<string, string> = {
     info: 'text-sky-500',
     warning: 'text-yellow-500',
-    danger: 'text-rose-500',
+    error: 'text-rose-500',
   }
 
   const fetchNotifications = () => {
