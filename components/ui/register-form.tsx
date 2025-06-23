@@ -12,22 +12,30 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { registerSchema } from '@/types/auth-schema'
 type RegisterFormData = z.infer<typeof registerSchema>
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
     const router = useRouter()
     const [error, setError] = useState<string>('')
     const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
-
+    const emailParam = useSearchParams().get("email")
     const {
         register,
         handleSubmit,
+        watch,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
     })
-
+    const email = emailParam || watch('email')
+    useEffect(() => {
+        if (emailParam) {
+            setValue('email', emailParam)
+        }
+    }, [emailParam])
     const onSubmit = async (data: RegisterFormData) => {
         const dataToSend = {...data, accountName: "Compte personnel", amount: 150.32}
         try {
@@ -72,7 +80,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
             <span className="text-sm text-center mb-4">
                 Vous avez déjà un compte ?{' '}
-                <Link href={"/connexion"} className={"underline hover:text-primary"}>
+                <Link href={"/connexion?email=" + email} className={"underline hover:text-primary"}>
                     Se connecter
                 </Link>
             </span>
