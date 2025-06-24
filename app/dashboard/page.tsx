@@ -46,7 +46,6 @@ export default async function Dashboard() {
     };console.log(dashboardResult)
     const transactions: Transaction[] = transactionsResult.success && transactionsResult.data ? transactionsResult.data.data : [];
     const dashboardData: DashboardData | null | undefined = dashboardResult.success ? dashboardResult.data : null;
-    const dashboardErrorMessage: string | null = dashboardResult.error || 'Erreur inconnue lors du chargement des données du tableau de bord.';
     const budgets: BudgetFetched[] = budgetsResult.success && budgetsResult.data ? budgetsResult.data : [];
     const categoriesMap = new Map<string, { name: string, fill: string, icon: React.ReactNode }>();
     if (categoriesResult.success && categoriesResult.data) {
