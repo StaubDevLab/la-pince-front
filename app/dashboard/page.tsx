@@ -43,10 +43,10 @@ export default async function Dashboard() {
                 <CategoryItem category={{ name: categoryName, iconSize: 24, displayName: false }} />
             </div>
         );
-    };
+    };console.log(dashboardResult)
     const transactions: Transaction[] = transactionsResult.success && transactionsResult.data ? transactionsResult.data.data : [];
     const dashboardData: DashboardData | null | undefined = dashboardResult.success ? dashboardResult.data : null;
-    const dashboardErrorMessage: string | null = dashboardResult.success ? null : (dashboardResult.error || 'Erreur inconnue lors du chargement des données du tableau de bord.');
+    const dashboardErrorMessage: string | null = dashboardResult.error || 'Erreur inconnue lors du chargement des données du tableau de bord.';
     const budgets: BudgetFetched[] = budgetsResult.success && budgetsResult.data ? budgetsResult.data : [];
     const categoriesMap = new Map<string, { name: string, fill: string, icon: React.ReactNode }>();
     if (categoriesResult.success && categoriesResult.data) {
@@ -125,6 +125,7 @@ export default async function Dashboard() {
 
     // 3. Données pour ChartWeekly
     const dayNames = ['DIM', 'LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'];
+    console.log(dashboardData?.hebdo)
     const weeklyProps = dashboardData?.hebdo ? {
         title: 'Activité hebdomadaire',
         total: dashboardData.hebdo.total,
@@ -202,7 +203,7 @@ export default async function Dashboard() {
                     <ChartWeekly {...weeklyProps} />
                 </div>
             </div>
-            <DashboardToaster message={dashboardErrorMessage || "Données du dashboard chargées avec succès"} success={dashboardResult.success} />
+            {dashboardResult.error && <DashboardToaster message={dashboardResult.error || "Données du dashboard chargées avec succès"} success={false} />}
 
         </main>
     );
