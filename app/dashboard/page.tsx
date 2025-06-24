@@ -9,8 +9,6 @@ import { getDashboardData, getBudgetsForUser } from '@/actions/dashboard.actions
 import { getCategories } from '@/actions/categories.actions'
 
 // Client Components
-import { BudgetCard } from '@/components/budget-card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ExpensesByCategoriesChart } from '@/components/expenses-by-categories-chart';
 import { ChartMonthly } from '@/components/chart-monthly';
 import { ChartWeekly } from '@/components/chart-weekly';
@@ -24,9 +22,6 @@ import { Category } from '@/types/categories'
 import { toast } from 'sonner'
 import { DashboardData } from '@/types/dashboard'
 import { BudgetFetched } from '@/types/budget'
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 import { BudgetCarousel } from '@/components/budget-carousel';
 
 
@@ -99,7 +94,7 @@ export default async function Dashboard() {
             remainingColor: '#E5E7EB',
             budgetId:budget.id,
             categoryId: budget.categoryId,
-            recurringFrequency: budget.recurringFrequency,
+            recurringFrequency: String(budget.recurringFrequency),
             recurringStartDate: budget.recurringStartDate,
             id: budget.id,
             totalAmount: budget.totalAmount,
@@ -176,7 +171,7 @@ export default async function Dashboard() {
 
 
     return (
-        <main className="flex-grow bg-background p-4 font-inter md:p-8 max-w-[1500px] mx-auto ">
+        <main className="flex-grow bg-background p-4 font-inter md:p-8 max-w-[2000px] mx-auto ">
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mt-8">
           
