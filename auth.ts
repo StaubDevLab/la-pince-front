@@ -9,7 +9,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 password: { },
             },
             async authorize(credentials) {
-                console.log("CREDENTIALS",credentials)
                 const response = await fetch(`${process.env.API_URL}/auth/signin`,{
                     method: 'POST',
                     headers: {
@@ -69,4 +68,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     secret: process.env.NEXTAUTH_SECRET,
+    trustHost: true,
 })
