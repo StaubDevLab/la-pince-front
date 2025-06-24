@@ -1,6 +1,6 @@
 'use client'
 
-import { z } from 'zod'
+import {  z } from 'zod'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,7 +66,9 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
             setIsRedirecting(true)
             router.push('/dashboard')
             router.refresh()
-        } catch (err : any) {
+            
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err : any) { 
             console.error(err)
             setError( err.message || "Une erreur est survenue")
         }

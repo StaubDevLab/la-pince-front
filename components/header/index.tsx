@@ -1,5 +1,5 @@
 'use client'
-import { BellIcon, CircleUser, LogOut, Menu, Settings } from 'lucide-react'
+import { BellIcon, CircleUser, LogOut, Menu } from 'lucide-react'
 import Image from 'next/image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'

@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Plus } from "lucide-react" 
+import { X } from "lucide-react" 
 import { Cell, Pie, PieChart } from "recharts"
 import { useState } from "react"
 
@@ -9,7 +9,6 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart"
 
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -23,10 +22,7 @@ import { revalidateUserDashboardCache,revalidateUserBudgetsCache } from "@/actio
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
-// Pas besoin de SheetTrigger, SheetContent, etc. ici,
-// car la Sheet est gérée par le composant parent BudgetCarousel.
-// import { SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
-// import { BudgetForm } from "../budget-form" // Pas besoin d'importer BudgetForm ici, il est géré dans le parent
+
 
 interface BudgetCardProps {
   title: string
@@ -36,7 +32,7 @@ interface BudgetCardProps {
   spentLabel?: string
   spentColor?: string
   remainingColor?: string
-  budgetId: string; // Rendre budgetId obligatoire si utilisé pour la suppression
+  budgetId: string; 
   onEditOpen?: () => void;
 }
 

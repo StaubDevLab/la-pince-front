@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -8,7 +8,7 @@ import FormTransaction from '../transaction-form/FormTransaction'
 import { Transaction } from '@/types/transactions'
 import { PlusIcon } from 'lucide-react'
 import { Button } from '../ui/button'
-import { SheetContent, SheetTrigger, Sheet, SheetTitle } from '../ui/sheet'
+import { Sheet } from '../ui/sheet'
 
 const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) => {
     const [open, setOpen] = React.useState(false)

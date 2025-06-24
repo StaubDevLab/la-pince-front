@@ -23,7 +23,6 @@ import {
 type BudgetFormInputs = z.infer<typeof budgetSchema>;
 
 export function BudgetForm({
-  open,
   onOpenChange,
   initialData,
 }: {
