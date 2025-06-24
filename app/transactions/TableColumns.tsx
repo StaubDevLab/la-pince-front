@@ -70,10 +70,10 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
         },
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue('amount'))
-            const isPositive = amount > 0
+            const transaction = row.original
             return (
-                <div className={`font-medium ${isPositive ? 'text-green-500' : ''}`}>
-                    {isPositive && '+'}
+                <div className={`font-medium ${transaction.transactionType === 1 ? 'text-green-500' : 'text-red-500'}`}>
+                    {transaction.transactionType === 1 ? '+' : '-'}
                     {row.getValue('amount')} €
                 </div>
             )
