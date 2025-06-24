@@ -69,7 +69,6 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
             )
         },
         cell: ({ row }) => {
-            const amount = parseFloat(row.getValue('amount'))
             const transaction = row.original
             return (
                 <div className={`font-medium ${transaction.transactionType === 1 ? 'text-green-500' : 'text-red-500'}`}>
