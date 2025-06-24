@@ -1,5 +1,4 @@
 import Link from "next/link"
-import  Footer  from "@/components/footer"
 import { ChevronLeft } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -66,7 +65,7 @@ export default function MentionsLegales() {
                                         </p>
                                         <p>
                                             Les icônes utilisées proviennent de la fabuleuse librairie <strong>Lucide
-                                            React</strong>, qu’on remercie pour leur bon goût graphique : {' '}
+                                            React</strong>, qu&apos;on remercie pour leur bon goût graphique : {' '}
                                             <Link href="https://lucide.dev" target="_blank"
                                                   rel="noopener noreferrer" className={"underline hover:text-primary"}>
                                                 lucide.dev
@@ -84,7 +83,7 @@ export default function MentionsLegales() {
                                             personnelles</h2>
                                         <p>
                                             On respecte ta vie privée. On ne collecte que le strict nécessaire (email et
-                                            mot de passe hashé — on n'est pas des barbares).
+                                            mot de passe hashé — on n&apos;est pas des barbares).
                                         </p>
                                         <p>
                                             Tes données sont stockées de manière sécurisée et ne seront jamais revendues
