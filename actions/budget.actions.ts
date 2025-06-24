@@ -1,148 +1,71 @@
 'use server'
 
 import { auth } from "@/auth";
+import { fetchWithAuth } from "@/lib/fetch-with-auth";
 import { ApiResponse } from "@/types/apiResponse";
 import { BudgetFormType } from "@/types/budget";
 import { revalidateTag } from "next/cache";
 const API_BASE_URL = process.env.API_URL
-export async function createBudget(data: BudgetFormType): Promise<ApiResponse<{amount: number}>> {
-    
-    const session = await auth()
-
-    if (!session?.accessToken) {
-        return { success: false, error: 'Non autorisé : Token JWT manquant pour créer la transaction.' }
+export async function createBudget(data: BudgetFormType): Promise<ApiResponse<{ amount: number }>> {
+    const { data: res, error, success } = await fetchWithAuth<{ totalUserAccountAmount: number }>(
+      `${API_BASE_URL}/budget`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+        next: {
+          revalidate: 300,
+          tags: ['budget'],
+        },
+      }
+    )
+  
+    if (!success || !res) {
+      return { success: false, error: error || 'Erreur inconnue' }
     }
-
-    const jwt = session.accessToken
-
-    
-
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/budget`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwt}`,
-            },
-            body: JSON.stringify(data),
-            next: {
-                revalidate: 300,
-                tags: ['budget'],
-            },
-        })
-
-        if (!response.ok) {
-            let errorData
-            try {
-                errorData = await response.json()
-            } catch (e) {
-                errorData = { message: response.statusText || "Erreur de communication avec l'API." }
-            }
-            console.error('Erreur API (création budget):', response.status, errorData)
-            return {
-                success: false,
-                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de créer le budget.'}`,
-            }
-        }
-        const res = await response.json()
-        const amount = res.totalUserAccountAmount
-     
-        revalidateUserBudgetsCache()
-        console.log("Cache révalidé pour le tag: 'budget' après création.")
-        return { success: true, message: 'Budget créé avec succès.',data: { amount } }
-    } catch (error) {
-        console.error('Erreur inattendue (création budget):', error)
-        return { success: false, error: 'Une erreur serveur est survenue lors de la création du budget.' }
-    }
-}
+  
+    await revalidateUserBudgetsCache()
+    return { success: true, data: { amount: res.totalUserAccountAmount }, message: 'Budget créé avec succès' }
+  }
 
 export const deleteBudget = async (budgetId: string): Promise<ApiResponse<null>> => {
     
-    const session = await auth()
-
-    if (!session?.accessToken) {
-        return { success: false, error: 'Non autorisé : Token JWT manquant pour supprimer le budget.' }
-    }
-
-    const jwt = session.accessToken
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/budget/${budgetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwt}`,
-            },
-            next: {
-                revalidate: 300,
-                tags: ['budget'],
-            },
-        })
-
-        if (!response.ok) {
-            let errorData
-            try {
-                errorData = await response.json()
-            } catch (e) {
-                errorData = { message: response.statusText || "Erreur de communication avec l'API." }
-            }
-            console.error('Erreur API (suppression budget):', response.status, errorData)
-            return {
-                success: false,
-                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de supprimer le budget.'}`,
-            }
+    const { data: res, error, success } = await fetchWithAuth<{ totalUserAccountAmount: number }>(
+        `${API_BASE_URL}/budget/${budgetId}`,
+        {
+          method: 'DELETE',
+          next: {
+            revalidate: 300,
+            tags: ['budget'],
+          },
         }
-        revalidateUserBudgetsCache()
-        console.log("Cache révalidé pour le tag: 'budget' après suppression.")
-        return { success: true, message: 'Budget supprimé avec succès.' }
-    } catch (error) {
-        console.error('Erreur inattendue (suppression budget):', error)
-        return { success: false, error: 'Une erreur serveur est survenue lors de la suppression du budget.' }
-    }
+      )
+
+      if (!success || !res) {
+        return { success: false, error: error || 'Erreur inconnue' }
+      }
+    
+      await revalidateUserBudgetsCache()
+      return { success: true, message: 'Budget supprimé avec succès' }
 }
 export const updateBudget = async(budgetId: string, data: BudgetFormType): Promise<ApiResponse<null>> => {
-    const session = await auth()
-
-    if (!session?.accessToken) {
-        return { success: false, error: 'Non autorisé : Token JWT manquant pour supprimer le budget.' }
-    }
-
-    const jwt = session.accessToken
-    
-    try{
-        const response = await fetch(`${API_BASE_URL}/budget/${budgetId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwt}`,
-            },
-            body: JSON.stringify(data),
-            next: {
-                revalidate: 300,
-                tags: ['budget'],
-            },
-        })
-        if (!response.ok) {
-            let errorData
-            try {
-                errorData = await response.json()
-            } catch (e) {
-                errorData = { message: response.statusText || "Erreur de communication avec l'API." }
-            }
-            console.error('Erreur API (mise à jour budget):', response.status, errorData)
-            return {
-                success: false,
-                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de mettre à jour le budget.'}`,
-            }
+   const { data: res, error, success } = await fetchWithAuth<{ totalUserAccountAmount: number }>(
+        `${API_BASE_URL}/budget/${budgetId}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+          next: {
+            revalidate: 300,
+            tags: ['budget'],
+          },
         }
-        revalidateUserBudgetsCache()
-        console.log("Cache révalidé pour le tag: 'budget' après mise à jour.")
-        return { success: true, message: 'Budget modifié avec succès.' }
-    } catch (error) {
-        console.error('Erreur inattendue (mise à jour budget):', error)
-        return { success: false, error: 'Une erreur serveur est survenue lors de la mise à jour du budget.' }
-    }
+      )
+
+      if (!success || !res) {
+        return { success: false, error: error || 'Erreur inconnue' }
+      }
+    
+      await revalidateUserBudgetsCache()
+      return { success: true, message: 'Budget modifié avec succès' }
 }
 
 export const revalidateUserBudgetsCache = async (): Promise<ApiResponse<null>> => {
