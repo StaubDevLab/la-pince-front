@@ -1,4 +1,3 @@
-import { DateRange } from 'react-day-picker'
 import { Category } from './categories'
 
 export interface Transaction {
@@ -11,23 +10,35 @@ export interface Transaction {
     transactionType: number
     description: string | null
     categoryId: string
-    isReccuring: boolean
-    reccuringFrequency: number | null
-    reccuringStartDate: Date | null
-    reccuringEndDate: Date | null
+    isRecurring: boolean
+    recurringFrequency: number | null
+    recurringStartDate: Date | null 
+    recurringEndDate: Date | null
 
     category: Category
 }
 
-export interface TransactionPayloadBeforeFormat {
+// Type pour le PAYLOAD ENVOYÉ À L'API (après formatage du formulaire)
+export interface ApiPayloadTransaction {
     amount: number
-    transactionType: string // sera converti en number
+    transactionType: number
     description: string
-    category: string // sera converti en categoryId
+    categoryId: string
     isRecurring: boolean
-    reccuringFrequency?: string // sera converti en number | null
-    dateRange?: {
-        from: Date
-        to?: Date
-    }
+    recurringFrequency: number | null
+    recurringStartDate?: string | null 
+    recurringEndDate: string | null 
+    date: string 
+}
+
+// Type pour les DONNÉES BRUTES DU FORMULAIRE (avant tout formatage pour l'API)
+export interface FormTransactionInputs {
+    amount: number
+    transactionType: string
+    description: string
+    category: string
+    isRecurring: boolean
+    reccuringFrequency?: string
+    recurringEndDate?: string | null 
+    date: string 
 }
