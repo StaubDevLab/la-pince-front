@@ -8,7 +8,7 @@ export const HeaderAmmount = ({ amount }: { amount: number }) => {
             <span className="text-sm sm:text-lg text-muted-foreground">
                 Il vous reste
             </span>
-            <span className={cn("text-sm sm:text-lg font-semibold", colorClass)}>
+            <span className={cn("text-sm sm:text-lg", colorClass)}>
               {amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
               
             </span>

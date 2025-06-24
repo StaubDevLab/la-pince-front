@@ -15,10 +15,12 @@ import { useUser } from '@/context/user-context'
 import { HeaderAmmount } from '../header-amount'
 import { Skeleton } from '../ui/skeleton'
 import { getNotifications } from '@/actions/notifications.actions'
+import * as ToggleGroup from '@radix-ui/react-toggle-group'
 export default function Header() {
     const pathname = usePathname()
     const { user, setUser } = useUser()
     const [nbUnreadNotifs, setNbUnreadNotifs] = useState(0)
+    const toggleValue = ['/dashboard', '/transactions'].includes(pathname) ? pathname : undefined;
 
 
     useEffect(() => {
@@ -54,26 +56,40 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-                <div className="hidden md:flex items-center rounded-full bg-muted px-1 py-0.5">
-                    <Link href="/dashboard">
-                        <Button
-                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all cursor-pointer
-                                ${pathname === '/dashboard' ? 'bg-primary text-white' : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
-                            `}
+                <ToggleGroup.Root
+                    type="single"
+                    value={toggleValue}
+                    className="hidden md:inline-flex relative bg-muted rounded-full p-1"
+                >
+                    <div
+                        className={`
+                        absolute inset-y-0 left-0 w-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out
+                        ${pathname === '/dashboard' ? 'translate-x-0' : pathname === '/transactions' ? 'translate-x-full' : 'translate-x-[-100%] opacity-0'}
+                        `}
+                    />
+
+                    <Link href="/dashboard" passHref>
+                        <ToggleGroup.Item
+                        value="/dashboard"
+                        className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
+                            ${pathname === '/dashboard' ? 'text-white' : 'text-muted-foreground hover:text-white'}
+                        `}
                         >
-                            Dashboard
-                        </Button>
+                        Dashboard
+                        </ToggleGroup.Item>
                     </Link>
-                    <Link href="/transactions">
-                        <Button
-                            className={`h-8 px-4 text-sm font-medium rounded-full transition-all cursor-pointer
-                                ${pathname === '/transactions' ? 'bg-primary text-white' : 'bg-input/30 text-muted-foreground hover:text-white hover:bg-input/50'}
-                            `}
+
+                    <Link href="/transactions" passHref>
+                        <ToggleGroup.Item
+                        value="/transactions"
+                        className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
+                            ${pathname === '/transactions' ? 'text-white' : 'text-muted-foreground hover:text-white'}
+                        `}
                         >
-                            Transactions
-                        </Button>
+                        Transactions
+                        </ToggleGroup.Item>
                     </Link>
-                </div>
+                </ToggleGroup.Root>
 
                 <Sheet>
                     <SheetTrigger asChild className="md:hidden">
