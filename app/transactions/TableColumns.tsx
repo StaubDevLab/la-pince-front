@@ -5,8 +5,63 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { formatRelativeDate } from '@/lib/utils'
 import { Transaction } from '@/types/transactions'
 import { ColumnDef } from '@tanstack/react-table'
-import { CalendarIcon, DeleteIcon, EuroIcon, Eye, LayersIcon, NotebookTextIcon, Trash } from 'lucide-react'
+import { CalendarIcon, EuroIcon, Eye, LayersIcon, NotebookTextIcon, Trash } from 'lucide-react'
+import React from 'react'
 
+
+const TransactionActionCell: React.FC<{
+    transaction: Transaction;
+    onDelete: (id: string) => void;
+    onRowClick: (transaction: Transaction) => void;
+}> = ({ transaction, onDelete, onRowClick }) => {
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = React.useState(false);
+
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 5 }}>
+            <Button
+                variant='outline'
+                size="sm"
+                className="rounded-full p-1 text-md bg-primary text-white"
+                onClick={() => onRowClick(transaction)}
+            >
+                <Eye />
+            </Button>
+            <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button
+                        variant='outline'
+                        size="sm"
+                        className="rounded-full p-1 text-md bg-primary text-white"
+                    >
+                        <Trash />
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Attention</DialogTitle>
+                        <DialogDescription>
+                            Êtes-vous sûr de vouloir supprimer cette transaction ?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline" onClick={(e) => e.stopPropagation()}>Annuler</Button>
+                        </DialogClose>
+                        <Button
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                await onDelete(transaction.id);
+                                setIsConfirmDialogOpen(false);
+                            }}
+                        >
+                            Confirmer
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+};
 const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Transaction) => void): ColumnDef<Transaction>[] => [
     {
         accessorKey: 'description',
@@ -126,46 +181,8 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
         id: 'action',
         header: () => <span>Action</span>,
         cell: ({ row }) => {
-            const transaction = row.original
-            return (
-                <div style={{display: 'flex', justifyContent: 'center', gap: 5}}>
-                    <Button
-                        variant='outline'
-                        size="sm"
-                        className="rounded-full p-1 text-md bg-primary text-white"
-                        onClick={(e) => onRowClick(transaction)}>
-                            <Eye />
-                    </Button>
-                    <Dialog>
-                            <DialogTrigger asChild>
-                            <Button
-                                variant='outline'
-                                size="sm"
-                                className="rounded-full p-1 text-md bg-primary text-white"
-                                onClick={(e) => e.stopPropagation()}>
-                                    <Trash />
-                            </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Attention</DialogTitle>
-                                <DialogDescription>
-                                Etes-vous sur de vouloir supprimer cette transaction ?
-                                </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                <Button variant="outline" onClick={(e) => e.stopPropagation()}>Annuler</Button>
-                                </DialogClose>
-                                <Button type="submit" onClick={(e) => {
-                                    e.stopPropagation()
-                                    onDelete(transaction.id)
-                                }}>Confirmer</Button>
-                            </DialogFooter>
-                            </DialogContent>
-                    </Dialog>
-                </div>
-            )
+            const transaction = row.original;
+            return <TransactionActionCell transaction={transaction} onDelete={onDelete} onRowClick={onRowClick} />;
         },
     },
 ]
