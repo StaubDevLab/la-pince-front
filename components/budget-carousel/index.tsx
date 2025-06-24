@@ -63,14 +63,15 @@ export function BudgetCarousel({
       <div className="lg:col-span-4 md:col-span-2 col-span-1">
         <Sheet open={open} onOpenChange={setOpen}>
           <Button
-            className="w-fit mb-4"
+            size='sm'
+            className="w-fit mb-4 rounded-full"
             onClick={() => {
               setEditingBudget(null);
               setOpen(true);
             }}
           >
             <Plus />
-            Ajouter un budget
+            Budget
           </Button>
   
           {open && (

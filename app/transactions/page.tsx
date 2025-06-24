@@ -170,7 +170,7 @@ export default function DataTableDemo() {
                         )}
                     </div>
                     <Sheet open={isFormOpen} onOpenChange={setIsFormOpen} modal={false}>
-                        <Button size="sm" className="rounded-full p-1 text-md bg-primary text-white" onClick={handleAddClick}>
+                        <Button size="icon" className="rounded-full p-1 text-md bg-primary text-white" onClick={handleAddClick}>
                             <PlusIcon className="h-5 w-5" />
                         </Button>
 

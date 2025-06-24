@@ -19,7 +19,7 @@ export default function Footer() {
 
     return (
         <footer className="bg-muted/50 text-muted-foreground border-t border-border">
-            <div className="container mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="container mx-auto px-2 py-2 flex flex-col md:flex-row items-center justify-between gap-4">
                 {/* Logo + message */}
                 <div className="flex items-center gap-3">
                     <Image src={logo} alt="Logo La Pince" width={36} height={36} priority={false} />
@@ -51,7 +51,7 @@ export default function Footer() {
                     </Link>
                 </div>
             </div>
-            <div className="border-t border-border mt-4 text-center text-xs py-2 text-muted-foreground" aria-live="polite">
+            <div className="text-center text-xs py-2 text-muted-foreground" aria-live="polite">
                 Fait avec ❤️ et NextJs – {mounted ? `Mode ${currentThemeText} activé !` : 'Chargement du thème...'}
             </div>
         </footer>

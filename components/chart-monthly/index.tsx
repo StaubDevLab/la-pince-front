@@ -91,7 +91,7 @@ export function ChartMonthly({
     return (
         <Card className="flex flex-col mx-auto">
             <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
-                <CardTitle className="text-xl font-medium">{title}</CardTitle>
+                <CardTitle className="text-lg font-medium">{title}</CardTitle>
 
             </CardHeader>
             <CardContent className="p-4 pt-0">
