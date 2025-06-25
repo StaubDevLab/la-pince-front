@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { CalendarIcon } from 'lucide-react'
+import * as Lucide from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Textarea } from '../ui/textarea'
@@ -24,13 +24,14 @@ import { revalidateProfileCache } from '@/actions/profile.actions'
 import { revalidateUserDashboardCache, revalidateUserBudgetsCache } from '@/actions/dashboard.actions'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/user-context'
+import { CreateCategoryDialog } from '../category-dialog/CategoryDialog'
 
 const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
     const { data: session } = useSession()
-    const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
-    const [isMounted, setIsMounted] = useState(false)
     const router = useRouter()
     const { setUser } = useUser()
+    const [isMounted, setIsMounted] = useState(false)
+    const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
 
     const { 
         handleSubmit,
@@ -50,11 +51,9 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             dateRange: undefined,
         },
     })
-
     const isRecurring = watch('isRecurring')
 
     const onSubmit = async (data: TransactionPayloadBeforeFormat) => {
-        console.log("Données du formulaire avant envoi à l'action serveur:", data)
 
         const payload = {
             amount: Number(data.amount),
@@ -67,9 +66,6 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             recurringEndDate: data.isRecurring && data.dateRange?.to ? new Date(data.dateRange.to).toISOString() : null,
             date: new Date().toISOString(),
         }
-
-        console.log("Données du formulaire avant envoi à l'action serveur:", payload)
-
         const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(payload)
 
         if (result.success) {
@@ -83,7 +79,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             toast.success(props.transactionToEdit ? 'Transaction modifiée avec succès.' : 'Transaction créée avec succès.')
 
             if (!props.transactionToEdit) {
-                reset() // On réinitialise uniquement pour une création
+                reset()
             }
             props.onOpenChange?.(false)
         } else {
@@ -98,13 +94,11 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
 
     useEffect(() => {
         if (!session?.accessToken || !props.open) return
-        console.log(props.open)
 
         getCategoriesForForm().then(data => {
             if (data.success && data.data) {
                 setCategories(data.data)
             } else {
-                console.error('Échec de la récupération des catégories :', data.error)
                 setCategories([])
             }
         })
@@ -127,7 +121,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                         : undefined,
             })
         } else {
-            reset() // vide le formulaire en cas de création
+            reset()
         }
     }, [session?.accessToken, props.open, isMounted])
 
@@ -176,30 +170,40 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
 
                 <div className="grid gap-3">
                     <Label>Catégorie</Label>
-                    <Controller
-                        control={control}
-                        name="category"
-                        render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Catégorie" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {categories && categories.length > 0 ? (
-                                        categories.map(ctg => (
-                                            <SelectItem key={ctg.id} value={ctg.id as string}>
-                                                {ctg.name}
+                    <div className='flex gap-3'>
+                        <Controller
+                            control={control}
+                            name="category"
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Catégorie" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categories && categories.length > 0 ? (
+                                            categories.map(ctg => (
+                                                <SelectItem key={ctg.id} value={ctg.id as string}>
+                                                    {ctg.name}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="loading" disabled>
+                                                Chargement...
                                             </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="loading" disabled>
-                                            Chargement...
-                                        </SelectItem>
-                                    )}
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
+                                        )}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        <CreateCategoryDialog
+                            onSuccess={async () => {
+                                const updated = await getCategoriesForForm()
+                                if (updated.success && updated.data) {
+                                setCategories(updated.data)
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -245,7 +249,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg w-full justify-start">
-                                        <CalendarIcon className="h-4 w-4 mr-2" />
+                                        <Lucide.CalendarIcon className="h-4 w-4 mr-2" />
                                         {field.value?.from ? `${field.value.from.toLocaleDateString()} - ${field.value.to?.toLocaleDateString()}` : 'Choisir une période'}
                                     </Button>
                                 </PopoverTrigger>

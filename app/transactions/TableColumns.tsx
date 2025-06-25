@@ -40,7 +40,7 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
 
             return (
                 <Badge style={{ backgroundColor: category.color }} className="font-medium capitalize">
-                    <CategoryItem category={{ name: category.name, iconSize: 14 }} />
+                    <CategoryItem category={{ name: category.name }} iconName={category.icon} />
                 </Badge>
             )
         },
