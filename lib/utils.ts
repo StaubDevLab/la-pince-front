@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import * as Lucide from 'lucide-react'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -32,3 +33,14 @@ export function formatRelativeDate(dateString: string): string {
     const years = Math.floor(days / 365)
     return `Il y a ${years} an${years > 1 ? 's' : ''}`
 }
+
+export function getLucideIcons(): { name: string; component: React.ComponentType<Lucide.LucideProps> }[] {
+    const iconsArray = Object.entries(Lucide)
+      .filter(([name]) => name !== 'createLucideIcon' && name !== 'icons' && !name.startsWith('Lucide') && !name.endsWith('Icon'))
+      .map(([name, component]) => ({
+        name,
+        component: component as React.ComponentType<Lucide.LucideProps>,
+      }))
+    return iconsArray
+  }
+
