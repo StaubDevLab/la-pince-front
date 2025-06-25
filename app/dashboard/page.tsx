@@ -45,7 +45,7 @@ export default async function Dashboard() {
         
         return (
             <div className="p-1 rounded-md" style={{ backgroundColor: fillColor }}>
-                <CategoryItem category={{ name: categoryName, iconSize: 24, displayName: false }} />
+                <CategoryItem category={{ name: categoryName, displayName: false, iconSize: 20 }} />
             </div>
         );
     };
