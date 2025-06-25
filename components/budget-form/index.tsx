@@ -23,7 +23,6 @@ import {
 type BudgetFormInputs = z.infer<typeof budgetSchema>;
 
 export function BudgetForm({
-  open,
   onOpenChange,
   initialData,
 }: {
@@ -201,7 +200,7 @@ export function BudgetForm({
          {/* Date de début */}
          <div className="flex flex-col gap-2">
         <Label>Date de début</Label>
-        <Input type="date" {...register('recurringStartDate')} />
+        <Input type="date" {...register('recurringStartDate')} max={new Date().toISOString().split('T')[0]}/>
         {errors.recurringStartDate && (
           <p className="text-red-500">{errors.recurringStartDate.message}</p>
         )}

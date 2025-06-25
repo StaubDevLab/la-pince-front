@@ -1,5 +1,5 @@
 'use client'
-import { BellIcon, CircleUser, LogOut, Menu, Settings } from 'lucide-react'
+import { BellIcon, CircleUser, LogOut, Menu } from 'lucide-react'
 import Image from 'next/image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -74,6 +74,7 @@ export default function Header() {
                         className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
                             ${pathname === '/dashboard' ? 'text-white' : 'text-muted-foreground hover:text-white'}
                         `}
+                        aria-label="Lien vers le dashboard"
                         >
                         Dashboard
                         </ToggleGroup.Item>
@@ -85,6 +86,7 @@ export default function Header() {
                         className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
                             ${pathname === '/transactions' ? 'text-white' : 'text-muted-foreground hover:text-white'}
                         `}
+                        aria-label="Lien vers les transactions"
                         >
                         Transactions
                         </ToggleGroup.Item>
@@ -101,12 +103,12 @@ export default function Header() {
                     <SheetContent side="left" className="p-2 bg-white shadow-xl dark:bg-gray-800">
                         <div className="flex flex-col gap-3 mt-8">
                             <Link href="/dashboard">
-                                <Button variant="outline" className="w-full text-sm">
+                                <Button variant="outline" className="w-full text-sm" aria-label="Lien vers le dashboard">
                                     Dashboard
                                 </Button>
                             </Link>
                             <Link href="/transactions">
-                                <Button variant="outline" className="w-full text-sm">
+                                <Button variant="outline" className="w-full text-sm" aria-label="Lien vers les transactions">
                                     Transactions
                                 </Button>
                             </Link>
@@ -115,7 +117,7 @@ export default function Header() {
                 </Sheet>
 
                 <Link href="/notifications">
-                    <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                    <Button variant="ghost" size="icon" className="relative h-8 w-8" aria-label="Accès aux notifications">
                         <BellIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                         {nbUnreadNotifs > 0 && (
                         <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 text-xs text-white bg-red-500 rounded-full flex items-center justify-center">
@@ -128,20 +130,20 @@ export default function Header() {
                 <SwitchTheme />
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="h-8 w-8 md:h-9 md:w-9">
+                    <DropdownMenuTrigger className="h-8 w-8 md:h-9 md:w-9" aria-label="Accès au profil">
                         <Avatar className="h-8 w-8 md:h-9 md:w-9">
-                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarImage src="https://github.com/shadcn.png" alt="Avatar" />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
+                        <DropdownMenuLabel aria-label="Mon compte">Mon compte</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem aria-label="Mon profil">
                             <CircleUser className="mr-2 h-4 w-4" />
                             <Link href={"/profile"}>Mon profil</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={ () => {
+                        <DropdownMenuItem aria-label="Déconnexion" onClick={ () => {
                             signOut({redirectTo: '/connexion'})
                         }}>
                             <LogOut className="mr-2 h-4 w-4" />

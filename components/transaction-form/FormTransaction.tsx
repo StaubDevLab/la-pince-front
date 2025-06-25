@@ -4,20 +4,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+
 import * as Lucide from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Textarea } from '../ui/textarea'
 import { Switch } from '../ui/switch'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Calendar } from '../ui/calendar'
 import { useForm, Controller } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 import { getCategoriesForForm } from '@/actions/categories.actions'
 import { Category } from '@/types/categories'
-import { Transaction, TransactionPayloadBeforeFormat } from '@/types/transactions'
-import { createTransaction } from '@/actions/transactions.actions'
-import { updateTransaction } from '@/actions/transactions.actions'
+import { Transaction, ApiPayloadTransaction, FormTransactionInputs } from '@/types/transactions'
+import { createTransaction, updateTransaction } from '@/actions/transactions.actions'
 import { toast } from 'sonner'
 import { revalidateUserTransactionsCache } from '@/actions/transactions.actions'
 import { revalidateProfileCache } from '@/actions/profile.actions'
@@ -26,6 +25,7 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/user-context'
 import { CreateCategoryDialog } from '../category-dialog/CategoryDialog'
 
+
 const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
     const { data: session } = useSession()
     const router = useRouter()
@@ -33,34 +33,50 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
     const [isMounted, setIsMounted] = useState(false)
     const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
 
-    const { 
+
+const FormTransaction: React.FC<{
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    transactionToEdit?: Transaction;
+    onSuccess?: () => void;
+}> = props => {
+    const { data: session } = useSession();
+    const [categories, setCategories] = useState<Partial<Category>[] | undefined>([]);
+    const router = useRouter();
+    const { setUser } = useUser();
+
+    const {
         handleSubmit,
         control,
         register,
         watch,
         reset,
         formState: { errors, isSubmitting },
-    } = useForm<TransactionPayloadBeforeFormat>({
+    } = useForm<FormTransactionInputs>({
         defaultValues: {
-            transactionType: '1',
             amount: 0,
+            transactionType: '1',
             description: '',
             category: '',
             isRecurring: false,
-            reccuringFrequency: undefined,
-            dateRange: undefined,
+            reccuringFrequency: '30',
+            recurringEndDate: null, 
+            date: new Date().toISOString().split('T')[0],
         },
+
     })
     const isRecurring = watch('isRecurring')
 
     const onSubmit = async (data: TransactionPayloadBeforeFormat) => {
 
-        const payload = {
+
+        const apiPayload: ApiPayloadTransaction = {
             amount: Number(data.amount),
             transactionType: Number(data.transactionType),
             description: data.description?.trim() || '',
             categoryId: data.category,
             isRecurring: data.isRecurring,
+
             recurringFrequency: data.isRecurring ? Number(data.reccuringFrequency) : null,
             recurringStartDate: data.isRecurring && data.dateRange?.from ? new Date(data.dateRange.from).toISOString() : null,
             recurringEndDate: data.isRecurring && data.dateRange?.to ? new Date(data.dateRange.to).toISOString() : null,
@@ -83,14 +99,9 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
             }
             props.onOpenChange?.(false)
         } else {
-            console.error('Échec de la création de la transaction:', result.error)
-            toast.error('Échec de la création de la transaction: ' + result.error)
+            result = await createTransaction(apiPayload);
         }
-    }
 
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
 
     useEffect(() => {
         if (!session?.accessToken || !props.open) return
@@ -100,30 +111,15 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                 setCategories(data.data)
             } else {
                 setCategories([])
-            }
-        })
 
-        // Ce bloc ne doit s'exécuter que si on OUVRE la modale pour la première fois
-        if (props.open && props.transactionToEdit) {
-            reset({
-                amount: props.transactionToEdit.amount,
-                transactionType: '1',
-                description: props.transactionToEdit.description ?? '',
-                category: props.transactionToEdit.category.id,
-                isRecurring: props.transactionToEdit.isReccuring,
-                reccuringFrequency: props.transactionToEdit.reccuringFrequency?.toString(),
-                dateRange:
-                    props.transactionToEdit.isReccuring && props.transactionToEdit.reccuringStartDate
-                        ? {
-                              from: new Date(props.transactionToEdit.reccuringStartDate),
-                              to: props.transactionToEdit.reccuringEndDate ? new Date(props.transactionToEdit.reccuringEndDate) : undefined,
-                          }
-                        : undefined,
-            })
+            }
+            props.onOpenChange?.(false);
         } else {
+
             reset()
+
         }
-    }, [session?.accessToken, props.open, isMounted])
+    };
 
     return (
         <SheetContent className="w-full sm:w-[480px]">
@@ -137,7 +133,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                         control={control}
                         name="transactionType"
                         render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value} aria-label="Type de transaction">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Sélectionnez un type" />
                                 </SelectTrigger>
@@ -148,36 +144,48 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                             </Select>
                         )}
                     />
+                    {errors.transactionType && <p className="text-sm text-red-500">{errors.transactionType.message}</p>}
                 </div>
                 <div className="grid gap-3">
                     <Label htmlFor="amount">Montant</Label>
                     <Input
                         id="amount"
-                        type="float"
+                        type="number"
+                        step="0.01"
                         placeholder="Entrez le montant"
                         {...register('amount', {
                             required: 'Le montant est requis',
                             valueAsNumber: true,
                         })}
+                        aria-label="Montant"
                     />
                     {errors.amount && <p className="text-sm text-red-500">{errors.amount.message}</p>}
                 </div>
 
                 <div className="grid gap-3">
                     <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Burking king..." {...register('description')} />
+                    <Textarea id="description" placeholder="Burking king..." {...register('description')} aria-label="Description" />
+                    {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                 </div>
+
+
+               
+                    <div className="grid gap-3">
+                        <Label>Catégorie</Label>
 
                 <div className="grid gap-3">
                     <Label>Catégorie</Label>
                     <div className='flex gap-3'>
+
                         <Controller
                             control={control}
                             name="category"
                             render={({ field }) => (
+
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Catégorie" />
+
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories && categories.length > 0 ? (
@@ -188,13 +196,16 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                                             ))
                                         ) : (
                                             <SelectItem value="loading" disabled>
+
                                                 Chargement...
+
                                             </SelectItem>
                                         )}
                                     </SelectContent>
                                 </Select>
                             )}
                         />
+
                         <CreateCategoryDialog
                             onSuccess={async () => {
                                 const updated = await getCategoriesForForm()
@@ -206,13 +217,14 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                     </div>
                 </div>
 
+
                 <div className="flex items-center space-x-2">
                     <Controller
                         name="isRecurring"
                         control={control}
                         render={({ field }) => (
                             <>
-                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} aria-label="Récurrent ?" />
                                 <Label htmlFor="recurring">Récurrent ?</Label>
                             </>
                         )}
@@ -226,7 +238,7 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                             control={control}
                             name="reccuringFrequency"
                             render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value || ''}>
+                                <Select onValueChange={field.onChange} value={field.value || '30'} aria-label="Fréquence">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Mensuelle..." />
                                     </SelectTrigger>
@@ -239,9 +251,12 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                                 </Select>
                             )}
                         />
+                        {errors.reccuringFrequency && <p className="text-sm text-red-500">{errors.reccuringFrequency.message}</p>}
                     </div>
                 )}
+
                 {isRecurring && (
+
                     <Controller
                         control={control}
                         name="dateRange"
@@ -259,14 +274,19 @@ const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean)
                             </Popover>
                         )}
                     />
+
                 )}
 
-                <Button type="submit" disabled={isSubmitting}>
+               
+                   
+             
+
+                <Button type="submit" disabled={isSubmitting} aria-label="Enregistrer la transaction">
                     Enregistrer
                 </Button>
             </form>
         </SheetContent>
-    )
+    );
 }
 
-export default FormTransaction
+export default FormTransaction;

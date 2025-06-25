@@ -1,4 +1,3 @@
-import { Apple, Bike, Bus, HeartPulse, House, Tv } from 'lucide-react'
 import type React from 'react'
 import { CategoryItem } from '@/components/category-item'
 

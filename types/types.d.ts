@@ -1,39 +1,68 @@
-declare module "next-auth" {
-    /**
-     * The shape of the user object returned in the OAuth providers' `profile` callback,
-     * or the second parameter of the `session` callback, when using a database.
-     */
-    interface User {
-        firstName: string
-        lastName: string
-        accountName: string
-        amount: number
-        email: string
-        id: string
-        accessToken: string
-        emailVerified?: Date
-    }
-    /**
-     * The shape of the account object returned in the OAuth providers' `account` callback,
-     * Usually contains information about the provider being used, like OAuth tokens (`access_token`, etc).
-     */
-    interface Account {}
+// types/next-auth.d.ts
 
-    /**
-     * Returned by `useSession`, `auth`, contains information about the active session.
-     */
-    interface Session {
-        accessToken: string
-    }
+// Importe les types par défaut de next-auth et next-auth/jwt
+import { DefaultSession } from "next-auth";
+import { JWT as NextAuthJWT } from "next-auth/jwt";
+
+declare module "next-auth" {
+  /**
+   * L'interface Session est ce qui est exposé côté client via useSession().
+   * Nous ajoutons nos champs personnalisés et la gestion d'erreur.
+   */
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      accountName: string;
+      amount: number;
+      accessToken: string;
+      accessTokenExpiresAt: number; 
+      refreshToken: string;
+    } | null; 
+    accessToken: string; 
+    error?: "RefreshAccessTokenError" | "RefreshTokenExpired"; 
+  }
+
+  /**
+   * L'interface User est ce qui est retourné par la fonction `authorize` du provider Credentials.
+   * Elle doit correspondre exactement aux données que votre API renvoie lors de la connexion.
+   */
+  interface User {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    accountName: string;
+    amount: number;
+    accessToken: string;
+    refreshToken: string;
+    accessTokenExpiresAt: number; 
+    refreshTokenExpiresAt: number; 
+    sessionId: string;
+  }
 }
 
-// The `JWT` interface can be found in the `next-auth/jwt` submodule
-import { JWT } from "next-auth/jwt"
+
 
 declare module "next-auth/jwt" {
-    /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
-    interface JWT {
-        /** OpenID ID Token */
-        idToken?: string
-    }
+  /**
+   * L'interface JWT est la structure du token JWT interne géré par NextAuth.js.
+   * Elle stocke les données qui persistent entre les requêtes.
+   */
+  interface JWT extends NextAuthJWT {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    accountName: string;
+    amount: number;
+    accessToken: string;
+    accessTokenExpiresAt: number; 
+    refreshToken: string;
+    refreshTokenExpiresAt: number; 
+    sessionId: string;
+    error?: "RefreshAccessTokenError" | "RefreshTokenExpired"; 
+  }
 }
