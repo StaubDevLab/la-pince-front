@@ -43,7 +43,7 @@ export default async function Dashboard() {
                 <CategoryItem category={{ name: categoryName, iconSize: 24, displayName: false }} />
             </div>
         );
-    };console.log(dashboardResult)
+    };
     const transactions: Transaction[] = transactionsResult.success && transactionsResult.data ? transactionsResult.data.data : [];
     const dashboardData: DashboardData | null | undefined = dashboardResult.success ? dashboardResult.data : null;
     const budgets: BudgetFetched[] = budgetsResult.success && budgetsResult.data ? budgetsResult.data : [];
@@ -124,7 +124,7 @@ export default async function Dashboard() {
 
     // 3. Données pour ChartWeekly
     const dayNames = ['DIM', 'LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'];
-    console.log(dashboardData?.hebdo)
+
     const weeklyProps = dashboardData?.hebdo ? {
         title: 'Activité hebdomadaire',
         total: dashboardData.hebdo.total,

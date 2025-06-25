@@ -9,7 +9,6 @@ export async function fetchWithAuth<T>(
 ): Promise<{ data?: T; error?: string; success: boolean; status?: number }> {
  
     const session = await auth()
-
   if (!session?.accessToken) {
     console.warn('Aucun token disponible, redirection en cours...')
     redirect('/connexion')
