@@ -101,29 +101,29 @@ export function ResetPasswordForm() {
             <div className="flex flex-col gap-6">
                 <div className="grid gap-2 relative">
                     <Label htmlFor="newPassword">Nouveau mot de passe</Label>
-                    <Input id="newPassword" type={showPasswords.new ? "text" : "password"} required {...register("newPassword")} />
+                    <Input id="newPassword" type={showPasswords.new ? "text" : "password"} required {...register("newPassword")} aria-label="Nouveau mot de passe"/>
                     {errors.newPassword && (
                         <span className="text-sm text-red-500">
                             {errors.newPassword.message}
                         </span>
                     )}
-                    <Button type="button" className="absolute right-3 top-1 translate-y-1/2" variant="ghost" onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}>
+                    <Button type="button" className="absolute right-3 top-1 translate-y-1/2" variant="ghost" onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })} aria-label="Afficher/masquer le mot de passe">
                         {showPasswords.new ? <EyeOff /> : <Eye />}
                     </Button>
                 </div>
                 <div className="grid gap-2 relative">
                     <Label htmlFor="confirmNewPassword">Confirmer le nouveau mot de passe</Label>
-                    <Input id="confirmNewPassword" type={showPasswords.confirm ? "text" : "password"} required {...register("confirmNewPassword")} />
+                    <Input id="confirmNewPassword" type={showPasswords.confirm ? "text" : "password"} required {...register("confirmNewPassword")} aria-label="Confirmer le nouveau mot de passe" />
                     {errors.confirmNewPassword && (
                         <span className="text-sm text-red-500">
                             {errors.confirmNewPassword.message}
                         </span>
                     )}
-                    <Button type="button" className="absolute right-3 top-1 translate-y-1/2" variant="ghost" onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}>
+                    <Button type="button" className="absolute right-3 top-1 translate-y-1/2" variant="ghost" onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })} aria-label="Afficher/masquer le mot de passe">
                         {showPasswords.confirm ? <EyeOff /> : <Eye />}
                     </Button>
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting} aria-label="Changer le mot de passe">
                     {isSubmitting ? 'Changement en cours...' : "Changer le mot de passe"}
                 </Button>
             </div>

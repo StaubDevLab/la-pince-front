@@ -70,7 +70,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
 
             <span className="text-sm text-center mb-4">
                 Retour à la{' '}
-                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={'underline hover:text-primary'}>
+                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={'underline hover:text-primary'} aria-label="Se connecter">
                     connexion
                 </Link>
             </span>
@@ -86,6 +86,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
                                 {...register('email')}
                                 placeholder="john.doe@gmail.com"
                                 required
+                                aria-label="Email"
                             />
                             {errors.email && (
                                 <span className="text-sm text-red-500">
@@ -95,11 +96,11 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
                         </div>
                         
                         {error && (
-                            <div className="bg-red-50 p-4 rounded-md">
+                            <div className="bg-red-50 p-4 rounded-md" aria-label="Erreur de réinitialisation">
                                 <p className="text-sm text-red-500">{error}</p>
                             </div>
                         )}
-                        <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+                        <Button type="submit" className="w-full" disabled={isButtonDisabled} aria-label="Réinitialiser le mot de passe">
                             {isSubmitting ? 'Envoi...' : 'Réinitialiser'}
                         </Button>
                     </div>

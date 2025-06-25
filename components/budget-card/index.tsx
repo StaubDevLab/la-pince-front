@@ -154,6 +154,7 @@ export function BudgetCard({
           e.stopPropagation(); 
           setOpenDeleteDialog(true);
         }}
+        aria-label="Supprimer le budget"
       >
        <X  className="h-4 w-4 text-gray-500 hover:text-red-500" />
       </Button>

@@ -81,7 +81,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" aria-label="Email">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -97,15 +97,16 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center">
-                                <Label htmlFor="password">Mot de passe</Label>
+                                <Label htmlFor="password" aria-label="Mot de passe">Mot de passe</Label>
                                 <Link
                                     href={`/forgot-password?email=${email}`}
                                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                    aria-label="Mot de passe oublié ?"
                                 >
                                     Mot de passe oublié ?
                                 </Link>
                             </div>
-                            <Input {...register('password')} type="password" required />
+                            <Input {...register('password')} type="password" required aria-label="Mot de passe" />
                             {errors.password && (
                                 <span className="text-sm text-red-500">
               {errors.password.message}
@@ -117,7 +118,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 <p className="text-sm text-red-500">{error}</p>
                             </div>
                         )}
-                        <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+                        <Button type="submit" className="w-full" disabled={isButtonDisabled} aria-label="Se connecter">
                             {isSubmitting ? 'Connexion...' : 'Connexion'}
                         </Button>
                     </div>

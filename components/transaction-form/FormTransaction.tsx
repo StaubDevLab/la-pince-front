@@ -171,7 +171,7 @@ const FormTransaction: React.FC<{
                         control={control}
                         name="transactionType"
                         render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value} aria-label="Type de transaction">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Sélectionnez un type" />
                                 </SelectTrigger>
@@ -195,13 +195,14 @@ const FormTransaction: React.FC<{
                             required: 'Le montant est requis',
                             valueAsNumber: true,
                         })}
+                        aria-label="Montant"
                     />
                     {errors.amount && <p className="text-sm text-red-500">{errors.amount.message}</p>}
                 </div>
 
                 <div className="grid gap-3">
                     <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Burking king..." {...register('description')} />
+                    <Textarea id="description" placeholder="Burking king..." {...register('description')} aria-label="Description" />
                     {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                 </div>
 
@@ -212,7 +213,7 @@ const FormTransaction: React.FC<{
                             control={control}
                             name="category"
                             render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value} aria-label="Catégorie">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Sélectionnez une catégorie" />
                                     </SelectTrigger>
@@ -232,7 +233,7 @@ const FormTransaction: React.FC<{
                                 </Select>
                             )}
                         />
-                        {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
+                        {errors.category && <p className="text-sm text-red-500" >{errors.category.message}</p>}
                     </div>
              
             <div className="grid gap-3">
@@ -244,6 +245,7 @@ const FormTransaction: React.FC<{
                             {...register('date', {
                                 required: 'La date est requise',
                             })}
+                            aria-label="Date de la transaction"
                         />
                         {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
                     </div>
@@ -253,7 +255,7 @@ const FormTransaction: React.FC<{
                         control={control}
                         render={({ field }) => (
                             <>
-                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} aria-label="Récurrent ?" />
                                 <Label htmlFor="recurring">Récurrent ?</Label>
                             </>
                         )}
@@ -267,7 +269,7 @@ const FormTransaction: React.FC<{
                             control={control}
                             name="reccuringFrequency"
                             render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value || '30'}>
+                                <Select onValueChange={field.onChange} value={field.value || '30'} aria-label="Fréquence">
                                     <SelectTrigger>
                                         <SelectValue placeholder="Mensuelle..." />
                                     </SelectTrigger>
@@ -291,8 +293,9 @@ const FormTransaction: React.FC<{
                             id="recurringEndDate"
                             type="date"
                             {...register('recurringEndDate', {
-                                required: isRecurring ? 'La date de fin de récurrence est requise' : false, // Rend obligatoire si isRecurring
+                                required: isRecurring ? 'La date de fin de récurrence est requise' : false, 
                             })}
+                            aria-label="Date de fin de récurrence"
                         />
                         {errors.recurringEndDate && <p className="text-sm text-red-500">{errors.recurringEndDate.message}</p>}
                     </div>
@@ -302,7 +305,7 @@ const FormTransaction: React.FC<{
                    
              
 
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" disabled={isSubmitting} aria-label="Enregistrer la transaction">
                     Enregistrer
                 </Button>
             </form>

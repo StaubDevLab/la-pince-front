@@ -77,12 +77,12 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
     return (
         <div className={cn('flex flex-col gap-2 items-center', className)} {...props}>
-            <Image src={logo} alt="logo" height="100" width="75" />
+            <Image src={logo} alt="logo" height="100" width="75" aria-label="Logo" />
             <h1 className="text-2xl font-semibold text-center">Bienvenue sur La Pince</h1>
 
             <span className="text-sm text-center mb-4">
                 Vous avez déjà un compte ?{' '}
-                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={"underline hover:text-primary"}>
+                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={"underline hover:text-primary"} aria-label="Se connecter">
                     Se connecter
                 </Link>
             </span>
@@ -92,7 +92,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="text">Prénom</Label>
-                            <Input id="firstname" type="text" placeholder="John" required {...register("firstName")} />
+                            <Input id="firstname" type="text" placeholder="John" required {...register("firstName")} aria-label="Prénom"/>
                             {errors.firstName && (
                                 <span className="text-sm text-red-500">
               {errors.firstName.message}
@@ -101,7 +101,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="text">Nom</Label>
-                            <Input id="lastname" type="text" placeholder="Doe" required  {...register("lastName")}/>
+                            <Input id="lastname" type="text" placeholder="Doe" required  {...register("lastName")} aria-label="Nom"/>
                             {errors.lastName && (
                                 <span className="text-sm text-red-500">
               {errors.lastName.message}
@@ -116,6 +116,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                                 placeholder="john.doe@gmail.com"
                                 required
                                 {...register("email")}
+                                aria-label="Email"
                             />
                             {errors.email && (
                                 <span className="text-sm text-red-500">
@@ -127,7 +128,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                             <div className="flex items-center">
                                 <Label htmlFor="password">Mot de passe</Label>
                             </div>
-                            <Input id="password" type="password" required  {...register("password")} />
+                            <Input id="password" type="password" required  {...register("password")} aria-label="Mot de passe"/>
                             {errors.password && (
                                 <span className="text-sm text-red-500">
               {errors.password.message}
@@ -135,12 +136,12 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                             )}
                         </div>
                         {error && (
-                            <div className="p-2 bg-red-300 text-red-800 rounded-md">
+                            <div className="p-2 bg-red-300 text-red-800 rounded-md" aria-label="Erreur d'inscription">
                                 <p className="text-md text-red-500">{error}</p>
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={isSubmitting || isRedirecting}>
+                        <Button type="submit" className="w-full" disabled={isSubmitting || isRedirecting} aria-label="S'inscrire">
                             {isSubmitting || isRedirecting ? 'Inscription...' : "S'inscrire"}
                         </Button>
                     </div>

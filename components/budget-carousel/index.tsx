@@ -54,6 +54,7 @@ export function BudgetCarousel({
                       setEditingBudget(null); 
                       setOpen(true);
                   }}
+                  aria-label="Ajouter un budget"
               >
                   <Plus />
                   Budget
