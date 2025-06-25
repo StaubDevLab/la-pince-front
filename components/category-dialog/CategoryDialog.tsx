@@ -69,7 +69,7 @@ export const CreateCategoryDialog = ({ onSuccess }: { onSuccess?: () => void }) 
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="mb-2">Création d'une catégorie</DialogTitle>
+          <DialogTitle className="mb-2">Création d&apos;une catégorie</DialogTitle>
           <DialogDescription>Remplissez les champs ci-dessous pour ajouter une nouvelle catégorie.</DialogDescription>
         </DialogHeader>
 

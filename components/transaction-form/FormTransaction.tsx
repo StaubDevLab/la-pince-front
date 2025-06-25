@@ -1,12 +1,9 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-
-import * as Lucide from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Textarea } from '../ui/textarea'
@@ -24,14 +21,6 @@ import { revalidateUserDashboardCache, revalidateUserBudgetsCache } from '@/acti
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/user-context'
 import { CreateCategoryDialog } from '../category-dialog/CategoryDialog'
-
-
-const FormTransaction: React.FC<{ open?: boolean; onOpenChange?: (open: boolean) => void; transactionToEdit?: Transaction; onSuccess?: () => void }> = props => {
-    const { data: session } = useSession()
-    const router = useRouter()
-    const { setUser } = useUser()
-    const [isMounted, setIsMounted] = useState(false)
-    const [categories, setCategories] = useState<Partial<Category>[] | undefined>([])
 
 
 const FormTransaction: React.FC<{
@@ -63,12 +52,72 @@ const FormTransaction: React.FC<{
             recurringEndDate: null, 
             date: new Date().toISOString().split('T')[0],
         },
+    });
 
-    })
-    const isRecurring = watch('isRecurring')
+    const isRecurring = watch('isRecurring');
 
-    const onSubmit = async (data: TransactionPayloadBeforeFormat) => {
+    useEffect(() => {
+        if (props.open && session?.accessToken) {
+            const fetchCategories = async () => {
+                const data = await getCategoriesForForm();
+                if (data.success && data.data) {
+                    setCategories(data.data);
+                } else {
+                    console.error('Échec de la récupération des catégories :', data.error);
+                    setCategories([]);
+                }
+            };
+            fetchCategories();
+        } else if (!props.open) {
+            setCategories([]);
+        }
+    }, [props.open, session?.accessToken]);
 
+    useEffect(() => {
+        if (!props.open) {
+            reset({
+                amount: 0,
+                transactionType: '1',
+                description: '',
+                category: '',
+                isRecurring: false,
+                reccuringFrequency: '30',
+                recurringEndDate: null, 
+                date: new Date().toISOString().split('T')[0],
+            });
+            return;
+        }
+
+        if (props.transactionToEdit) {
+            if (categories && categories.length > 0) {
+                reset({
+                    amount: props.transactionToEdit.amount,
+                    transactionType: String(props.transactionToEdit.transactionType),
+                    description: props.transactionToEdit.description ?? '',
+                    category: props.transactionToEdit.categoryId,
+                    isRecurring: props.transactionToEdit.isRecurring,
+                    reccuringFrequency: props.transactionToEdit.recurringFrequency?.toString() || '30',
+                    recurringEndDate: props.transactionToEdit.recurringEndDate ? new Date(props.transactionToEdit.recurringEndDate).toISOString().split('T')[0] : null,
+                    date: props.transactionToEdit.date ? new Date(props.transactionToEdit.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                });
+            }
+        } else {
+            reset({
+                amount: 0,
+                transactionType: '1',
+                description: '',
+                category: '',
+                isRecurring: false,
+                reccuringFrequency: '30',
+                recurringEndDate: null, 
+                date: new Date().toISOString().split('T')[0],
+            });
+        }
+    }, [props.open, props.transactionToEdit, reset, categories]);
+
+
+    const onSubmit = async (data: FormTransactionInputs) => {
+        console.log("Données du formulaire brutes (data):", data);
 
         const apiPayload: ApiPayloadTransaction = {
             amount: Number(data.amount),
@@ -76,48 +125,38 @@ const FormTransaction: React.FC<{
             description: data.description?.trim() || '',
             categoryId: data.category,
             isRecurring: data.isRecurring,
+            recurringFrequency: data.isRecurring && data.reccuringFrequency ? Number(data.reccuringFrequency) : null,
+            recurringStartDate: null, 
+            recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null, 
+            date: new Date(data.date).toISOString(),
+        };
 
-            recurringFrequency: data.isRecurring ? Number(data.reccuringFrequency) : null,
-            recurringStartDate: data.isRecurring && data.dateRange?.from ? new Date(data.dateRange.from).toISOString() : null,
-            recurringEndDate: data.isRecurring && data.dateRange?.to ? new Date(data.dateRange.to).toISOString() : null,
-            date: new Date().toISOString(),
-        }
-        const result = props.transactionToEdit ? await updateTransaction(props.transactionToEdit.id, data) : await createTransaction(payload)
+        console.log("Payload formaté pour l'API:", apiPayload);
 
-        if (result.success) {
-            props.onSuccess?.()
-            revalidateUserDashboardCache()
-            revalidateUserBudgetsCache()
-            revalidateUserTransactionsCache()
-            revalidateProfileCache()
-            setUser((prev) => ({ ...prev, amount: result.data?.amount || prev.amount }))
-            router.refresh()
-            toast.success(props.transactionToEdit ? 'Transaction modifiée avec succès.' : 'Transaction créée avec succès.')
-
-            if (!props.transactionToEdit) {
-                reset()
-            }
-            props.onOpenChange?.(false)
+        let result;
+        if (props.transactionToEdit) {
+            result = await updateTransaction(props.transactionToEdit.id, apiPayload);
         } else {
             result = await createTransaction(apiPayload);
         }
 
+        if (result.success) {
+            props.onSuccess?.();
+            revalidateUserDashboardCache();
+            revalidateUserBudgetsCache();
+            revalidateUserTransactionsCache();
+            revalidateProfileCache();
+            setUser((prev) => ({ ...prev, amount: result.data?.amount ?? prev.amount })); // Sécurité supplémentaire
+            router.refresh();
+            toast.success(props.transactionToEdit ? 'Transaction modifiée avec succès.' : 'Transaction créée avec succès.');
 
-    useEffect(() => {
-        if (!session?.accessToken || !props.open) return
-
-        getCategoriesForForm().then(data => {
-            if (data.success && data.data) {
-                setCategories(data.data)
-            } else {
-                setCategories([])
-
+            if (!props.transactionToEdit) {
+                reset();
             }
             props.onOpenChange?.(false);
         } else {
-
-            reset()
-
+            console.error('Échec de l\'opération de transaction:', result.error);
+            toast.error('Échec de l\'opération de transaction: ' + result.error);
         }
     };
 
@@ -168,24 +207,17 @@ const FormTransaction: React.FC<{
                     {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                 </div>
 
-
                
                     <div className="grid gap-3">
                         <Label>Catégorie</Label>
-
-                <div className="grid gap-3">
-                    <Label>Catégorie</Label>
-                    <div className='flex gap-3'>
-
+                        <div className="flex items-center gap-2">   
                         <Controller
                             control={control}
                             name="category"
                             render={({ field }) => (
-
-                                <Select onValueChange={field.onChange} value={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value} aria-label="Catégorie">
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Catégorie" />
-
+                                        <SelectValue placeholder="Sélectionnez une catégorie" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories && categories.length > 0 ? (
@@ -196,17 +228,14 @@ const FormTransaction: React.FC<{
                                             ))
                                         ) : (
                                             <SelectItem value="loading" disabled>
-
-                                                Chargement...
-
+                                                Chargement des catégories...
                                             </SelectItem>
                                         )}
                                     </SelectContent>
                                 </Select>
                             )}
                         />
-
-                        <CreateCategoryDialog
+<CreateCategoryDialog
                             onSuccess={async () => {
                                 const updated = await getCategoriesForForm()
                                 if (updated.success && updated.data) {
@@ -214,10 +243,24 @@ const FormTransaction: React.FC<{
                                 }
                             }}
                         />
+
+                        {errors.category && <p className="text-sm text-red-500" >{errors.category.message}</p>}
+                        </div>
                     </div>
-                </div>
-
-
+             
+            <div className="grid gap-3">
+                        <Label htmlFor="date">Date de la transaction</Label>
+                        <Input
+                            id="date"
+                            type="date"
+                            max={new Date().toISOString().split('T')[0]}
+                            {...register('date', {
+                                required: 'La date est requise',
+                            })}
+                            aria-label="Date de la transaction"
+                        />
+                        {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
+                    </div>
                 <div className="flex items-center space-x-2">
                     <Controller
                         name="isRecurring"
@@ -256,25 +299,18 @@ const FormTransaction: React.FC<{
                 )}
 
                 {isRecurring && (
-
-                    <Controller
-                        control={control}
-                        name="dateRange"
-                        render={({ field }) => (
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button variant="outline" size="lg" className="h-10 px-2 text-sm md:text-lg w-full justify-start">
-                                        <Lucide.CalendarIcon className="h-4 w-4 mr-2" />
-                                        {field.value?.from ? `${field.value.from.toLocaleDateString()} - ${field.value.to?.toLocaleDateString()}` : 'Choisir une période'}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-4" align="end">
-                                    <Calendar mode="range" numberOfMonths={2} selected={field.value} onSelect={field.onChange} defaultMonth={new Date()} />
-                                </PopoverContent>
-                            </Popover>
-                        )}
-                    />
-
+                    <div className="grid gap-3">
+                        <Label htmlFor="recurringEndDate">Date de fin de récurrence</Label>
+                        <Input
+                            id="recurringEndDate"
+                            type="date"
+                            {...register('recurringEndDate', {
+                                required: isRecurring ? 'La date de fin de récurrence est requise' : false, 
+                            })}
+                            aria-label="Date de fin de récurrence"
+                        />
+                        {errors.recurringEndDate && <p className="text-sm text-red-500">{errors.recurringEndDate.message}</p>}
+                    </div>
                 )}
 
                
