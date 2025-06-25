@@ -45,7 +45,7 @@ const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) =
                             </div>
                             <div className={`flex justify-center `}>
                                 <Badge style={{ backgroundColor: transaction.category.color }} className="font-medium capitalize">
-                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} />
+                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} iconName={transaction.category.icon} />
                                 </Badge>
                             </div>
                             <div className={cn('text-right', transaction.transactionType === 1 ? 'text-green-600' : 'text-red-500')}>
