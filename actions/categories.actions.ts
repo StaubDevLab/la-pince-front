@@ -109,12 +109,110 @@ export async function createCategory(categoryProps: Pick<Category, 'color' | 'ic
             }
 
             const category: Category = await response.json();
+            revalidateTag('categories');
             return { success: true, data: category };
 
         } catch (error) {
             console.error('Erreur inattendue (catégorie):', error);
             return { success: false, error: 'Une erreur serveur est survenue lors de la création de la catégorie.' };
         }
+}
+
+export async function updateCategory(
+    categoryProps: Pick<Category, 'id' | 'color' | 'icon' | 'name'>
+) {
+    const session = await auth();
+
+    if (!session?.accessToken) {
+        return { success: false, error: 'Non autorisé : Token JWT manquant pour mettre à jour la catégorie.' };
+    }
+
+    const jwt = session.accessToken;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/categories/${categoryProps.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: categoryProps.name,
+                color: categoryProps.color,
+                icon: categoryProps.icon
+            }),
+        });
+
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { message: response.statusText || 'Erreur de communication avec l\'API.' };
+            }
+            console.error('Erreur API (update catégorie):', response.status, errorData);
+            return {
+                success: false,
+                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de mettre à jour la catégorie.'}`
+            };
+        }
+
+        const updatedCategory: Category = await response.json();
+        revalidateTag('categories'); // Ajout ici
+        revalidateTag(`category-${categoryProps.id}`);
+        return { success: true, data: updatedCategory };
+
+    } catch (error) {
+        console.error('Erreur inattendue (update catégorie):', error);
+        return { success: false, error: 'Une erreur serveur est survenue lors de la mise à jour de la catégorie.' };
+    }
+}
+
+export async function deleteCategory(id: string) {
+    const session = await auth();
+
+    if (!session?.accessToken) {
+        return {
+            success: false,
+            error: 'Non autorisé : Token JWT manquant pour supprimer la catégorie.',
+        };
+    }
+
+    const jwt = session.accessToken;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { message: response.statusText || 'Erreur de communication avec l\'API.' };
+            }
+            console.error('Erreur API (delete catégorie):', response.status, errorData);
+            return {
+                success: false,
+                error: `Erreur API (${response.status}): ${errorData.message || 'Impossible de supprimer la catégorie.'}`
+            };
+        }
+
+        revalidateTag('categories'); // Ajout ici
+        return { success: true };
+
+    } catch (error) {
+        console.error('Erreur inattendue (delete catégorie):', error);
+        return {
+            success: false,
+            error: 'Une erreur serveur est survenue lors de la suppression de la catégorie.',
+        };
+    }
 }
 
 /**
