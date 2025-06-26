@@ -75,7 +75,7 @@ export default async function Dashboard() {
 
     //1. Données pour les cartes de budget
     const budgetCardProps = budgets.map(budget => {
-        const periodText = budget.recurringFrequency === 30 ? '30 Jours' : `${budget.recurringFrequency} Jours`; // Adapter le texte de la période
+        const periodText = budget.recurringFrequency === "monthly" ? '30 Jours' : `${budget.recurringFrequency} Jours`; // Adapter le texte de la période
 
         const spentPercentage = budget.totalAmount > 0 ? (budget.actualAmount / budget.totalAmount) * 100 : 0;
         let spentColor = '#F97316';

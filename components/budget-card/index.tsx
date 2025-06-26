@@ -47,8 +47,8 @@ export function BudgetCard({
   budgetId, 
   onEditOpen 
 }: BudgetCardProps) {
-  const isOverBudget = spent > total
-  const remaining = isOverBudget ? 0 : total - spent
+  const isOverBudget = spent !== null && spent !== undefined && spent > total
+  const remaining = spent !== null && spent !== undefined ? total - spent : 0
     
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false) // Renommé pour clarté
   const router = useRouter()
@@ -133,10 +133,10 @@ export function BudgetCard({
                     isOverBudget ? "text-red-600" : "text-green-600"
                   }`}
                 >
-                  {spent.toLocaleString("fr-FR", {
+                  {spent !== null && spent !== undefined ? spent.toLocaleString("fr-FR", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
-                  })}
+                  }) : "0,00"}
                   €
                 </span>
                 <span className="text-sm text-muted-foreground ml-2">/ {total}€</span>
