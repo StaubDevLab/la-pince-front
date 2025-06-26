@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { Input } from '../ui/input'
@@ -10,7 +10,7 @@ import { Badge } from '../ui/badge'
 import * as Lucide from 'lucide-react'
 import { toast } from 'sonner'
 import { CategoryItem } from '../category-item'
-import { createCategory, revalidateCategoriesCache } from '@/actions/categories.actions'
+import { createCategory, deleteCategory, getCategories, revalidateCategoriesCache, updateCategory } from '@/actions/categories.actions'
 
 import {
   Command,
@@ -22,17 +22,26 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { getLucideIcons } from '@/lib/utils'
+import { Category } from '@/types/categories'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 const iconsArray = getLucideIcons()
 
-export const CreateCategoryDialog = ({ onSuccess }: { onSuccess?: () => void }) => {
+export const CreateCategoryDialog = ({ onSuccess, triggerElement, isEditMod = false }: { onSuccess?: () => void, triggerElement?: React.ReactNode, isEditMod?: boolean }) => {
   const iconListRef = useRef<HTMLDivElement>(null)
   const [visibleIconsCount, setVisibleIconsCount] = useState(50)
   const [open, setOpen] = useState(false)
   const [openSelectIcon, setOpenSelectIcon] = useState(false)
   const [searchIcon, setSearchIcon] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategorie, setSelectedCategorie] = useState<Category>()
 
-  const [form, setForm] = useState({ name: '', color: '#bb11cc', icon: 'TreePine' })
+  const [form, setForm] = useState<{ name: string; color: string; icon: string }>({
+    name: '',
+    color: '#bb11cc',
+    icon: 'TreePine',
+  })
+  
 
   const filteredIcons = iconsArray.filter(icon =>
     icon.name.toLowerCase().includes(searchIcon.toLowerCase())
@@ -47,32 +56,130 @@ export const CreateCategoryDialog = ({ onSuccess }: { onSuccess?: () => void }) 
     }
   }
 
-  const handleCreate = async () => {
-    const result = await createCategory(form)
-    if (result.success) {
-      toast.success('Catégorie créée')
-      await revalidateCategoriesCache()
-      onSuccess?.()
-      setOpen(false)
+  const handleSubmit = async () => {
+    if (selectedCategorie) {
+      // Mode édition
+      const result = await updateCategory({
+        id: selectedCategorie.id,
+        name: form.name,
+        color: form.color,
+        icon: form.icon ?? '',
+      })
+      
+      if (result.success) {
+        toast.success('Catégorie modifiée');
+        await revalidateCategoriesCache();
+        const updated = await getCategories();
+        if (updated.success && updated.data) {
+          setCategories(updated.data);
+        }
+        onSuccess?.()
+        setOpen(false)
+      } else {
+        toast.error('Erreur lors de la modification')
+      }
     } else {
-      toast.error('Erreur lors de la création')
+      // Mode création
+      const result = await createCategory(form)
+      if (result.success) {
+        toast.success('Catégorie créée')
+        await revalidateCategoriesCache()
+        onSuccess?.()
+        setOpen(false)
+      } else {
+        toast.error('Erreur lors de la création')
+      }
     }
   }
+
+  const handleDelete = async () => {
+    if(selectedCategorie) {
+      const result = await deleteCategory(selectedCategorie.id)
+      console.log(result)
+      if (result.success) {
+        toast.success('Catégorie supprimée');
+        await revalidateCategoriesCache(); // s'assure que les données sont à jour
+        setSelectedCategorie(undefined); // réinitialise la sélection
+        setForm({ name: '', color: '#bb11cc', icon: 'TreePine' }); // reset form
+        const updated = await getCategories();
+        if (updated.success && updated.data) {
+          setCategories(updated.data);
+        }
+    } else {
+      toast.error(result.error)
+    }
+  }
+}
+  
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await getCategories();
+      if (data.success && data.data) {
+        setCategories(data.data);
+      } else {
+        console.error('Échec de la récupération des catégories :', data.error);
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+  console.log(categories)
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
-        <Button size="icon" className="rounded-full p-1 text-md bg-primary text-white">
+        {triggerElement ? <div>{triggerElement}</div> : <Button size="icon" className="rounded-full p-1 text-md bg-primary text-white">
           <Lucide.PlusIcon className="h-5 w-5" />
-        </Button>
+        </Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="mb-2">Création d&apos;une catégorie</DialogTitle>
-          <DialogDescription>Remplissez les champs ci-dessous pour ajouter une nouvelle catégorie.</DialogDescription>
+          <DialogTitle className="mb-2">{isEditMod ? 'Modification' : 'Création'} d'une catégorie</DialogTitle>
+          <DialogDescription>{isEditMod ? 'Modifier' : 'Remplissez' } les champs ci-dessous pour {isEditMod ? 'modifier une'  : 'ajouter une nouvelle'} catégorie.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
+        {isEditMod &&
+        <>
+        <Label>Catégorie</Label>
+          <div className='flex'>
+        <Select
+              onValueChange={(value) => {
+                const selected = categories.find((ctg) => ctg.name.toLowerCase() === value)
+                if (selected) {
+                  setSelectedCategorie(selected)
+                  setForm({
+                    name: selected.name ?? '',
+                    color: selected.color ?? '#000',
+                    icon: selected.icon ?? null,
+                  })
+                }
+            }}>
+            <SelectTrigger className="w-full md:w-[220px]">
+              <SelectValue placeholder="Sélectionner une catégorie" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((ctg) => (
+                <SelectItem key={ctg.name} value={ctg.name.toLowerCase()}>
+                  {ctg.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+        </Select>
+
+
+        <Button 
+          disabled={!selectedCategorie}
+          variant='outline'
+          className="ml-2 p-1 text-md bg-primary text-white"
+          onClick={handleDelete}
+          >
+            <Lucide.Trash />
+        </Button>
+        </div>
+        </>
+}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="grid gap-2">
               <Label htmlFor="name">Nom</Label>
@@ -147,7 +254,10 @@ export const CreateCategoryDialog = ({ onSuccess }: { onSuccess?: () => void }) 
           <DialogClose asChild>
             <Button variant="outline">Annuler</Button>
           </DialogClose>
-          <Button onClick={handleCreate}>Confirmer</Button>
+          <Button onClick={handleSubmit}>
+            {isEditMod ? 'Mettre à jour' : 'Créer'}
+          </Button>
+
         </DialogFooter>
       </DialogContent>
     </Dialog>
