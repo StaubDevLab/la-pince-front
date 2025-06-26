@@ -11,7 +11,7 @@ export interface Transaction {
     description: string | null
     categoryId: string
     isRecurring: boolean
-    recurringFrequency: number | null
+    recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringStartDate: Date | null 
     recurringEndDate: Date | null
 
@@ -25,7 +25,7 @@ export interface ApiPayloadTransaction {
     description: string
     categoryId: string
     isRecurring: boolean
-    recurringFrequency: number | null
+    recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringStartDate?: string | null 
     recurringEndDate: string | null 
     date: string 
@@ -38,7 +38,7 @@ export interface FormTransactionInputs {
     description: string
     category: string
     isRecurring: boolean
-    reccuringFrequency?: string
+    reccuringFrequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringEndDate?: string | null 
     date: string 
 }
