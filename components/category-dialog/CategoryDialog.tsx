@@ -37,7 +37,6 @@ export const CreateCategoryDialog = ({ onSuccess }: { onSuccess?: () => void }) 
   const filteredIcons = iconsArray.filter(icon =>
     icon.name.toLowerCase().includes(searchIcon.toLowerCase())
   )
-  console.log(filteredIcons)
 
   const handleScroll = () => {
     const list = iconListRef.current
