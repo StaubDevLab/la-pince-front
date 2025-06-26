@@ -75,7 +75,7 @@ export function BudgetForm({
       reset({
         totalAmount: initialData.totalAmount ?? 0,
        
-        recurringFrequency: initialData.recurringFrequency ? String(initialData.recurringFrequency) : 'monthly',
+        recurringFrequency: initialData.recurringFrequency ? (initialData.recurringFrequency as "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly") : 'monthly',
         categoryId: initialData.categoryId ?? '',
         recurringStartDate:
           initialData.recurringStartDate ?? new Date().toISOString().split('T')[0],
