@@ -13,12 +13,14 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { DateRange } from 'react-day-picker'
+import { CategoryItem } from "@/components/category-item"
+import { Badge } from "@/components/ui/badge"
 
 interface CategoryData {
     name: string
     value: number
     fill: string
-    icon?: React.ReactNode
+    icon?: string
     percentage?: number
 }
 
@@ -83,7 +85,7 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
         <Card className="flex flex-col mx-auto">
             <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
                 <CardTitle className="text-lg font-medium">{title}</CardTitle>
-                <Popover>
+                {/*<Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="px-2 text-sm md:text-lg">
                             <CalendarIcon className="h-3 w-3 mr-1" />
@@ -98,7 +100,7 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
                             locale={fr}
                         />
                     </PopoverContent>
-                </Popover>
+                </Popover>*/}
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 <div className="flex flex-col md:flex-row items-center gap-4">
@@ -126,11 +128,13 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full md:w-1/2">
                         {categoriesFormat.map((category, index) => (
+                            
                             <div key={index} className="flex items-center gap-1.5">
-                                {category.icon}
-                                <span className="text-md">{category.name}</span>
+                                <Badge className="flex items-center gap-1.5" style={{ backgroundColor: category.fill }}>
+                                    <CategoryItem category={{ name: category.name, displayName: true, iconSize: 20 }} iconName={category.icon as string} />
+                                </Badge>
                                 {category.percentage !== undefined && (
-                                    <span className="text-sm text-muted-foreground">({category.percentage}%)</span>
+                                    <span className="text-sm text-white">({category.percentage}%)</span>
                                 )}
                             </div>
                         ))}

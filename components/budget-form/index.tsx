@@ -42,7 +42,7 @@ export function BudgetForm({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
       totalAmount: 0,
-      recurringFrequency: '30', 
+      recurringFrequency: 'monthly', 
       categoryId: '',
       recurringStartDate: new Date().toISOString().split('T')[0],
     },
@@ -75,7 +75,7 @@ export function BudgetForm({
       reset({
         totalAmount: initialData.totalAmount ?? 0,
        
-        recurringFrequency: initialData.recurringFrequency ? String(initialData.recurringFrequency) : '30',
+        recurringFrequency: initialData.recurringFrequency ? (initialData.recurringFrequency as "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly") : 'monthly',
         categoryId: initialData.categoryId ?? '',
         recurringStartDate:
           initialData.recurringStartDate ?? new Date().toISOString().split('T')[0],
@@ -84,7 +84,7 @@ export function BudgetForm({
       
       reset({
         totalAmount: 0,
-        recurringFrequency: '30',
+        recurringFrequency: 'monthly',
         categoryId: '',
         recurringStartDate: new Date().toISOString().split('T')[0],
       });
@@ -95,10 +95,10 @@ export function BudgetForm({
     const payload = {
       categoryId: data.categoryId,
       totalAmount: Number(data.totalAmount),
-      recurringFrequency: Number(data.recurringFrequency),
+      recurringFrequency: data.recurringFrequency,
       recurringStartDate: new Date(data.recurringStartDate).toISOString(),
     };
-
+    console.log(payload)
 
     const response = initialData?.id
       ? await updateBudget(initialData.id, payload)
@@ -184,10 +184,11 @@ export function BudgetForm({
               </SelectTrigger>
               <SelectContent>
                 {/* Assurez-vous que les valeurs sont des chaînes */}
-                <SelectItem value="1">Quotidien</SelectItem>
-                <SelectItem value="7">Hebdomadaire</SelectItem>
-                <SelectItem value="30">Mensuelle</SelectItem>
-                <SelectItem value="90">Trimestrielle</SelectItem>
+                <SelectItem value="weekly">Hebdomadaire</SelectItem>
+                <SelectItem value="biweekly">Bihebdomadaire</SelectItem>
+                <SelectItem value="monthly">Mensuelle</SelectItem>
+                <SelectItem value="quarterly">Trimestrielle</SelectItem>
+                <SelectItem value="yearly">Annuelle</SelectItem>
               </SelectContent>
             </Select>
           )}

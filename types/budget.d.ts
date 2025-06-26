@@ -4,7 +4,7 @@ export interface BudgetFetched {
     categoryId: string;
     totalAmount: number;
     actualAmount: number;
-    recurringFrequency: number;
+    recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly";
     recurringStartDate: string;
     lastResetDate: string;
     createdAt: string;
@@ -15,7 +15,7 @@ export interface BudgetFetched {
 export type BudgetFormType = {
     categoryId:string
     totalAmount: number
-    recurringFrequency: number
+    recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly"
     recurringStartDate: string
 
 }

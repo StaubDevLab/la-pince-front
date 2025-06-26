@@ -37,7 +37,7 @@ export default async function Dashboard() {
         getBudgetsForUser()
     ]);
     const getCategoryIconComponent = (categoryName: string, fillColor: string): React.ReactNode => {
-        
+    
         return (
             <div className="p-1 rounded-md" style={{ backgroundColor: fillColor }}>
                 <CategoryItem category={{ name: categoryName, displayName: false, iconSize: 20 }} />
@@ -47,20 +47,21 @@ export default async function Dashboard() {
     const transactions: Transaction[] = transactionsResult.success && transactionsResult.data ? transactionsResult.data.data : [];
     const dashboardData: DashboardData | null | undefined = dashboardResult.success ? dashboardResult.data : null;
     const budgets: BudgetFetched[] = budgetsResult.success && budgetsResult.data ? budgetsResult.data : [];
-    const categoriesMap = new Map<string, { name: string, fill: string, icon: React.ReactNode }>();
+    const categoriesMap = new Map<string, { name: string, fill: string, icon: string }>();
     if (categoriesResult.success && categoriesResult.data) {
 
         categoriesResult.data.forEach((cat: Category) => {
             if (cat.id && cat.name && cat.color && cat.icon) {
                 const categoryFillColor: string = cat.color;
                 const categoryIconName: string = cat.name;
+                const categoryIcon = cat.icon;
 
                 const categoryIconComponent = getCategoryIconComponent(categoryIconName, categoryFillColor);
-
+              
                 categoriesMap.set(cat.id, {
                     name: cat.name,
                     fill: categoryFillColor,
-                    icon: categoryIconComponent
+                    icon: categoryIcon
                 });
             } else {
                 console.warn(`Catégorie incomplète trouvée et ignorée: ${cat.id || 'N/A'}`);
@@ -155,7 +156,7 @@ export default async function Dashboard() {
                 name: categoryInfo?.name || 'Catégorie inconnue',
                 value: item.total,
                 fill: categoryInfo?.fill || '#CCCCCC',
-                icon: categoryInfo?.icon || null
+                icon: categoryInfo?.icon || undefined
             };
         }),
         initialDateRange: {

@@ -12,7 +12,6 @@ import { Sheet } from '../ui/sheet'
 
 const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) => {
     const [open, setOpen] = React.useState(false)
-
     return (
         <Card className="w-full h-full">
             <CardHeader className="flex flex-row items-center justify-between">
