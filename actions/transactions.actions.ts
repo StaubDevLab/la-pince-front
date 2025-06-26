@@ -126,7 +126,7 @@ export async function deleteTransaction(id: string): Promise<ApiResponse<null>> 
  */
 export async function updateTransaction(id: string, payload: ApiPayloadTransaction): Promise<ApiResponse<{ amount: number }>> { // <--- MODIFICATION ICI
     const { data: res, error, success } = await fetchWithAuth<{ totalUserAccountAmount: number }>(
-        `${API_BASE_URL}/transactions/${id}`,
+        `${API_BASE_URL}/transactions/${id}?updateNextChilds=false`,
         {
             method: 'PATCH',
             body: JSON.stringify(payload),
