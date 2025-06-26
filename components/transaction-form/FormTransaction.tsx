@@ -48,7 +48,7 @@ const FormTransaction: React.FC<{
             description: '',
             category: '',
             isRecurring: false,
-            reccuringFrequency: '30',
+            reccuringFrequency: 'monthly',
             recurringEndDate: null, 
             date: new Date().toISOString().split('T')[0],
         },
@@ -81,7 +81,7 @@ const FormTransaction: React.FC<{
                 description: '',
                 category: '',
                 isRecurring: false,
-                reccuringFrequency: '30',
+                reccuringFrequency: 'monthly',
                 recurringEndDate: null, 
                 date: new Date().toISOString().split('T')[0],
             });
@@ -96,7 +96,7 @@ const FormTransaction: React.FC<{
                     description: props.transactionToEdit.description ?? '',
                     category: props.transactionToEdit.categoryId,
                     isRecurring: props.transactionToEdit.isRecurring,
-                    reccuringFrequency: props.transactionToEdit.recurringFrequency?.toString() || '30',
+                    reccuringFrequency: props.transactionToEdit.recurringFrequency || 'monthly',
                     recurringEndDate: props.transactionToEdit.recurringEndDate ? new Date(props.transactionToEdit.recurringEndDate).toISOString().split('T')[0] : null,
                     date: props.transactionToEdit.date ? new Date(props.transactionToEdit.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
                 });
@@ -108,7 +108,7 @@ const FormTransaction: React.FC<{
                 description: '',
                 category: '',
                 isRecurring: false,
-                reccuringFrequency: '30',
+                reccuringFrequency: 'monthly',
                 recurringEndDate: null, 
                 date: new Date().toISOString().split('T')[0],
             });
@@ -125,7 +125,7 @@ const FormTransaction: React.FC<{
             description: data.description?.trim() || '',
             categoryId: data.category,
             isRecurring: data.isRecurring,
-            recurringFrequency: data.isRecurring && data.reccuringFrequency ? Number(data.reccuringFrequency) : null,
+            recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
             recurringStartDate: null, 
             recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null, 
             date: new Date(data.date).toISOString(),
@@ -286,10 +286,11 @@ const FormTransaction: React.FC<{
                                         <SelectValue placeholder="Mensuelle..." />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="1">Quotidien</SelectItem>
-                                        <SelectItem value="7">Hebdomadaire</SelectItem>
-                                        <SelectItem value="30">Mensuelle</SelectItem>
-                                        <SelectItem value="90">Trimestrielle</SelectItem>
+                                        <SelectItem value="weekly">Hebdomadaire</SelectItem>
+                                        <SelectItem value="biweekly">Bihebdomadaire</SelectItem>
+                                        <SelectItem value="monthly">Mensuelle</SelectItem>
+                                        <SelectItem value="quarterly">Trimestrielle</SelectItem>
+                                        <SelectItem value="yearly">Annuelle</SelectItem>
                                     </SelectContent>
                                 </Select>
                             )}
