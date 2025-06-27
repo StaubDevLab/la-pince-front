@@ -50,7 +50,7 @@ export default function Header() {
                         Bonjour, {user.firstName ? user.firstName : <Skeleton className='w-20 h-4' />}
                     </h1>
                     <div className="text-sm text-muted-foreground">
-                        {user.amount ? <HeaderAmmount amount={user.amount} /> : <Skeleton  className="w-24 h-6" />}
+                         <HeaderAmmount amount={user.amount} />
                     </div>
                 </div>
             </div>

@@ -21,6 +21,8 @@ import { revalidateUserDashboardCache, revalidateUserBudgetsCache } from '@/acti
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/user-context'
 import { CreateCategoryDialog } from '../category-dialog/CategoryDialog'
+import { AlertCircleIcon, TriangleAlert } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
 
 const FormTransaction: React.FC<{
@@ -55,7 +57,6 @@ const FormTransaction: React.FC<{
     });
 
     const isRecurring = watch('isRecurring');
-
     useEffect(() => {
         if (props.open && session?.accessToken) {
             const fetchCategories = async () => {
@@ -118,27 +119,42 @@ const FormTransaction: React.FC<{
 
     const onSubmit = async (data: FormTransactionInputs) => {
         console.log("Données du formulaire brutes (data):", data);
-
-        const apiPayload: ApiPayloadTransaction = {
-            amount: Number(data.amount),
-            transactionType: Number(data.transactionType),
-            description: data.description?.trim() || '',
+        let result;
+        if (props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null){
+            const apiPayload: ApiPayloadTransaction = {
+                amount: Number(data.amount),
+                transactionType: Number(data.transactionType),
+                description: data.description?.trim() || '',
+                categoryId: data.category, 
+                date: new Date(data.date).toISOString(),
+            }
+            result = await updateTransaction(props.transactionToEdit.id, apiPayload);
+        }else if(props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId === null){
+            const apiPayload: ApiPayloadTransaction = {
+                amount: Number(data.amount),
+                transactionType: Number(data.transactionType),
+                description: data.description?.trim() || '',
             categoryId: data.category,
             isRecurring: data.isRecurring,
             recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
             recurringStartDate: null, 
             recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null, 
             date: new Date(data.date).toISOString(),
-        };
-
-        console.log("Payload formaté pour l'API:", apiPayload);
-
-        let result;
-        if (props.transactionToEdit) {
+            }
             result = await updateTransaction(props.transactionToEdit.id, apiPayload);
-        } else {
+        }else{
+            const apiPayload: ApiPayloadTransaction = {
+                amount: Number(data.amount),
+                transactionType: Number(data.transactionType),
+                description: data.description?.trim() || '',
+                categoryId: data.category, 
+                date: new Date(data.date).toISOString(),
+            }
             result = await createTransaction(apiPayload);
         }
+
+        
+           
 
         if (result.success) {
             props.onSuccess?.();
@@ -164,6 +180,13 @@ const FormTransaction: React.FC<{
         <SheetContent className="w-full sm:w-[480px]">
             <SheetHeader>
                 <SheetTitle>{props.transactionToEdit ? 'Modifier la transaction' : 'Ajouter une transaction'}</SheetTitle>
+                {props.transactionToEdit?.isRecurring && <Alert variant="info">
+                        <AlertCircleIcon />
+                        <AlertTitle>Information</AlertTitle>
+                        <AlertDescription>
+                            Certains éléments ne peuvent pas être modifiés car la transaction fait partie d'une récurrence.
+                        </AlertDescription>
+                    </Alert>}
             </SheetHeader>
             <form className="grid flex-1 auto-rows-min gap-6 px-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-3">
@@ -172,7 +195,7 @@ const FormTransaction: React.FC<{
                         control={control}
                         name="transactionType"
                         render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value} aria-label="Type de transaction">
+                            <Select onValueChange={field.onChange} value={field.value} aria-label="Type de transaction" disabled={props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Sélectionnez un type" />
                                 </SelectTrigger>
@@ -214,8 +237,9 @@ const FormTransaction: React.FC<{
                         <Controller
                             control={control}
                             name="category"
+                            
                             render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value} aria-label="Catégorie">
+                                <Select onValueChange={field.onChange} value={field.value} aria-label="Catégorie" disabled={props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Sélectionnez une catégorie" />
                                     </SelectTrigger>
@@ -261,13 +285,14 @@ const FormTransaction: React.FC<{
                         />
                         {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
                     </div>
+                  
                 <div className="flex items-center space-x-2">
                     <Controller
                         name="isRecurring"
                         control={control}
                         render={({ field }) => (
                             <>
-                                <Switch id="recurring" checked={field.value} onCheckedChange={field.onChange} aria-label="Récurrent ?" />
+                                <Switch id="recurring" checked={field.value} disabled={props.transactionToEdit?.isRecurring} onCheckedChange={field.onChange} aria-label="Récurrent ?" />
                                 <Label htmlFor="recurring">Récurrent ?</Label>
                             </>
                         )}
@@ -281,7 +306,7 @@ const FormTransaction: React.FC<{
                             control={control}
                             name="reccuringFrequency"
                             render={({ field }) => (
-                                <Select onValueChange={field.onChange} value={field.value || 'monthly'} aria-label="Fréquence">
+                                <Select onValueChange={field.onChange} value={field.value || 'monthly'} aria-label="Fréquence" disabled={props.transactionToEdit?.isRecurring}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Mensuelle..." />
                                     </SelectTrigger>
@@ -309,6 +334,7 @@ const FormTransaction: React.FC<{
                                 required:  false, 
                             })}
                             aria-label="Date de fin de récurrence"
+                            disabled={props.transactionToEdit?.isRecurring}
                         />
                         {errors.recurringEndDate && <p className="text-sm text-red-500">{errors.recurringEndDate.message}</p>}
                     </div>

@@ -14,7 +14,10 @@ export interface Transaction {
     recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringStartDate: Date | null 
     recurringEndDate: Date | null
-
+    recurringParentId: string | null
+    isDeleted: boolean
+    isOrphaned: boolean
+    
     category: Category
 }
 
@@ -24,10 +27,10 @@ export interface ApiPayloadTransaction {
     transactionType: number
     description: string
     categoryId: string
-    isRecurring: boolean
-    recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
+    isRecurring?: boolean
+    recurringFrequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringStartDate?: string | null 
-    recurringEndDate: string | null 
+    recurringEndDate?: string | null 
     date: string 
 }
 
