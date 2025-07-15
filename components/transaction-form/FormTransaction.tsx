@@ -23,6 +23,7 @@ import { useUser } from '@/context/user-context'
 import { CreateCategoryDialog } from '../category-dialog/CategoryDialog'
 import { AlertCircleIcon, TriangleAlert } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { ScrollArea } from '../ui/scroll-area'
 
 
 const FormTransaction: React.FC<{
@@ -216,7 +217,8 @@ const FormTransaction: React.FC<{
 
 
     return (
-        <SheetContent className="w-full sm:w-[480px]">
+        <SheetContent className="w-full sm:w-[480px] h-[calc(100vh-10rem)]">
+            <ScrollArea className="h-full w-full">
             <SheetHeader>
                 <SheetTitle>{props.transactionToEdit ? 'Modifier la transaction' : 'Ajouter une transaction'}</SheetTitle>
                 {props.transactionToEdit?.isRecurring && (
@@ -397,6 +399,7 @@ const FormTransaction: React.FC<{
                     Enregistrer
                 </Button>
             </form>
+            </ScrollArea>
         </SheetContent>
     );
 }
