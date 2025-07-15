@@ -3,7 +3,7 @@
 import { auth } from '@/auth'
 import { ApiResponse } from '@/types/apiResponse'
 import { revalidateTag } from 'next/cache';
-import { PasswordFormData } from '@/types/user'
+import { PasswordFormData, User } from '@/types/user'
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
 const API_BASE_URL = process.env.API_URL
 export async function updateProfileAndSession(newProfile: { firstName: string,lastName: string, email: string }): Promise<ApiResponse<null>> {
@@ -24,10 +24,8 @@ export async function updateProfileAndSession(newProfile: { firstName: string,la
     return { success: true, data: null }
 }
 
-export async function getProfile(): Promise<ApiResponse<{
-    accountName: string, firstName: string, lastName: string, email: string
-}>> {
-    const { data: res, error, success } = await fetchWithAuth<{accountName: string, firstName: string, lastName: string, email: string}>(
+export async function getProfile(): Promise<ApiResponse<User>> {
+    const { data: res, error, success } = await fetchWithAuth<User>(
         `${API_BASE_URL}/users`,
         {
             method: 'GET',
