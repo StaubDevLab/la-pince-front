@@ -20,7 +20,9 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         });
 
         const refreshedTokens = await response.json();
-        console.log("Token in refreshAccessToken", refreshedTokens)
+        if (process.env.NODE_ENV !== 'production') {
+            console.log("Token in refreshAccessToken", refreshedTokens);
+        }
         if (!response.ok) {
             throw refreshedTokens;
         }

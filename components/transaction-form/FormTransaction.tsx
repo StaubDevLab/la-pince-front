@@ -155,7 +155,7 @@ const FormTransaction: React.FC<{
                 categoryId: data.category,
                 date: new Date(data.date).toISOString(),
                 isRecurring: data.isRecurring,
-                recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
+                recurringFrequency: data.isRecurring && data.recurringFrequency ? data.recurringFrequency : null,
                 recurringStartDate: null,
                 recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null,
             

@@ -75,7 +75,14 @@ export default async function Dashboard() {
 
     //1. Données pour les cartes de budget
     const budgetCardProps = budgets.map(budget => {
-        const periodText = budget.recurringFrequency === "monthly" ? '30 Jours' : `${budget.recurringFrequency === "weekly" ? '7 Jours' : budget.recurringFrequency === "biweekly" ? '14 Jours' : budget.recurringFrequency === "quarterly" ? '90 Jours' : budget.recurringFrequency === "yearly" ? '365 Jours' : 'Inconnu'}`; // Adapter le texte de la période
+        const recurringFrequencyMap: Record<string, string> = {
+            monthly: '30 Jours',
+            weekly: '7 Jours',
+            biweekly: '14 Jours',
+            quarterly: '90 Jours',
+            yearly: '365 Jours',
+        };
+        const periodText = recurringFrequencyMap[budget.recurringFrequency] || 'Inconnu'; // Adapter le texte de la période
 
         const spentPercentage = budget.totalAmount > 0 ? (budget.actualAmount / budget.totalAmount) * 100 : 0;
         let spentColor = '#F97316';
