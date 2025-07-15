@@ -19,7 +19,7 @@ export default function Notifications() {
   const [notifications, setNotifications] = React.useState<Notification[]>([])
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 5 })
   const [totalCount, setTotalCount] = React.useState(0)
-  const [showOnlyUnread, setShowOnlyUnread] = React.useState(false)
+  const [showReadedNotifs, setShowReadedNotifs] = React.useState(false)
 
   const typeColor: Record<string, string> = {
     info: 'text-sky-500',
@@ -28,7 +28,7 @@ export default function Notifications() {
   }
 
   const fetchNotifications = () => {
-    getNotifications(pagination.pageSize, pagination.pageIndex, showOnlyUnread).then((notifications) => {
+    getNotifications(pagination.pageSize, pagination.pageIndex, showReadedNotifs).then((notifications) => {
       if (notifications.success && notifications.data) {
         setNotifications(notifications.data.data)
         setTotalCount(notifications.data.total || notifications.data.data.length || 0)
@@ -41,14 +41,18 @@ export default function Notifications() {
 
   React.useEffect(() => {
     fetchNotifications()
-  }, [pagination.pageIndex, pagination.pageSize, showOnlyUnread, setShowOnlyUnread])
+  }, [pagination.pageIndex, pagination.pageSize, showReadedNotifs, setShowReadedNotifs])
 
   React.useEffect(() => {
-    const ids = notifications.map((notif) => notif.id)
-    if(ids.length) {
-        markAsReadNotifications(ids)
+    const unreadIds = notifications
+      .filter((notif) => !notif.isRead)
+      .map((notif) => notif.id)
+
+    if (unreadIds.length && !showReadedNotifs) {
+      markAsReadNotifications(unreadIds)
     }
-  }, [notifications])
+  }, [notifications, showReadedNotifs])
+
 
   return (
     <div className="flex items-center justify-center w-full flex-grow">
@@ -61,8 +65,8 @@ export default function Notifications() {
             </Label>
             <Switch
               id="show-unread"
-              checked={showOnlyUnread}
-              onCheckedChange={(value) => setShowOnlyUnread(value)}
+              checked={showReadedNotifs}
+              onCheckedChange={(value) => setShowReadedNotifs(value)}
             />
           </div>
         </div>
