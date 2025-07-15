@@ -9,6 +9,9 @@ export type User = {
     accountName: string;
     accountId: string;
     amount: float;
+    firstLogin: boolean;
+    currency: string;
+    locale: string;
 }
 
 export interface PasswordFormData {

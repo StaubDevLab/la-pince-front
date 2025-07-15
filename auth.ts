@@ -9,6 +9,7 @@ import { AdapterUser } from "@auth/core/adapters";
 
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
+  
     try {
         const response = await fetch(`${process.env.API_URL}/auth/token/refresh`, {
             method: 'POST',
@@ -19,7 +20,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         });
 
         const refreshedTokens = await response.json();
-
+        console.log("Token in refreshAccessToken", refreshedTokens)
         if (!response.ok) {
             throw refreshedTokens;
         }
@@ -28,7 +29,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         return {
             ...token, 
             accessToken: refreshedTokens.accessToken,
-            accessTokenExpiresAt: Date.now() + refreshedTokens.expiresIn * 1000,
+            accessTokenExpiresAt: Date.now() + refreshedTokens.accessTokenExpiresAt,
             refreshToken: refreshedTokens.refreshToken ?? token.refreshToken,
             refreshTokenExpiresAt: refreshedTokens.refreshTokenExpiresAt
                 ? new Date(refreshedTokens.refreshTokenExpiresAt).getTime()
@@ -61,7 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 if (!response.ok || !data.user) {
                     throw new Error(data.message || 'Authentication failed');
                 }
-
+                
                 return {
                     id: data.user.id,
                     email: data.user.email,
@@ -106,7 +107,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (Date.now() < (token.accessTokenExpiresAt || 0)) {
                 return token; 
             }
-            console.log("Access Token expiré, tentative de rafraîchissement...");
             const refreshedToken = await refreshAccessToken(token);
 
             if (refreshedToken.error) {
@@ -127,7 +127,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     error: token.error, 
                 } as Session; 
             }
-
             session.user = {
                 id: token.id,
                 email: token.email,
