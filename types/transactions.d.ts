@@ -41,7 +41,7 @@ export interface FormTransactionInputs {
     description: string
     category: string
     isRecurring: boolean
-    reccuringFrequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
+    recurringFrequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly" | null
     recurringEndDate?: string | null 
     date: string 
 }

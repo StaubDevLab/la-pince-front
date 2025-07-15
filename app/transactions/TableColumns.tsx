@@ -74,7 +74,7 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="capitalize">{row.getValue('description')}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue('description')} {row.original.isRecurring ? '🔄' : ''} {!row.original.recurringParentId && row.original.isRecurring ? '👑' : ''}</div>,
     },
     {
         accessorKey: 'category',

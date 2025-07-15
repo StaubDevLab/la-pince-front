@@ -20,6 +20,11 @@ declare module "next-auth" {
       accessToken: string;
       accessTokenExpiresAt: number; 
       refreshToken: string;
+      refreshTokenExpiresAt: number; 
+      sessionId: string;
+      firstLogin?: boolean;
+      currency: string;
+      locale: string;
     } | null; 
     accessToken: string; 
     error?: "RefreshAccessTokenError" | "RefreshTokenExpired"; 
@@ -41,6 +46,9 @@ declare module "next-auth" {
     accessTokenExpiresAt: number; 
     refreshTokenExpiresAt: number; 
     sessionId: string;
+    firstLogin: boolean;
+    currency: string;
+    locale: string;
   }
 }
 
@@ -63,6 +71,10 @@ declare module "next-auth/jwt" {
     refreshToken: string;
     refreshTokenExpiresAt: number; 
     sessionId: string;
+    firstLogin?: boolean;
+    currency: string;
+    locale: string;
+  
     error?: "RefreshAccessTokenError" | "RefreshTokenExpired"; 
   }
 }

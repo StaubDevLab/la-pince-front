@@ -144,3 +144,32 @@ export async function updateTransaction(id: string, payload: ApiPayloadTransacti
     await revalidateUserTransactionsCache()
     return { success: true, data: { amount: res.totalUserAccountAmount }, message: 'Transaction modifiée avec succès' }
 }
+
+/**
+ * Arrête la récurrence d'une transaction spécifique.
+ * @param transactionId L'ID de la transaction récurrente à arrêter.
+ * @returns Une ApiResponse indiquant le succès ou l'échec de l'opération.
+ */
+export async function stopRecurringTransaction(transactionId: string): Promise<ApiResponse<null>> {
+    console.log(`Tentative d'arrêt de la récurrence pour la transaction ID: ${transactionId}`);
+    try {
+        const { success, error } = await fetchWithAuth<any>(
+            `${API_BASE_URL}/transactions/recurring/stop/${transactionId}`,
+            {
+                method: 'DELETE', 
+            }
+        );
+
+        if (!success) {
+            console.error(`Erreur lors de l'arrêt de la récurrence pour ${transactionId}:`, error);
+            return { success: false, error: error || "Échec de l'arrêt de la récurrence." };
+        }
+
+        await revalidateUserTransactionsCache();
+        console.log(`Récurrence arrêtée avec succès pour la transaction ID: ${transactionId}`);
+        return { success: true, message: 'Récurrence de la transaction arrêtée avec succès.' };
+    } catch (err: any) {
+        console.error(`Exception lors de l'arrêt de la récurrence pour ${transactionId}:`, err);
+        return { success: false, error: `Erreur interne du serveur: ${err.message}` };
+    }
+}

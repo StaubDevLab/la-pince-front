@@ -24,7 +24,7 @@ type BudgetCardFullProps = {
   spentColor: string;
   remainingColor: string;
   categoryId: string;
-  recurringFrequency: string;
+  recurringFrequency: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly";
   recurringStartDate: string;
 };
 

@@ -40,7 +40,7 @@ const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) =
                         <div key={transaction.id} className="grid grid-cols-3 items-center px-4 py-3">
                             <div>
                                 <p className="text-xs text-muted-foreground">{new Date(transaction.date).toLocaleDateString('fr-FR')}</p>
-                                <p className="font-medium">{transaction.description}</p>
+                                <p className="font-medium">{transaction.description} {transaction.isRecurring ? '🔄' : ''} {!transaction.recurringParentId && transaction.isRecurring ? '👑' : ''}</p>
                             </div>
                             <div className={`flex justify-center `}>
                                 <Badge style={{ backgroundColor: transaction.category.color }} className="font-medium capitalize">

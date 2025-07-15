@@ -75,7 +75,14 @@ export default async function Dashboard() {
 
     //1. Données pour les cartes de budget
     const budgetCardProps = budgets.map(budget => {
-        const periodText = budget.recurringFrequency === "monthly" ? '30 Jours' : `${budget.recurringFrequency} Jours`; // Adapter le texte de la période
+        const recurringFrequencyMap: Record<string, string> = {
+            monthly: '30 Jours',
+            weekly: '7 Jours',
+            biweekly: '14 Jours',
+            quarterly: '90 Jours',
+            yearly: '365 Jours',
+        };
+        const periodText = recurringFrequencyMap[budget.recurringFrequency] || 'Inconnu'; // Adapter le texte de la période
 
         const spentPercentage = budget.totalAmount > 0 ? (budget.actualAmount / budget.totalAmount) * 100 : 0;
         let spentColor = '#F97316';
@@ -94,7 +101,7 @@ export default async function Dashboard() {
             remainingColor: '#E5E7EB',
             budgetId:budget.id,
             categoryId: budget.categoryId,
-            recurringFrequency: String(budget.recurringFrequency),
+            recurringFrequency: budget.recurringFrequency,
             recurringStartDate: budget.recurringStartDate,
             id: budget.id,
             totalAmount: budget.totalAmount,
@@ -149,7 +156,7 @@ export default async function Dashboard() {
     // 4. Données pour graphique des dépenses par catégories
 
     const expensesByCategoriesChartProps = dashboardData?.byCategories ? {
-        title: "Dépenses par catégorie",
+        title: "Dépenses par catégorie du mois en cours",
         categories: dashboardData.byCategories.totalByCategory.map(item => {
             const categoryInfo  = categoriesMap.get(item.categoryId);
             return {
