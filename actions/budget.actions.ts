@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { fetchWithAuth } from "@/lib/fetch-with-auth";
 import { ApiResponse } from "@/types/apiResponse";
 import { BudgetFormType } from "@/types/budget";
+import { User } from "@/types/user";
 import { revalidateTag } from "next/cache";
 const API_BASE_URL = process.env.API_URL
 export async function createBudget(data: BudgetFormType): Promise<ApiResponse<{ amount: number }>> {
@@ -66,6 +67,20 @@ export const updateBudget = async(budgetId: string, data: BudgetFormType): Promi
     
       await revalidateUserBudgetsCache()
       return { success: true, message: 'Budget modifié avec succès' }
+}
+
+export const updateGlobalBudget = async ({ userId, amount }: { userId: string, amount: number }): Promise<ApiResponse<User>> => {
+  const { data: res, error, success } = await fetchWithAuth<User>(
+    `${API_BASE_URL}/account/user/${userId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ amount })
+    }
+  )
+  if (!success || !res) {
+      return { success: false, error: error || 'Erreur inconnue' }
+  }
+  return { success: true, message: 'Budget global modifié avec succès' }
 }
 
 export const revalidateUserBudgetsCache = async (): Promise<ApiResponse<null>> => {
