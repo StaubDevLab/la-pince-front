@@ -13,7 +13,7 @@ import { useSession } from 'next-auth/react'
 import { getCategoriesForForm } from '@/actions/categories.actions'
 import { Category } from '@/types/categories'
 import { Transaction, ApiPayloadTransaction, FormTransactionInputs } from '@/types/transactions'
-import { createTransaction, updateTransaction } from '@/actions/transactions.actions'
+import { createTransaction, updateTransaction, stopRecurringTransaction } from '@/actions/transactions.actions' // <-- Importez la nouvelle action
 import { toast } from 'sonner'
 import { revalidateUserTransactionsCache } from '@/actions/transactions.actions'
 import { revalidateProfileCache } from '@/actions/profile.actions'
@@ -51,12 +51,16 @@ const FormTransaction: React.FC<{
             category: '',
             isRecurring: false,
             reccuringFrequency: 'monthly',
-            recurringEndDate: null, 
+            recurringEndDate: null,
             date: new Date().toISOString().split('T')[0],
         },
     });
 
     const isRecurring = watch('isRecurring');
+
+    // État local pour le bouton Stop, pour éviter la désactivation globale
+    const [isStopping, setIsStopping] = useState(false);
+
     useEffect(() => {
         if (props.open && session?.accessToken) {
             const fetchCategories = async () => {
@@ -83,7 +87,7 @@ const FormTransaction: React.FC<{
                 category: '',
                 isRecurring: false,
                 reccuringFrequency: 'monthly',
-                recurringEndDate: null, 
+                recurringEndDate: null,
                 date: new Date().toISOString().split('T')[0],
             });
             return;
@@ -110,7 +114,7 @@ const FormTransaction: React.FC<{
                 category: '',
                 isRecurring: false,
                 reccuringFrequency: 'monthly',
-                recurringEndDate: null, 
+                recurringEndDate: null,
                 date: new Date().toISOString().split('T')[0],
             });
         }
@@ -120,41 +124,43 @@ const FormTransaction: React.FC<{
     const onSubmit = async (data: FormTransactionInputs) => {
         console.log("Données du formulaire brutes (data):", data);
         let result;
-        if (props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null){
+        if (props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null) {
             const apiPayload: ApiPayloadTransaction = {
                 amount: Number(data.amount),
                 transactionType: Number(data.transactionType),
                 description: data.description?.trim() || '',
-                categoryId: data.category, 
+                categoryId: data.category,
                 date: new Date(data.date).toISOString(),
             }
             result = await updateTransaction(props.transactionToEdit.id, apiPayload);
-        }else if(props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId === null){
+        } else if (props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId === null) {
             const apiPayload: ApiPayloadTransaction = {
                 amount: Number(data.amount),
                 transactionType: Number(data.transactionType),
                 description: data.description?.trim() || '',
-            categoryId: data.category,
-            isRecurring: data.isRecurring,
-            recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
-            recurringStartDate: null, 
-            recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null, 
-            date: new Date(data.date).toISOString(),
+                categoryId: data.category,
+                isRecurring: data.isRecurring,
+                recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
+                recurringStartDate: null,
+                recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null,
+                date: new Date(data.date).toISOString(),
             }
             result = await updateTransaction(props.transactionToEdit.id, apiPayload);
-        }else{
+        } else {
             const apiPayload: ApiPayloadTransaction = {
                 amount: Number(data.amount),
                 transactionType: Number(data.transactionType),
                 description: data.description?.trim() || '',
-                categoryId: data.category, 
+                categoryId: data.category,
                 date: new Date(data.date).toISOString(),
+                isRecurring: data.isRecurring,
+                recurringFrequency: data.isRecurring && data.reccuringFrequency ? data.reccuringFrequency : null,
+                recurringStartDate: null,
+                recurringEndDate: data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null,
+            
             }
             result = await createTransaction(apiPayload);
         }
-
-        
-           
 
         if (result.success) {
             props.onSuccess?.();
@@ -176,17 +182,64 @@ const FormTransaction: React.FC<{
         }
     };
 
+    // Nouvelle fonction pour gérer l'arrêt de la récurrence
+    const handleStopRecurring = async () => {
+        if (!props.transactionToEdit?.id) {
+            toast.error("Impossible d'arrêter la récurrence: ID de transaction manquant.");
+            return;
+        }
+
+        setIsStopping(true); // Désactive le bouton pendant l'appel API
+        try {
+            const result = await stopRecurringTransaction(props.transactionToEdit.id);
+
+            if (result.success) {
+                toast.success('Récurrence arrêtée avec succès.');
+                props.onSuccess?.(); // Rafraîchit les données dans le composant parent
+                revalidateUserDashboardCache();
+                revalidateUserBudgetsCache();
+                revalidateUserTransactionsCache();
+                revalidateProfileCache();
+                router.refresh(); // Rafraîchit la page pour prendre en compte le changement
+                props.onOpenChange?.(false); // Ferme la feuille
+            } else {
+                console.error('Échec de l\'arrêt de la récurrence:', result.error);
+                toast.error('Échec de l\'arrêt de la récurrence: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Erreur inattendue lors de l\'arrêt de la récurrence:', error);
+            toast.error('Une erreur inattendue est survenue.');
+        } finally {
+            setIsStopping(false); // Réactive le bouton
+        }
+    };
+
+
     return (
         <SheetContent className="w-full sm:w-[480px]">
             <SheetHeader>
                 <SheetTitle>{props.transactionToEdit ? 'Modifier la transaction' : 'Ajouter une transaction'}</SheetTitle>
-                {props.transactionToEdit?.isRecurring && <Alert variant="info">
-                        <AlertCircleIcon />
-                        <AlertTitle>Information</AlertTitle>
-                        <AlertDescription>
-                            Certains éléments ne peuvent pas être modifiés car la transaction fait partie d'une récurrence.
-                        </AlertDescription>
-                    </Alert>}
+                {props.transactionToEdit?.isRecurring && (
+                    <>
+                        <Alert variant="info">
+                            <AlertCircleIcon />
+                            <AlertTitle>Information</AlertTitle>
+                            <AlertDescription>
+                                Certains éléments ne peuvent pas être modifiés car la transaction fait partie d'une récurrence.
+                            </AlertDescription>
+                        </Alert>
+                        {/* Bouton pour arrêter la récurrence */}
+                        <Button
+                            variant="destructive"
+                            onClick={handleStopRecurring}
+                            disabled={isStopping || isSubmitting}
+                            className="mt-4"
+                            aria-label="Arrêter la récurrence"
+                        >
+                            {isStopping ? 'Arrêt en cours...' : 'Arrêter la récurrence'}
+                        </Button>
+                    </>
+                )}
             </SheetHeader>
             <form className="grid flex-1 auto-rows-min gap-6 px-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-3">
@@ -230,14 +283,14 @@ const FormTransaction: React.FC<{
                     {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                 </div>
 
-               
-                    <div className="grid gap-3">
-                        <Label>Catégorie</Label>
-                        <div className="flex items-center gap-2">   
+
+                <div className="grid gap-3">
+                    <Label>Catégorie</Label>
+                    <div className="flex items-center gap-2">
                         <Controller
                             control={control}
                             name="category"
-                            
+
                             render={({ field }) => (
                                 <Select onValueChange={field.onChange} value={field.value} aria-label="Catégorie" disabled={props.transactionToEdit?.isRecurring && props.transactionToEdit?.recurringParentId !== null}>
                                     <SelectTrigger>
@@ -259,33 +312,33 @@ const FormTransaction: React.FC<{
                                 </Select>
                             )}
                         />
-<CreateCategoryDialog
+                        <CreateCategoryDialog
                             onSuccess={async () => {
                                 const updated = await getCategoriesForForm()
                                 if (updated.success && updated.data) {
-                                setCategories(updated.data)
+                                    setCategories(updated.data)
                                 }
                             }}
                         />
 
                         {errors.category && <p className="text-sm text-red-500" >{errors.category.message}</p>}
-                        </div>
                     </div>
-             
-            <div className="grid gap-3">
-                        <Label htmlFor="date">Date de la transaction</Label>
-                        <Input
-                            id="date"
-                            type="date"
-                            max={new Date().toISOString().split('T')[0]}
-                            {...register('date', {
-                                required: 'La date est requise',
-                            })}
-                            aria-label="Date de la transaction"
-                        />
-                        {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
-                    </div>
-                  
+                </div>
+
+                <div className="grid gap-3">
+                    <Label htmlFor="date">Date de la transaction</Label>
+                    <Input
+                        id="date"
+                        type="date"
+                        max={new Date().toISOString().split('T')[0]}
+                        {...register('date', {
+                            required: 'La date est requise',
+                        })}
+                        aria-label="Date de la transaction"
+                    />
+                    {errors.date && <p className="text-sm text-red-500">{errors.date.message}</p>}
+                </div>
+
                 <div className="flex items-center space-x-2">
                     <Controller
                         name="isRecurring"
@@ -331,7 +384,7 @@ const FormTransaction: React.FC<{
                             id="recurringEndDate"
                             type="date"
                             {...register('recurringEndDate', {
-                                required:  false, 
+                                required: false,
                             })}
                             aria-label="Date de fin de récurrence"
                             disabled={props.transactionToEdit?.isRecurring}
@@ -340,11 +393,7 @@ const FormTransaction: React.FC<{
                     </div>
                 )}
 
-               
-                   
-             
-
-                <Button type="submit" disabled={isSubmitting} aria-label="Enregistrer la transaction">
+                <Button type="submit" disabled={isSubmitting || isStopping} aria-label="Enregistrer la transaction">
                     Enregistrer
                 </Button>
             </form>
