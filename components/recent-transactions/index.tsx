@@ -40,11 +40,19 @@ const RecentTransactions = ({ transactions }: { transactions: Transaction[] }) =
                         <div key={transaction.id} className="grid grid-cols-3 items-center px-4 py-3">
                             <div>
                                 <p className="text-xs text-muted-foreground">{new Date(transaction.date).toLocaleDateString('fr-FR')}</p>
-                                <p className="font-medium">{transaction.description} {transaction.isRecurring ? '🔄' : ''} {!transaction.recurringParentId && transaction.isRecurring ? '👑' : ''}</p>
+                                <p className="font-medium inline-flex items-center gap-1">
+                                    {transaction.description}
+                                    {transaction.isRecurring && (
+                                        <span title="Récurrente" className="cursor-pointer inline-block">🔄</span>
+                                    )}
+                                    {!transaction.recurringParentId && transaction.isRecurring && (
+                                        <span title="Parent" className="cursor-pointer inline-block">👑</span>
+                                    )}
+                                </p>
                             </div>
                             <div className={`flex justify-center `}>
                                 <Badge style={{ backgroundColor: transaction.category.color }} className="font-medium capitalize">
-                                    <CategoryItem category={{ name: transaction.category.name, iconSize: 14 }} iconName={transaction.category.icon} />
+                                    <CategoryItem category={{ name: transaction.category.name }} iconName={transaction.category.icon} />
                                 </Badge>
                             </div>
                             <div className={cn('text-right', transaction.transactionType === 1 ? 'text-green-600' : 'text-red-500')}>
