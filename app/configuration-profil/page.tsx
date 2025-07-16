@@ -69,9 +69,10 @@ export default function ConfigurationProfil() {
     return null
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    startTransition(async () => {
       try {
         const result = await completeProfileSetup(formData)
 
