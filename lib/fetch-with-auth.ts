@@ -34,7 +34,9 @@ export async function fetchWithAuth<T>(
    
       try {
         const json = await response.json()
-        console.log("Response", json)
+        if (process.env.NODE_ENV === 'development') {
+            console.debug("Response", json)
+        }
         errorMessage = json.message || response.statusText || json.errors?.[0]?.recurringStartDate._errors[0] || 'Erreur inconnue'
       } catch  {
         errorMessage = response.statusText || `Erreur HTTP ${response.status}`
