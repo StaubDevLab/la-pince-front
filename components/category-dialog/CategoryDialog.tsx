@@ -135,7 +135,7 @@ export const CreateCategoryDialog = ({ onSuccess, triggerElement, isEditMod = fa
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="mb-2">{isEditMod ? 'Modification' : 'Création'} d'une catégorie</DialogTitle>
+          <DialogTitle className="mb-2">{isEditMod ? 'Modification' : 'Création'} d&apos;une catégorie</DialogTitle>
           <DialogDescription>{isEditMod ? 'Modifier' : 'Remplissez' } les champs ci-dessous pour {isEditMod ? 'modifier une'  : 'ajouter une nouvelle'} catégorie.</DialogDescription>
         </DialogHeader>
 

@@ -28,7 +28,7 @@ export default function Header() {
             if (response.success && response.data) {
                 setUser(response.data)
             }
-            getNotifications().then((response) => {
+            getNotifications(0, 1, true).then((response) => {
                 if(response.success && response.data) {
                     const nbNotifsUnread = response.data.data.filter((notif) => !notif.isRead)
                     setNbUnreadNotifs(nbNotifsUnread.length)

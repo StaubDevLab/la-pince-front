@@ -1,18 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import type React from "react"
-import { format } from "date-fns"
-import { fr } from "date-fns/locale"
-import { CalendarIcon } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import type { TooltipProps } from "recharts"
 import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { DateRange } from 'react-day-picker'
 import { CategoryItem } from "@/components/category-item"
 import { Badge } from "@/components/ui/badge"
 
@@ -33,8 +25,7 @@ interface ActivityChartProps {
     categories: CategoryData[]
 }
 
-export function ExpensesByCategoriesChart({title, categories, initialDateRange}: ActivityChartProps) {
-    const [date, setDate] = useState<DateRange>(initialDateRange as DateRange)
+export function ExpensesByCategoriesChart({title, categories}: ActivityChartProps) {
 
     // Calculate total and percentages
     const total = categories.reduce((sum, category) => sum + category.value, 0)
@@ -43,13 +34,7 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
         percentage: total > 0 ? Math.round((category.value / total) * 100) : 0, // Handle total being 0 to avoid NaN
     }))
 
-    // Format the date range for display
-    const formatDateRange = () => {
-        if (date.from && date.to) {
-            return `${format(date.from, "d MMM", { locale: fr })} - ${format(date.to, "d MMM", { locale: fr })}`
-        }
-        return "Sélectionner"
-    }
+    
 
     // Format currency function (re-defined here for CustomTooltip)
     const formatCurrency = (value: number) => {
@@ -85,7 +70,7 @@ export function ExpensesByCategoriesChart({title, categories, initialDateRange}:
         <Card className="flex flex-col mx-auto">
             <CardHeader className="flex flex-col md:flex-row items-center justify-between py-3 px-4 space-y-0">
                 <CardTitle className="text-lg font-medium">{title}</CardTitle>
-                {/*<Popover>
+                    {/*<Popover>
                     <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="px-2 text-sm md:text-lg">
                             <CalendarIcon className="h-3 w-3 mr-1" />

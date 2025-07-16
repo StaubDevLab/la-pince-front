@@ -101,6 +101,7 @@ export default function ConfigurationProfil() {
         console.error("Erreur:", error)
         toast.error("Erreur lors de la configuration du profil")
       }
+    })
   }
 
   const handleInputChange = (field: keyof ProfileSetupFormData, value: string | number) => {
