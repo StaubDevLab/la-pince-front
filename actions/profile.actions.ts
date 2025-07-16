@@ -90,7 +90,6 @@ export async function completeProfileSetup(profileData: {
 }): Promise<ApiResponse<null>> {
   const {
     data: res,
-    data: res,
     error,
     success,
   } = await fetchWithAuth<null>(`${API_BASE_URL}/users/first-login`, {

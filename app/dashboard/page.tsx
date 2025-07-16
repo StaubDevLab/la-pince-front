@@ -17,7 +17,6 @@ import RecentTransactions from '@/components/recent-transactions';
 import { DashboardToaster } from '@/components/dashboard-toaster';
 
 import { Transaction } from '@/types/transactions'
-import { CategoryItem } from '@/components/category-item'
 import { Category } from '@/types/categories'
 import { toast } from 'sonner'
 import { DashboardData } from '@/types/dashboard'
@@ -36,14 +35,7 @@ export default async function Dashboard() {
         getCategories(),
         getBudgetsForUser()
     ]);
-    const getCategoryIconComponent = (categoryName: string, fillColor: string): React.ReactNode => {
     
-        return (
-            <div className="p-1 rounded-md" style={{ backgroundColor: fillColor }}>
-                <CategoryItem category={{ name: categoryName, displayName: false, iconSize: 20 }} />
-            </div>
-        );
-    };
     const transactions: Transaction[] = transactionsResult.success && transactionsResult.data ? transactionsResult.data.data : [];
     const dashboardData: DashboardData | null | undefined = dashboardResult.success ? dashboardResult.data : null;
     const budgets: BudgetFetched[] = budgetsResult.success && budgetsResult.data ? budgetsResult.data : [];
@@ -53,10 +45,8 @@ export default async function Dashboard() {
         categoriesResult.data.forEach((cat: Category) => {
             if (cat.id && cat.name && cat.color && cat.icon) {
                 const categoryFillColor: string = cat.color;
-                const categoryIconName: string = cat.name;
                 const categoryIcon = cat.icon;
 
-                const categoryIconComponent = getCategoryIconComponent(categoryIconName, categoryFillColor);
               
                 categoriesMap.set(cat.id, {
                     name: cat.name,

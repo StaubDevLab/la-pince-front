@@ -285,7 +285,7 @@ const FormTransaction: React.FC<{
                   <AlertCircleIcon />
                   <AlertTitle>Information</AlertTitle>
                   <AlertDescription>
-                    Certains éléments ne peuvent pas être modifiés car la transaction fait partie d'une récurrence.
+                    Certains éléments ne peuvent pas être modifiés car la transaction fait partie d&apos;une récurrence.
                   </AlertDescription>
                 </Alert>
                 <Button
