@@ -11,7 +11,7 @@ const API_BASE_URL = process.env.API_URL;
  * Méthodes pour récupérer les catégories depuis l'API.
  * 
  */
-async function fetchCategories(): Promise<ApiResponse<Category[]>> {
+export async function fetchCategories(): Promise<ApiResponse<Category[]>> {
     const { data: res, error, success } = await fetchWithAuth<Category[]>(
         `${API_BASE_URL}/categories`,
         {

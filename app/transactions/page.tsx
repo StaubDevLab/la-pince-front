@@ -9,7 +9,6 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { categories } from '@/lib/fake-props'
 import { DateRange } from 'react-day-picker'
 import { deleteTransaction, getTransactionsForUser } from '@/actions/transactions.actions'
 import FormTransaction from '@/components/transaction-form/FormTransaction'
@@ -17,11 +16,14 @@ import { Transaction } from '@/types/transactions'
 import { Sheet } from '@/components/ui/sheet'
 import getColumns from './TableColumns'
 import { toast } from 'sonner'
+import { Category } from '@/types/categories'
+import { fetchCategories } from '@/actions/categories.actions'
 
 export default function DataTableDemo() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: 'date', desc: true }])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [rowSelection, setRowSelection] = React.useState({})
+    const [categories, setCategories] = React.useState<Category[]>([])
     const [selectedCategory, setSelectedCategory] = React.useState<string>('')
     const [transactions, setTransactions] = React.useState<Transaction[]>([])
     const [transactionToEdit, setTransactionToEdit] = React.useState<Transaction | null>(null)
@@ -87,6 +89,13 @@ export default function DataTableDemo() {
 
     React.useEffect(() => {
         fetchTransactions()
+        fetchCategories().then((res) => {
+            if (res.data && res.success) {
+                setCategories(res.data)
+            } else {
+                setCategories([])
+            }
+        })
     }, [pagination.pageIndex, pagination.pageSize])
 
     return (
