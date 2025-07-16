@@ -80,3 +80,37 @@ export async function revalidateProfileCache(): Promise<ApiResponse<null>> {
     console.log(`Cache révalidé pour les tags: 'profile-${userId}', 'profile'`);
     return { success: true, message: 'Cache des profile révalidé.' };
 }
+
+/**
+ * Action pour configurer le profil initial de l'utilisateur (firstLogin).
+ */
+export async function completeProfileSetup(profileData: {
+  accountName: string
+  currency: "USD" | "EUR" | "GBP" | "JPY" | "AUD" | "CAD" | "CHF" | "CNY" | "SEK" | "NZD"
+  locale: "fr-FR" | "en-US" | "es-ES" | "de-DE" | "it-IT"
+  totalAmount: number
+}): Promise<ApiResponse<null>> {
+    console.log("profileData",profileData)
+  const {
+    data: res,
+    error,
+    success,
+  } = await fetchWithAuth<null>(`${API_BASE_URL}/users/first-login`, {
+    method: "POST",
+    body: JSON.stringify(profileData),
+    next: {
+      revalidate: 300,
+      tags: ["profile"],
+    },
+  })
+
+  if (!success || !res) {
+    return { success: false, error: error || "Erreur lors de la configuration du profil" }
+  }
+
+  // Révalider le cache du profil après la mise à jour
+  revalidateTag("profile")
+  
+
+  return { success: true, data: null }
+}
