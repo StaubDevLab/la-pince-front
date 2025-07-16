@@ -25,14 +25,19 @@ export async function fetchWithAuth<T>(
         Authorization: `Bearer ${token}`,
       },
     })
+   
 
     if (!response.ok) {
       const isUnauthorized = response.status === 401 || response.status === 403
 
       let errorMessage = 'Erreur inconnue'
+   
       try {
         const json = await response.json()
-        errorMessage = json.message || response.statusText
+        if (process.env.NODE_ENV === 'development') {
+            console.debug("Response", json)
+        }
+        errorMessage = json.message || response.statusText || json.errors?.[0]?.recurringStartDate._errors[0] || 'Erreur inconnue'
       } catch  {
         errorMessage = response.statusText || `Erreur HTTP ${response.status}`
       }
