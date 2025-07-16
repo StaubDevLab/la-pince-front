@@ -90,8 +90,8 @@ export async function completeProfileSetup(profileData: {
   locale: "fr-FR" | "en-US" | "es-ES" | "de-DE" | "it-IT"
   totalAmount: number
 }): Promise<ApiResponse<null>> {
-    console.log("profileData",profileData)
   const {
+    data: res,
     data: res,
     error,
     success,
