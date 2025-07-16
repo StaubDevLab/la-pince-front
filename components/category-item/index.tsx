@@ -19,7 +19,7 @@ const Icons: Record<string, React.ComponentType<LucideProps>> = Object.fromEntri
 )
 
 export const CategoryItem = ({ category, iconName }: Props) => {
-  const { name, displayName = true, iconSize = 20 } = category
+  const { name, displayName = true, iconSize = 14 } = category
 
   const maybeLucideIcon = iconName ? Icons[iconName] : undefined
   const LucideIcon = maybeLucideIcon

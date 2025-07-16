@@ -74,7 +74,18 @@ const getColumns = (onDelete: (id: string) => void, onRowClick: (transaction: Tr
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="capitalize">{row.getValue('description')} {row.original.isRecurring ? '🔄' : ''} {!row.original.recurringParentId && row.original.isRecurring ? '👑' : ''}</div>,
+        cell: ({ row }) => (
+        <div className="capitalize">
+            {row.getValue('description')}{' '}
+            {row.original.isRecurring && (
+                <span title="Récurrente" className="cursor-pointer">🔄</span>
+            )}
+            {!row.original.recurringParentId && row.original.isRecurring && (
+            <span title="Parent" className="cursor-pointer">👑</span>
+            )}
+        </div>
+        )
+
     },
     {
         accessorKey: 'category',
