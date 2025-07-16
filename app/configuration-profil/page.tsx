@@ -81,7 +81,7 @@ export default function ConfigurationProfil() {
         }
 
         // Mettre à jour la session pour marquer firstLogin comme false
-        console.log("success",session)
+        // Success message already handled by toast.success
         await update({
           ...session,
           user: {
