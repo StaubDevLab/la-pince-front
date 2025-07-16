@@ -274,8 +274,8 @@ const FormTransaction: React.FC<{
   }
 
   return (
-    <SheetContent className="w-full sm:w-[480px] h-[calc(100vh-10rem)] ">
-      <ScrollArea className="h-full w-full" ref={scrollAreaRef}>
+    <SheetContent className="w-full sm:w-[480px]  ">
+      <ScrollArea className="h-full w-full pb-4" ref={scrollAreaRef}>
         <div ref={contentRef}>
           <SheetHeader>
             <SheetTitle>{props.transactionToEdit ? "Modifier la transaction" : "Ajouter une transaction"}</SheetTitle>
@@ -490,7 +490,6 @@ const FormTransaction: React.FC<{
         </div>
       </ScrollArea>
 
-      {/* Indicateur de scroll */}
       {isScrollable && !isAtBottom && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
           <Button
