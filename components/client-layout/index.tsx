@@ -24,7 +24,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const showHeader = !hideHeaderFooterPages.includes(pathname)
   const showFooter = !hideHeaderFooterPages.includes(pathname)
-console.log(session)
   useEffect(() => {
     if (status === "authenticated" && session?.user?.firstLogin && pathname !== "/configuration-profil") {
       router.push("/configuration-profil")
