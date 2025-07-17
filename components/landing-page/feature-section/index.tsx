@@ -93,7 +93,7 @@ export function FeaturesSection() {
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Découvrez tous les outils dont vous avez besoin pour transformer 
-            votre relation avec l'argent
+            votre relation avec l&apos;argent
           </p>
         </div>
 

@@ -1,12 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import ClientLayout from '@/components/client-layout'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SessionProvider } from 'next-auth/react'
-
-import { UserProvider } from '@/context/user-context'
-import ToasterComponent from '@/components/toaster'
 
 const inter = Inter({
     variable: '--font-inter',

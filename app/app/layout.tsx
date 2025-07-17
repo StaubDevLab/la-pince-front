@@ -1,6 +1,5 @@
 import '../globals.css'
 import ClientLayout from '@/components/client-layout'
-import { SessionProvider } from 'next-auth/react'
 
 import { UserProvider } from '@/context/user-context'
 import ToasterComponent from '@/components/toaster'
