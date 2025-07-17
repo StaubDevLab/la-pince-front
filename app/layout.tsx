@@ -32,16 +32,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <SessionProvider>
-                <UserProvider>
-                    <ClientLayout>
-                        <ToasterComponent />
-                        {children}
-
-
-                    </ClientLayout>
-                </UserProvider>
-            </SessionProvider>
+              <SessionProvider>
+            {children}
+              </SessionProvider>
         </ThemeProvider>
         </body>
 
