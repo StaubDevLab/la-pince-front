@@ -54,7 +54,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "User-Agent": "curl/7.79.1"
+            "User-Agent": "Mozilla/5.0",
+            "Origin": "https://la-pince.tech",
+            "Referer": "https://la-pince.tech",
           },
           body: JSON.stringify(credentials),
         })
