@@ -1,5 +1,5 @@
 'use client'
- import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUser } from '@/context/user-context'
 import { User as UserType } from '@/types/user'
 import { useForm } from 'react-hook-form'

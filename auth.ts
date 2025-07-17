@@ -49,7 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       async authorize(credentials) {
-        console.log("CREDENTIALS",credentials)
+        console.log("CREDENTIALS", credentials)
         const response = await fetch(`${process.env.API_URL}/auth/signin`, {
           method: "POST",
           headers: {
@@ -57,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
           body: JSON.stringify(credentials),
         })
-        console.log("RESPONSE", response)
+        console.log("RESPONSE", response, response.status, response.statusText, response.headers, response.body, response.text())
         const data = await response.json()
 
         if (!response.ok || !data.user) {
@@ -84,7 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user,trigger }) {
+    async jwt({ token, user, trigger }) {
       if (trigger === "update") {
         return {
           ...token,
