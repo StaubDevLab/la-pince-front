@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Star, Users, TrendingUp, Play } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+import Image from "next/image" // Assurez-vous que cette importation est correcte
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
@@ -86,19 +86,19 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Visual */}
-            <div className={`relative flex justify-center items-center ${isVisible ? "animate-bounce-in" : "opacity-0"}`}>
-              {/* Container for the image, ensuring it's centered within its grid column */}
-              <div className="relative max-w-full"> {/* Added max-w-full */}
-                <div className="w-full h-full shadow-2xl border-0 relative z-10 bg-transparent flex justify-center items-center"> {/* Added flex for inner centering */}
-                  <Image
-                    src="/hero-img.png"
-                    alt="hero-img"
-                    height={700} // Keep original dimensions or adjust as needed for optimal display
-                    width={700}
-                    className="rounded-xl opacity-90 object-contain" // object-contain ensures image scales within its bounds
-                  />
-                </div>
+            {/* Visual - Optimized for responsive image loading */}
+            <div className={`relative flex justify-center items-center ${isVisible ? "animate-bounce-in" : "opacity-0"} lg:min-h-[500px]`}>
+              {/* Container for the image, ensuring it's centered and has an aspect ratio */}
+              <div className="relative w-full max-w-lg mx-auto aspect-video md:aspect-square">
+                <Image
+                  src="/hero-img.png"
+                  alt="Illustration de l'application La Pince montrant la gestion budgétaire sur différents appareils."
+                  fill // L'image remplira le conteneur parent
+                  style={{ objectFit: 'contain' }} // Assure que l'image est contenue dans ses dimensions sans être coupée
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw" // Définit les tailles pour le chargement réactif
+                  priority // Charge l'image avec une haute priorité pour éviter le lazy loading initial
+                  className="rounded-xl opacity-90 shadow-2xl border-0" // Conserve les classes existantes
+                />
               </div>
             </div>
           </div>
