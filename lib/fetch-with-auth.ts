@@ -22,6 +22,9 @@ export async function fetchWithAuth<T>(
       headers: {
         ...(init?.headers || {}),
         'Content-Type': 'application/json',
+        "Origin": "https://la-pince.tech",
+        "Referer": "https://la-pince.tech",
+        "User-Agent": "Mozilla/5.0",
         Authorization: `Bearer ${token}`,
       },
     })

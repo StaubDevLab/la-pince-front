@@ -60,7 +60,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           body: JSON.stringify(credentials),
         })
         const data = await response.json()
-        console.log("DATA", data)
         if (!response.ok || !data.user) {
           throw new Error(data.message || "Authentication failed")
         }
