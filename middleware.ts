@@ -1,8 +1,8 @@
 import { auth } from "@/auth"
 
 export default auth((req) => {
-    if (!req.auth && req.nextUrl.pathname !== "/connexion" && req.nextUrl.pathname !== "/inscription") {
-        const newUrl = new URL("/connexion", req.nextUrl.origin)
+    if (!req.auth && req.nextUrl.pathname !== "/app/connexion" && req.nextUrl.pathname !== "/app/inscription" && req.nextUrl.pathname !== "/app/forgot-password" && req.nextUrl.pathname !== "/app/mentions-legales" && req.nextUrl.pathname !== "/app/contact" && req.nextUrl.pathname !== "/app/a-propos" && req.nextUrl.pathname !== "/app/conditions-generales" && req.nextUrl.pathname !== "/") {
+        const newUrl = new URL("/app/connexion", req.nextUrl.origin)
         return Response.redirect(newUrl)
     }
 })
