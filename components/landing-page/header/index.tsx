@@ -9,6 +9,7 @@ import { SwitchTheme } from "@/components/switch-theme"
 import Image from "next/image"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useSession } from "next-auth/react"
+import { DropdownMenuGroup, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu"
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -27,7 +28,7 @@ export function Header() {
       "fixed top-0 w-full z-50 transition-all duration-300",
       isScrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
     )}>
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
@@ -82,9 +83,7 @@ export function Header() {
             </>
           ) : (
             <>  
-            <Button variant="outline">
-              <Link href="/app/connexion">Connexion</Link>
-            </Button>
+           
             <Button className="bg-primary hover:bg-primary/90">
               <Link href="/app/inscription">S&apos;inscrire</Link>
             </Button>
@@ -106,16 +105,25 @@ export function Header() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+                <DropdownMenuGroup>
+
+                <DropdownMenuItem>
+                <Link href="/app/connexion">Connexion</Link>
+                </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator/>
+                <DropdownMenuGroup>
+               
                 <DropdownMenuItem>
                 <Link href="#features">Fonctionnalités</Link>
                 </DropdownMenuItem>
-                
                 <DropdownMenuItem>
                 <Link href="#testimonials">Témoignages</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                 <Link href="#contact">Contact</Link>
                 </DropdownMenuItem>
+                </DropdownMenuGroup>
                 </DropdownMenuContent>
                 </DropdownMenu>
           
