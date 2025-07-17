@@ -25,7 +25,7 @@ export function HeroSection() {
         <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-chart-5/20 rounded-full blur-xl animate-pulse" />
       </div>
 
-      <div className="container mx-auto px-4 py-10 relative z-10">
+      <div className="container mx-auto px-4 py-20 relative z-10 ">
         <div className="max-w-7xl mx-auto">
           {/* Centering the grid content vertically and horizontally */}
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen">
