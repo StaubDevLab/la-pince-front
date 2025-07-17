@@ -1,6 +1,6 @@
 "use client"
 
-import { Zap, Mail, Phone, MapPin, Github, Twitter, Linkedin } from "lucide-react"
+import { Mail, Phone, MapPin, Github, Twitter, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
@@ -60,18 +60,18 @@ export function Footer() {
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold">Support</h3>
                         <nav className="flex flex-col space-y-2">
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                Centre d'aide
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                                Centre d&apos;aide
+                            </Link>
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                                 Documentation
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            </Link>
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                                 Tutoriels
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            </Link>
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                                 Contact
-                            </a>
+                            </Link>
                         </nav>
                     </div>
 
