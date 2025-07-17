@@ -56,7 +56,7 @@ export default function ConfigurationProfil() {
   }
 
   if (session && !session.user?.firstLogin) {
-    router.push("/dashboard")
+    router.push("/app/dashboard")
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner message="Redirection vers le tableau de bord..." />
@@ -96,7 +96,7 @@ export default function ConfigurationProfil() {
         })
 
         toast.success("Profil configuré avec succès !")
-        router.push("/dashboard")
+        router.push("/app/dashboard")
       } catch (error) {
         console.error("Erreur:", error)
         toast.error("Erreur lors de la configuration du profil")

@@ -20,7 +20,7 @@ export default function Header() {
     const pathname = usePathname()
     const { user, setUser } = useUser()
     const [nbUnreadNotifs, setNbUnreadNotifs] = useState(0)
-    const toggleValue = ['/dashboard', '/transactions'].includes(pathname) ? pathname : undefined;
+    const toggleValue = ['/app/dashboard', '/app/transactions'].includes(pathname) ? pathname : undefined;
 
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function Header() {
     return (
         <header className="flex items-center justify-between px-4 py-2.5 border-b dark:text-white">
             <div className="flex items-center gap-3">
-                <Link className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0" href='/dashboard'>
+                <Link className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0" href='/app/dashboard'>
                     <Image src="/la-pince-logo.png" alt="Logo de l'application La Pince" width={80} height={80} />
                 </Link>
                 <div>
@@ -64,15 +64,15 @@ export default function Header() {
                     <div
                         className={`
                         absolute inset-y-0 left-0 w-1/2 rounded-full bg-primary transition-transform duration-300 ease-in-out
-                        ${pathname === '/dashboard' ? 'translate-x-0' : pathname === '/transactions' ? 'translate-x-full' : 'translate-x-[-100%] opacity-0'}
+                        ${pathname === '/app/dashboard' ? 'translate-x-0' : pathname === '/app/transactions' ? 'translate-x-full' : 'translate-x-[-100%] opacity-0'}
                         `}
                     />
 
-                    <Link href="/dashboard" passHref>
+                    <Link href="/app/dashboard" passHref>
                         <ToggleGroup.Item
-                        value="/dashboard"
+                        value="/app/dashboard"
                         className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
-                            ${pathname === '/dashboard' ? 'text-white' : 'text-muted-foreground hover:text-white'}
+                            ${pathname === '/app/dashboard' ? 'text-white' : 'text-muted-foreground hover:text-white'}
                         `}
                         aria-label="Lien vers le dashboard"
                         >
@@ -80,11 +80,11 @@ export default function Header() {
                         </ToggleGroup.Item>
                     </Link>
 
-                    <Link href="/transactions" passHref>
+                    <Link href="/app/transactions" passHref>
                         <ToggleGroup.Item
-                        value="/transactions"
+                        value="/app/transactions"
                         className={`relative z-10 px-4 py-0.5 text-sm font-medium rounded-full transition-colors cursor-pointer
-                            ${pathname === '/transactions' ? 'text-white' : 'text-muted-foreground hover:text-white'}
+                            ${pathname === '/app/transactions' ? 'text-white' : 'text-muted-foreground hover:text-white'}
                         `}
                         aria-label="Lien vers les transactions"
                         >
@@ -102,12 +102,12 @@ export default function Header() {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-2 bg-white shadow-xl dark:bg-gray-800">
                         <div className="flex flex-col gap-3 mt-8">
-                            <Link href="/dashboard">
+                            <Link href="/app/dashboard">
                                 <Button variant="outline" className="w-full text-sm" aria-label="Lien vers le dashboard">
                                     Dashboard
                                 </Button>
                             </Link>
-                            <Link href="/transactions">
+                            <Link href="/app/transactions">
                                 <Button variant="outline" className="w-full text-sm" aria-label="Lien vers les transactions">
                                     Transactions
                                 </Button>
@@ -116,7 +116,7 @@ export default function Header() {
                     </SheetContent>
                 </Sheet>
 
-                <Link href="/notifications">
+                <Link href="/app/notifications">
                     <Button variant="ghost" size="icon" className="relative h-8 w-8" aria-label="Accès aux notifications">
                         <BellIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                         {nbUnreadNotifs > 0 && (
@@ -141,10 +141,10 @@ export default function Header() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem aria-label="Mon profil">
                             <CircleUser className="mr-2 h-4 w-4" />
-                            <Link href={"/profile"}>Mon profil</Link>
+                            <Link href={"/app/profile"}>Mon profil</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem aria-label="Déconnexion" onClick={ () => {
-                            signOut({redirectTo: '/connexion'})
+                            signOut({redirectTo: '/app/connexion'})
                         }}>
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Déconnexion</span>

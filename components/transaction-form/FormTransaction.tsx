@@ -208,7 +208,22 @@ const FormTransaction: React.FC<{
         date: new Date(data.date).toISOString(),
       }
       result = await updateTransaction(props.transactionToEdit.id, apiPayload)
-    } else {
+    } else if(props.transactionToEdit && !props.transactionToEdit?.isRecurring && !props.transactionToEdit?.recurringParentId){
+      const apiPayload: ApiPayloadTransaction = {
+        amount: Number(data.amount),
+        transactionType: Number(data.transactionType),
+        description: data.description?.trim() || "",
+        categoryId: data.category,
+        isRecurring: data.isRecurring,
+        recurringFrequency: data.isRecurring && data.recurringFrequency ? data.recurringFrequency : null,
+        recurringStartDate: null,
+        recurringEndDate:
+          data.isRecurring && data.recurringEndDate ? new Date(data.recurringEndDate).toISOString() : null,
+        date: new Date(data.date).toISOString(),
+      }
+      result = await updateTransaction(props.transactionToEdit.id, apiPayload)
+    }
+    else {
       const apiPayload: ApiPayloadTransaction = {
         amount: Number(data.amount),
         transactionType: Number(data.transactionType),

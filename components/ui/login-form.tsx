@@ -57,7 +57,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 setIsButtonDisabled(false); // Re-enable button on authentication error
                 return;
             }
-            router.push('/dashboard');
+            router.push('/app/dashboard');
             router.refresh();
         } catch (error) {
             console.error('Erreur lors de la connexion', error);
@@ -72,7 +72,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
             <span className="text-sm text-center mb-4">
                 Pas de compte ?{' '}
-                <Link href={email ? "/inscription?email=" + email : "/inscription"} className={'underline hover:text-primary'}>
+                <Link href={email ? "/app/inscription?email=" + email : "/app/inscription"} className={'underline hover:text-primary'}>
                     Créer en un ici
                 </Link>
             </span>
@@ -99,7 +99,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                             <div className="flex items-center">
                                 <Label htmlFor="password" aria-label="Mot de passe">Mot de passe</Label>
                                 <Link
-                                    href={`/forgot-password?email=${email}`}
+                                    href={`/app/forgot-password?email=${email}`}
                                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                                     aria-label="Mot de passe oublié ?"
                                 >

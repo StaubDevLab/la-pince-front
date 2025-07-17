@@ -14,19 +14,25 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const router = useRouter()
 
   const hideHeaderFooterPages = [
-    "/connexion",
-    "/inscription",
-    "/reset-password",
-    "/mentions-legales",
-    "/forgot-password",
-    "/configuration-profil",
+    "/app/connexion",
+    "/app/inscription",
+    "/app/reset-password",
+    "/app/mentions-legales",
+    "/app/forgot-password",
+    "/app/configuration-profil",
   ]
 
   const showHeader = !hideHeaderFooterPages.includes(pathname)
   const showFooter = !hideHeaderFooterPages.includes(pathname)
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.firstLogin && pathname !== "/configuration-profil") {
-      router.push("/configuration-profil")
+    if (status === "authenticated" && session?.user?.firstLogin && pathname !== "/app/configuration-profil") {
+      router.push("/app/configuration-profil")
+    }
+    if (status === "authenticated" && !session?.user?.firstLogin && pathname === "/app/connexion") {
+      router.push("/app/dashboard")
+    }
+    if (status === "authenticated" && !session?.user?.firstLogin && pathname === "/app/inscription") {
+      router.push("/app/dashboard")
     }
   }, [session, status, router, pathname])
 
@@ -39,13 +45,37 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     )
   }
 
-  if (status === "authenticated" && session?.user?.firstLogin && pathname !== "/configuration-profil") {
+  if (status === "authenticated" && session?.user?.firstLogin && pathname !== "/app/configuration-profil") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <h2 className="text-xl font-semibold mb-2">Redirection en cours...</h2>
           <p className="text-gray-600">Configuration de votre profil</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (status === "authenticated" && !session?.user?.firstLogin && pathname === "/app/connexion") {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold mb-2">Redirection en cours...</h2>
+          <p className="text-gray-600">Accès au dashboard</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (status === "authenticated" && !session?.user?.firstLogin && pathname === "/app/inscription") {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold mb-2">Redirection en cours...</h2>
+          <p className="text-gray-600">Accès au dashboard</p>
         </div>
       </main>
     )

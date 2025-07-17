@@ -9,7 +9,7 @@ export default function MentionsLegales() {
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {/* Bouton retour */}
                     <div className="mb-8">
-                        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-[#f97316] hover:text-[#ea6a0a]">
+                        <Link href="/" className="inline-flex items-center text-sm font-medium text-[#f97316] hover:text-[#ea6a0a]">
                             <ChevronLeft className="h-4 w-4 mr-1" />
                             Retour à l&apos;accueil
                         </Link>

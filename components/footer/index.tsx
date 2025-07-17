@@ -30,9 +30,9 @@ export default function Footer() {
 
                 {/* Liens principaux */}
                 <nav className="flex gap-4 text-sm" aria-label="Liens principaux">
-                    <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
-                    <Link href="/transactions" className="hover:text-primary transition-colors">Transactions</Link>
-                    <Link href="/mentions-legales" className="hover:text-primary transition-colors">Mentions légales</Link>
+                    <Link href="/app/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
+                    <Link href="/app/transactions" className="hover:text-primary transition-colors">Transactions</Link>
+                    <Link href="/app/mentions-legales" className="hover:text-primary transition-colors">Mentions légales</Link>
                 </nav>
 
                 {/* Réseaux sociaux */}
