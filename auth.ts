@@ -60,7 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
           body: JSON.stringify(credentials),
         })
-        console.log("RESPONSE", response, response.status, response.statusText, response.headers, response.body, response.text())
+        console.log("RESPONSE", response, response.json(), response.status, response.statusText, response.headers, response.body, response.text())
         const data = await response.json()
 
         if (!response.ok || !data.user) {
