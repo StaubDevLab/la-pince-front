@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { CheckCircle, Mail, ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export function CTASection() {
   const [email, setEmail] = useState("")
@@ -62,7 +63,9 @@ export function CTASection() {
                   size="lg" 
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg font-medium group"
                 >
+                  <Link href="/app/inscription">
                   S&apos;inscrire maintenant
+                  </Link>
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button 
