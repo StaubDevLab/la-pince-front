@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Star, Users, TrendingUp, Play } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image" // Assurez-vous que cette importation est correcte
+import Image from "next/image" 
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
@@ -97,7 +97,7 @@ export function HeroSection() {
                   style={{ objectFit: 'contain' }} // Assure que l'image est contenue dans ses dimensions sans être coupée
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw" // Définit les tailles pour le chargement réactif
                   priority // Charge l'image avec une haute priorité pour éviter le lazy loading initial
-                  className="rounded-xl opacity-90 shadow-2xl border-0" // Conserve les classes existantes
+                  className="rounded-xl opacity-90 dark:shadow-2xl border-0" // Conserve les classes existantes
                 />
               </div>
             </div>

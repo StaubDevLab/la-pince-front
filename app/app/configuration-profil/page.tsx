@@ -65,7 +65,7 @@ export default function ConfigurationProfil() {
   }
 
   if (!session) {
-    router.push("/connexion")
+    router.push("/app/connexion")
     return null
   }
 
