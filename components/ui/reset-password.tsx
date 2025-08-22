@@ -87,7 +87,7 @@ export function ResetPasswordForm() {
         const result = await resetPasswordAction(payload.newPassword, payload.token!, payload.confirmPassword)
         if (result.success) {
             toast.success("Mot de passe modifié avec succès")
-            router.push("/connexion")
+            router.push("/app/connexion")
         } else {
             toast.error(result.error || "Une erreur est survenue")
         }

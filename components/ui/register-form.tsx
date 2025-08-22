@@ -109,7 +109,9 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
             <span className="text-sm text-center mb-4">
                 Vous avez déjà un compte ?{' '}
+
                 <Link href={email ? `/app/connexion?email=${email}` : "/app/connexion"} className={"underline hover:text-primary"} aria-label="Se connecter">
+
                     Se connecter
                 </Link>
             </span>

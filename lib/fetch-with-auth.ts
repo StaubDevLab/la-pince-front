@@ -11,7 +11,7 @@ export async function fetchWithAuth<T>(
     const session = await auth()
   if (!session?.accessToken) {
     console.warn('Aucun token disponible, redirection en cours...')
-    redirect('/connexion')
+    redirect('/app/connexion')
   }
 
   const token = session.accessToken
@@ -47,7 +47,7 @@ export async function fetchWithAuth<T>(
 
       if (isUnauthorized) {
         console.warn('Token invalide ou expiré, redirection...')
-        redirect('/connexion')
+        redirect('/app/connexion')
       }
 
       return { success: false, error: errorMessage, status: response.status }
