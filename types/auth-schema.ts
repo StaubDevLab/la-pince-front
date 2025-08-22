@@ -1,4 +1,4 @@
-import { object, string } from "zod"
+import { object, string, z } from "zod"
 
 export const loginSchema = object({
     email: string({ required_error: "L'email est requis" })
@@ -23,8 +23,18 @@ export const registerSchema = object({
     password: string({ required_error: "Mot de passe requis" })
         .min(1, "Mot de passe requis")
         .min(12, "Le mot de passe doit avoir au moins 12 caractères")
+        .max(32, "Le mot de passe doit avoir au plus 32 caractères")
+        .regex(/[a-z]/, "Le mot de passe doit contenir au moins une lettre minuscule")
+        .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une lettre majuscule")
+        .regex(/\d/, "Le mot de passe doit contenir au moins un chiffre")
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, "Le mot de passe doit contenir au moins un caractère spécial"),
+    confirmPassword: string({ required_error: "Confirmation du mot de passe requise" })
+        .min(1, "Confirmation du mot de passe requise")
+        .min(12, "Le mot de passe doit avoir au moins 12 caractères")
         .max(32, "Le mot de passe doit avoir au plus 32 caractères"),
-
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
 })
 
 export const resetPasswordSchema = object({
@@ -43,3 +53,5 @@ export const forgotPasswordSchema = object({
         .min(1, "L'email est requis")
         .email("L'email n'est pas valide"),
 })
+
+export type RegisterFormData = z.infer<typeof registerSchema>

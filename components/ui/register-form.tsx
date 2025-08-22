@@ -1,6 +1,6 @@
 'use client'
 
-import {  z } from 'zod'
+
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,13 +14,22 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { registerSchema } from '@/types/auth-schema'
-type RegisterFormData = z.infer<typeof registerSchema>
+import { registerSchema, RegisterFormData } from '@/types/auth-schema'
+
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
     const router = useRouter()
     const [error, setError] = useState<string>('')
     const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
+    const [passwordValidations, setPasswordValidations] = useState({
+        minLength: false,
+        hasLowercase: false,
+        hasUppercase: false,
+        hasNumber: false,
+        hasSpecialChar: false,
+        confirmPassword: false,
+    })
     const emailParam = useSearchParams().get("email")
+
     const {
         register,
         handleSubmit,
@@ -30,14 +39,35 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
     })
-    const email = emailParam || watch('email')
+
+    const email = emailParam || watch('email') || ''
+    const password = watch('password', '')
+    const confirmPassword = watch('confirmPassword', '')
+
     useEffect(() => {
         if (emailParam) {
             setValue('email', emailParam)
         }
-    }, [emailParam])
+    }, [emailParam, setValue])
+
+    useEffect(() => {
+        setPasswordValidations({
+            minLength: password.length >= 12,
+            hasLowercase: /[a-z]/.test(password),
+            hasUppercase: /[A-Z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            confirmPassword: password === confirmPassword && password !== '',
+        })
+    }, [password, confirmPassword])
+
     const onSubmit = async (data: RegisterFormData) => {
-        const dataToSend = {...data, accountName: "Compte personnel", amount: 150.32}
+        if (!Object.values(passwordValidations).every(Boolean)) {
+            setError('Veuillez vérifier que le mot de passe répond à tous les critères')
+            return
+        }
+
+        const dataToSend = { ...data, accountName: "Compte personnel", amount: 150.32 }
         try {
             const res = await fetch('https://api.la-pince.tech/v1/api/auth/signup', {
                 method: 'POST',
@@ -51,7 +81,6 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                 throw new Error(message || "Erreur d'inscription")
             }
 
-            // Auto login après inscription
             const loginResult = await signIn('credentials', {
                 email: data.email,
                 password: data.password,
@@ -66,14 +95,12 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
             setIsRedirecting(true)
             router.push('/dashboard')
             router.refresh()
-            
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err : any) { 
-            console.error(err)
-            setError( err.message || "Une erreur est survenue")
+        } catch (err: unknown) {
+            const error = err as Error
+            console.error(error)
+            setError(error.message || "Une erreur est survenue")
         }
     }
-
 
     return (
         <div className={cn('flex flex-col gap-2 items-center', className)} {...props}>
@@ -82,7 +109,7 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
 
             <span className="text-sm text-center mb-4">
                 Vous avez déjà un compte ?{' '}
-                <Link href={email ? "/connexion?email=" + email : "/connexion"} className={"underline hover:text-primary"} aria-label="Se connecter">
+                <Link href={email ? `/app/connexion?email=${email}` : "/app/connexion"} className={"underline hover:text-primary"} aria-label="Se connecter">
                     Se connecter
                 </Link>
             </span>
@@ -91,21 +118,17 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="text">Prénom</Label>
+                            <Label htmlFor="firstname">Prénom</Label>
                             <Input id="firstname" type="text" placeholder="John" required {...register("firstName")} aria-label="Prénom"/>
                             {errors.firstName && (
-                                <span className="text-sm text-red-500">
-              {errors.firstName.message}
-            </span>
+                                <span className="text-sm text-red-500">{errors.firstName.message}</span>
                             )}
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="text">Nom</Label>
-                            <Input id="lastname" type="text" placeholder="Doe" required  {...register("lastName")} aria-label="Nom"/>
+                            <Label htmlFor="lastname">Nom</Label>
+                            <Input id="lastname" type="text" placeholder="Doe" required {...register("lastName")} aria-label="Nom"/>
                             {errors.lastName && (
-                                <span className="text-sm text-red-500">
-              {errors.lastName.message}
-            </span>
+                                <span className="text-sm text-red-500">{errors.lastName.message}</span>
                             )}
                         </div>
                         <div className="grid gap-2">
@@ -119,28 +142,50 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
                                 aria-label="Email"
                             />
                             {errors.email && (
-                                <span className="text-sm text-red-500">
-              {errors.email.message}
-            </span>
+                                <span className="text-sm text-red-500">{errors.email.message}</span>
                             )}
                         </div>
                         <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Mot de passe</Label>
-                            </div>
-                            <Input id="password" type="password" required  {...register("password")} aria-label="Mot de passe"/>
+                            <Label htmlFor="password">Mot de passe</Label>
+                            <Input id="password" type="password" required {...register("password")} aria-label="Mot de passe"/>
                             {errors.password && (
-                                <span className="text-sm text-red-500">
-              {errors.password.message}
-            </span>
+                                <span className="text-sm text-red-500">{errors.password.message}</span>
                             )}
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                            <Input id="confirmPassword" type="password" required {...register("confirmPassword")} aria-label="Confirmer le mot de passe"/>
+                            {errors.confirmPassword && (
+                                <span className="text-sm text-red-500">{errors.confirmPassword.message}</span>
+                            )}
+                        </div>
+                        <div className="grid gap-2">
+                            <ul className="text-sm">
+                                <li className={cn("flex items-center gap-2", passwordValidations.minLength ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.minLength ? "✓" : "○"} Au moins 12 caractères
+                                </li>
+                                <li className={cn("flex items-center gap-2", passwordValidations.hasLowercase ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.hasLowercase ? "✓" : "○"} Une lettre minuscule
+                                </li>
+                                <li className={cn("flex items-center gap-2", passwordValidations.hasUppercase ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.hasUppercase ? "✓" : "○"} Une lettre majuscule
+                                </li>
+                                <li className={cn("flex items-center gap-2", passwordValidations.hasNumber ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.hasNumber ? "✓" : "○"} Un chiffre
+                                </li>
+                                <li className={cn("flex items-center gap-2", passwordValidations.hasSpecialChar ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.hasSpecialChar ? "✓" : "○"} Un caractère spécial
+                                </li>
+                                <li className={cn("flex items-center gap-2", passwordValidations.confirmPassword ? "text-green-500" : "text-gray-500")}>
+                                    {passwordValidations.confirmPassword ? "✓" : "○"} Mots de passe identiques
+                                </li>
+                            </ul>
                         </div>
                         {error && (
                             <div className="p-2 bg-red-300 text-red-800 rounded-md" aria-label="Erreur d'inscription">
                                 <p className="text-md text-red-500">{error}</p>
                             </div>
                         )}
-
                         <Button type="submit" className="w-full" disabled={isSubmitting || isRedirecting} aria-label="S'inscrire">
                             {isSubmitting || isRedirecting ? 'Inscription...' : "S'inscrire"}
                         </Button>
