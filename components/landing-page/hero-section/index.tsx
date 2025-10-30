@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Star, Users, TrendingUp, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image" 
-import {heroImg} from "@/public/hero-img.png"
+import heroImg from "@/public/hero-img.png"
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
