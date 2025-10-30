@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Star, Users, TrendingUp, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image" 
+import {heroImg} from "@/public/hero-img.png"
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
@@ -91,7 +92,7 @@ export function HeroSection() {
               {/* Container for the image, ensuring it's centered and has an aspect ratio */}
               <div className="relative w-full max-w-lg mx-auto aspect-video md:aspect-square">
                 <Image
-                  src="/hero-img.png"
+                  src={heroImg}
                   alt="Illustration de l'application La Pince montrant la gestion budgétaire sur différents appareils."
                   fill // L'image remplira le conteneur parent
                   style={{ objectFit: 'contain' }} // Assure que l'image est contenue dans ses dimensions sans être coupée
